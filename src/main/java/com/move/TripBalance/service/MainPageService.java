@@ -1,6 +1,8 @@
 package com.move.TripBalance.service;
 
 import com.move.TripBalance.controller.response.ResponseDto;
+import com.move.TripBalance.domain.Member;
+import com.move.TripBalance.jwt.TokenProvider;
 import com.move.TripBalance.repository.PostRepository;
 import io.swagger.annotations.Api;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 public class MainPageService {
 
     private final PostRepository postRepository;
+    private final TokenProvider tokenProvider;
 
     private final ApiService apiService;
 
@@ -31,8 +35,14 @@ public class MainPageService {
 
     @Transactional
     public ResponseDto<?> getPeopleData() throws IOException, ParseException {
-
         return ResponseDto.success(apiService.getPeopleNum());
     }
 
+    @Transactional
+    public Member validateMember(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh_Token"))) {
+            return null;
+        }
+        return tokenProvider.getMemberFromAuthentication();
+    }
 }
