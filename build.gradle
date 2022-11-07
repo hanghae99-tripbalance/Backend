@@ -60,8 +60,10 @@ dependencies {
     // JSONObject
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20220924'
+    implementation 'com.google.code.gson:gson:2.8.7'
 
-    // WebSocket
+
+// WebSocket
     compile 'org.springframework.boot:spring-boot-starter-mustache'
     //compile 'org.springframework.boot:spring-boot-starter-websocket'
     compile 'org.webjars.bower:jquery:3.6.1'
@@ -72,6 +74,9 @@ dependencies {
     // pub/sub
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+
+    //okhttp
+    implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
 
 }
 

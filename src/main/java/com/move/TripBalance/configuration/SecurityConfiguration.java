@@ -64,7 +64,8 @@ public class SecurityConfiguration {
                 "/tb/signup",
                 "/tb/join",
                 "/tb/bestfive",
-                "/tb/besttrip"
+                "/tb/besttrip",
+                "/apitest"
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",
