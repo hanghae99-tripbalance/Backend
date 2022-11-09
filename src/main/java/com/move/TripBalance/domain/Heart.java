@@ -14,7 +14,8 @@ import javax.persistence.*;
 @Entity
 public class Heart {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long heartId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,5 +25,4 @@ public class Heart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="postId")
     private Post post;
-
 }
