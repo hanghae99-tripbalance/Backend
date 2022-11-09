@@ -1,6 +1,8 @@
 package com.move.TripBalance.domain;
 
 import javax.persistence.*;
+
+import com.move.TripBalance.controller.request.CommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +19,7 @@ public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
 
     @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,7 +30,7 @@ public class Comment extends Timestamped {
     private Post post;
 
     @Column(nullable = false)
-    private String comment;
+    private String content;
 
     @Column(nullable = false)
     private String author;
@@ -37,6 +39,13 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment parent;
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 
 
 }
