@@ -28,6 +28,7 @@ public class ReCommentService {
     private final TokenProvider tokenProvider;
     private final CommentService commentService;
 
+    //대댓글 작성
     @Transactional
     public ResponseDto<?> createReComment(
             ReCommentRequestDto requestDto,
@@ -58,32 +59,33 @@ public class ReCommentService {
                         .build()
         );
     }
+////  대댓글 보기
+//    @Transactional(readOnly = true)
+//    public ResponseDto<?> getAllReCommentByMember(HttpServletRequest request) {
+//        Member member = validateMember(request);
+//        if (null == member) {
+//            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+//        }
+//
+//        List<ReComment> reCommentList = reCommentRepository.findAllByMember(member);
+//        List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
+//
+//        for (ReComment reComment : reCommentList) {
+//            reCommentResponseDtoList.add(
+//                    ReCommentResponseDto.builder()
+//                            .id(reComment.getId())
+//                            .author(reComment.getMember().getNickname())
+//                            .content(reComment.getContent())
+////                            .likes(countLikesReCommentLike(ReComment))
+//                            .createdAt(reComment.getCreatedAt())
+//                            .modifiedAt(reComment.getModifiedAt())
+//                            .build()
+//            );
+//        }
+//        return ResponseDto.success(reCommentResponseDtoList);
+//    }
 
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllReCommentByMember(HttpServletRequest request) {
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
-        }
-
-        List<ReComment> reCommentList = reCommentRepository.findAllByMember(member);
-        List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
-
-        for (ReComment reComment : reCommentList) {
-            reCommentResponseDtoList.add(
-                    ReCommentResponseDto.builder()
-                            .id(reComment.getId())
-                            .author(reComment.getMember().getNickname())
-                            .content(reComment.getContent())
-//                            .likes(countLikesReCommentLike(ReComment))
-                            .createdAt(reComment.getCreatedAt())
-                            .modifiedAt(reComment.getModifiedAt())
-                            .build()
-            );
-        }
-        return ResponseDto.success(reCommentResponseDtoList);
-    }
-
+    //대댓글 수정
     @Transactional
     public ResponseDto<?> updateReComment(
             Long id,
@@ -120,6 +122,7 @@ public class ReCommentService {
         );
     }
 
+    //대댓글 삭제
     @Transactional
     public ResponseDto<?> deleteReComment(
             Long id,

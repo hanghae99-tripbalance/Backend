@@ -32,6 +32,7 @@ public class CommentService {
     private final TokenProvider tokenProvider;
     private final PostService postService;
 
+    //댓글 작성
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
         Member member = validateMember(request);
@@ -62,6 +63,7 @@ public class CommentService {
         );
     }
 
+    //게시글 별 코멘트 보기
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllCommentsByPost(Long postId) {
         Post post = postService.isPresentPost(postId);
@@ -87,31 +89,33 @@ public class CommentService {
         return ResponseDto.success(commentResponseDtoList);
     }
 
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllCommentsByMember(HttpServletRequest request) {
-        Member member = validateMember(request);
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
-        }
+////    멤버별 코멘트 보기
+//    @Transactional(readOnly = true)
+//    public ResponseDto<?> getAllCommentsByMember(HttpServletRequest request) {
+//        Member member = validateMember(request);
+//        if (null == member) {
+//            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+//        }
+//
+//        List<Comment> commentList = commentRepository.findAllByMember(member);
+//        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//        for (Comment comment : commentList) {
+//            commentResponseDtoList.add(
+//                    CommentResponseDto.builder()
+//                            .id(comment.getId())
+//                            .author(comment.getMember().getNickname())
+//                            .content(comment.getContent())
+////                            .likes(countLikesComment(comment))
+//                            .createdAt(comment.getCreatedAt())
+//                            .modifiedAt(comment.getModifiedAt())
+//                            .build()
+//            );
+//        }
+//        return ResponseDto.success(commentResponseDtoList);
+//    }
 
-        List<Comment> commentList = commentRepository.findAllByMember(member);
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-        for (Comment comment : commentList) {
-            commentResponseDtoList.add(
-                    CommentResponseDto.builder()
-                            .id(comment.getId())
-                            .author(comment.getMember().getNickname())
-                            .content(comment.getContent())
-//                            .likes(countLikesComment(comment))
-                            .createdAt(comment.getCreatedAt())
-                            .modifiedAt(comment.getModifiedAt())
-                            .build()
-            );
-        }
-        return ResponseDto.success(commentResponseDtoList);
-    }
-
+    //댓글 수정
     @Transactional
     public ResponseDto<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
         Member member = validateMember(request);
@@ -162,6 +166,7 @@ public class CommentService {
         );
     }
 
+    //댓글 삭제
     @Transactional
     public ResponseDto<?> deleteComment(Long id, HttpServletRequest request) {
         Member member = validateMember(request);
