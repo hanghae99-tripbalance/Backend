@@ -1,5 +1,6 @@
 package com.move.TripBalance.controller;
 
+import com.move.TripBalance.controller.response.ApiResponseDto;
 import com.move.TripBalance.domain.Result;
 import com.move.TripBalance.service.ApiService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,9 @@ public class ApiController {
 
     private final ApiService apiService;
 
-    @GetMapping("/apitest")
-    public List<Result> getApi() throws IOException, ParseException {
-        return apiService.getPeopleNum();
+    @GetMapping("/tb/apitest")
+    public ApiResponseDto<?> getApi() throws IOException, ParseException {
+        return ApiResponseDto.success(apiService.getPeopleNum());
     }
 
 }

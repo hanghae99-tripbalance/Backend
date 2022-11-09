@@ -66,9 +66,7 @@ public class SecurityConfiguration {
                 "/tb/posts/{postId}",
                 "/tb/bestfive", //메인 페이지
                 "/tb/besttrip",
-                "/apitest",
-                "/nodetest1",
-                "/nodetest2",
+                "/tb/apitest",
                 "/api/graph"
 
         ).permitAll()
