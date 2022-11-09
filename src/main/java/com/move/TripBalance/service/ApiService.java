@@ -1,16 +1,20 @@
 package com.move.TripBalance.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.move.TripBalance.apiDB.ResultAge;
+import com.move.TripBalance.apiDB.ResultComp;
+import com.move.TripBalance.apiDB.ResultGender;
+import com.move.TripBalance.domain.Result;
+import com.move.TripBalance.repository.ResultRepository;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import nonapi.io.github.classgraph.json.JSONUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -25,18 +29,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
-import java.nio.charset.StandardCharsets;
+
 import java.util.*;
 
 @Getter
 @Setter
 @Service
+@RequiredArgsConstructor
 public class ApiService {
+    //sk api 서비스를 호출하기 위한 appkey
     @Value(value = "${sk.api.appkey}")
     String appkey;
 
+    // 법정지역코드를 불러오기 위한 api key
     @Value(value = "${region.api.code}")
     String regionCode;
+
+    private final ResultRepository resultRepository;
+
+    public void getGraph() {
+        String result = "강원도 강릉시";
+        if(resultRepository.findByLocation(result).isEmpty()){
+            Result result1 = new Result();
+        }
+    }
     public String getLawCode() throws IOException, ParseException {
         String result = "강원도 강릉시";
 
@@ -73,8 +89,6 @@ public class ApiService {
 //JSON데이터를 넣어 JSON Object 로 만들어 준다.
         JSONObject obj = (JSONObject) jsonParser.parse(line);
 
-
-
         JSONArray arr = (JSONArray) obj.get("StanReginCd");
         JSONObject stanReginCd = (JSONObject) arr.get(1);
 
@@ -83,66 +97,205 @@ public class ApiService {
       //  JSONObject code = (JSONObject) results.get("region_cd");
         String lawCode = (String) results.get("region_cd");
 
-        String localName = (String) results.get("locallow_nm");
-
         return lawCode;
 
     }
 
-    public String getPeopleNum() throws IOException, ParseException {
-
+    public List<Result> getPeopleNum() throws IOException, ParseException {
         OkHttpClient client = new OkHttpClient();
 
         List<String> genGrp = new ArrayList<>();
         genGrp.add("male");
         genGrp.add("female");
-        genGrp.add("all");
 
         List<String> ageGrp = new ArrayList<>();
-        ageGrp.add("10"); ageGrp.add("20"); ageGrp.add("30"); ageGrp.add("40");ageGrp.add("50"); ageGrp.add("60_over"); ageGrp.add("all");
+        ageGrp.add("10"); ageGrp.add("20"); ageGrp.add("30"); ageGrp.add("40");ageGrp.add("50"); ageGrp.add("60_over");
+        ageGrp.add("all");
 
         List<String> companion = new ArrayList<>();
-        companion.add("family"); companion.add("not_family"); companion.add("family_w_child"); companion.add("all");
+        companion.add("family"); companion.add("not_family"); companion.add("family_w_child");
+        companion.add("all");
 
-        System.out.println(getLawCode());
-
+        String result = "";
+        List<Result> resultList = new ArrayList<>();
+        List<ResultGender> resultGenderList = new ArrayList<>();
+        // 성별을 기준으로 정보 출력
         for (String gender : genGrp) {
-            for(String age : ageGrp){
-                for (String comp : companion){
-                    Request request = new Request.Builder()
-                            .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                    getLawCode() +
-                                    "?gender=" +
-                                    gender +
-                                    "&ageGrp=" +
-                                    age +
-                                    "&companionType=" +
-                                    comp)
-                            .get()
-                            .addHeader("accept", "application/json")
-                            .addHeader("appkey", appkey)
-                            .build();
+            Request requestGen = new Request.Builder()
+                    .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                            getLawCode() +
+                            "?gender=" +
+                            gender + "&ageGrp=all&companionType=all")
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("appkey", appkey)
+                    .build();
 
-                    Response response = client.newCall(request).execute();
-                    ResponseBody body = response.body();
-                    String jsonText = body.toString();
+            Response responseGen = client.newCall(requestGen).execute();
+            String genString = responseGen.body().string();
 
-                    Gson gson = new Gson();
-                    Map<String, Object> jsonObject = gson.fromJson(jsonText, new TypeToken<Map<String, Object>>(){}.getType());
+            //복잡한 JSON 파일 파싱
+            JSONParser parser = new JSONParser();
+            JSONObject resJson = (JSONObject) parser.parse(genString);
+            JSONObject contents = (JSONObject) resJson.get("contents");
+            //지역 이름 추출
+            String districtName = (String) contents.get("districtName");
+            JSONObject jsonRow = (JSONObject) contents.get("raw");
+            //방문객 수 추출
+            Long results = (Long) jsonRow.get("travelerCount");
 
-                    List<Map<String, Object>> jsonList = (List) jsonObject.get("");
-                    body.close();
-                    System.out.println(jsonText);
+            // 이미 저장된 내역이 있다면 repository 에서 불러오기
+            List<Result> repoResult = resultRepository.findByLocation(districtName);
+            if(repoResult.isEmpty()){
+               Result genResult = resultRepository.findByLocationAndGender(districtName, gender);
+               gender = genResult.getGender();
+               // 삼항 연산자 - male 이면 남성, 아니면 여성
+               //gender = (Objects.equals(gender, "male")) ? "남성" : "여성";
+               results = genResult.getPeopleCnt();
+               ResultGender resultGender = new ResultGender();
+               resultGender.setLocation(districtName);
+               resultGender.setGender(gender);
+               resultGender.setPeopleCnt(results);
+               resultGenderList.add(resultGender);
+               resultList.add(genResult);
+               System.out.println("성별 리스트: "  + resultGenderList);
+               System.out.println("최종리스트: " + resultList);
 
 
-                    System.out.println();
-                    //배열 추출
-                    System.out.println("저번달" + getLawCode() + "의" + gender +" 성별(male:남성, female:여성)"+ age +"대"+ comp + " 가족구성원 방문객 수는" );
-                }
             }
 
+            // 최초로 그 지역의 정보를 불러오는 거라면 새로 추출
+            ResultGender resultGender = new ResultGender();
+            resultGender.setPeopleCnt(results);
+            resultGender.setGender(gender);
+            Result genResult = new Result();
+            genResult.setPeopleCnt(results);
+            genResult.setGender(gender);
+            genResult.setLocation(districtName);
+
+            resultRepository.save(genResult);
+            resultGenderList.add(resultGender);
+            resultList.add(genResult);
+            System.out.println("새로운 성별 리스트: "  + resultGenderList);
+            System.out.println("새로운 최종리스트: " + resultList);
+
         }
-        return getPeopleNum();
+        List<ResultAge> resultAgeList = new ArrayList<>();
+
+        // 연령대를 기준으로 정보 추출하기
+        for(String age : ageGrp){
+            Request requestAge = new Request.Builder()
+                    .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                            getLawCode() +
+                            "?gender=all&ageGrp=" + age +
+                            "&companionType=all")
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("appkey", appkey)
+                    .build();
+
+            Response responseAge = client.newCall(requestAge).execute();
+            String ageString = responseAge.body().string();
+
+            JSONParser parser = new JSONParser();
+            JSONObject resJson = (JSONObject) parser.parse(ageString);
+
+            JSONObject arr = (JSONObject) resJson.get("contents");
+            String districtName = (String) arr.get("districtName");
+            JSONObject jsonRow = (JSONObject) arr.get("raw");
+            Long results = (Long) jsonRow.get("travelerCount");
+
+            // 이미 저장된 내역이 있다면 repository 에서 불러오기
+            List<Result> repoResult = resultRepository.findByLocation(districtName);
+            if(repoResult.isEmpty()){
+                Result ageResult = resultRepository.findByLocationAndAge(districtName, age);
+                age = ageResult.getAge();
+                results = ageResult.getPeopleCnt();
+                ResultAge resultAge = new ResultAge();
+                resultAge.setLocation(districtName);
+                resultAge.setAge(age);
+                resultAge.setPeopleCnt(results);
+                resultAgeList.add(resultAge);
+                resultList.add(ageResult);
+                System.out.println("나이대별 리스트: "  + resultAgeList);
+                System.out.println("최종리스트: " + resultList);
+
+
+            }
+
+            //배열 추출
+            ResultAge resultAge = new ResultAge();
+            resultAge.setPeopleCnt(results);
+            resultAge.setAge(age);
+            Result ageResult = new Result();
+            ageResult.setPeopleCnt(results);
+            ageResult.setAge(age);
+            ageResult.setLocation(districtName);
+
+            resultRepository.save(ageResult);
+            resultAgeList.add(resultAge);
+            resultList.add(ageResult);
+            System.out.println("새로운 나이대별 리스트: "  + resultAgeList);
+            System.out.println("새로운 최종리스트: " + resultList);
+
+        }
+        List<ResultComp> resultCompList = new ArrayList<>();
+        for (String comp : companion){
+            Request requestComp = new Request.Builder()
+                    .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                            getLawCode() +
+                            "?gender=all&ageGrp=all&companionType="+comp)
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("appkey", appkey)
+                    .build();
+
+            Response responseComp = client.newCall(requestComp).execute();
+            String compString = responseComp.body().string();
+
+            JSONParser parser = new JSONParser();
+            JSONObject resJson = (JSONObject) parser.parse(compString);
+
+            JSONObject arr = (JSONObject) resJson.get("contents");
+            String districtName = (String) arr.get("districtName");
+            JSONObject jsonRow = (JSONObject) arr.get("raw");
+            Long results = (Long) jsonRow.get("travelerCount");
+
+            // 이미 저장된 내역이 있다면 repository 에서 불러오기
+            List<Result> repoResult = resultRepository.findByLocation(districtName);
+            if(repoResult.isEmpty()){
+                Result compResult = resultRepository.findByLocationAndType(districtName, comp);
+                comp = compResult.getType();
+                results = compResult.getPeopleCnt();
+                ResultComp resultComp = new ResultComp();
+                resultComp.setLocation(districtName);
+                resultComp.setType(comp);
+                resultComp.setPeopleCnt(results);
+                resultCompList.add(resultComp);
+                resultList.add(compResult);
+                System.out.println("타입별 리스트: "  + resultCompList);
+                System.out.println("최종리스트: " + resultList);
+
+            }
+            //배열 추출
+
+            ResultComp resultComp = new ResultComp();
+            resultComp.setPeopleCnt(results);
+            resultComp.setType(comp);
+            Result compResult = new Result();
+            compResult.setPeopleCnt(results);
+            compResult.setType(comp);
+            compResult.setLocation(districtName);
+
+            resultRepository.save(compResult);
+            resultCompList.add(resultComp);
+            resultList.add(compResult);
+            System.out.println("새로운 타입별 리스트: "  + resultCompList);
+            System.out.println("새로운 최종리스트: " + resultList);
+        }
+
+
+        return resultList;
     }
 
 }

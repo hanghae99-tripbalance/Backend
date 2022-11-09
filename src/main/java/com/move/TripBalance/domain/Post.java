@@ -1,11 +1,10 @@
 package com.move.TripBalance.domain;
 
+import com.move.TripBalance.controller.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Post extends Timestamped{
 
@@ -29,9 +27,9 @@ public class Post extends Timestamped{
 
     // 작성자
     @Column(nullable = false)
-    private String author;
+    private String nickName;
 
-    // 카테고리
+    // 지역
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Local local;
@@ -55,7 +53,7 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>();
 
-    // 게시글 작성 시 같이 업로드할 미디어 파일들 (존재하지 않을 수도 있음)
+//    //미디어 파일
 //    @OneToMany(
 //            mappedBy = "post",
 //            fetch = FetchType.LAZY,
@@ -66,4 +64,20 @@ public class Post extends Timestamped{
     @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    private Long countVisit;
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.pet = postRequestDto.getPet();
+        this.content = postRequestDto.getContent();
+        this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
+    }
+    private void updateVisit(Long countVisit){
+        this.countVisit = countVisit;
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }
