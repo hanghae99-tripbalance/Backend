@@ -12,7 +12,7 @@ public class MainPageController {
 
     private final MainPageService mainPageService;
     @GetMapping("/tb/bestfive")
-    public ResponseDto<?> getBestFive(){
+    public ResponseDto<?> getBestTen(){
         return mainPageService.getTop5Posts();
     }
 
