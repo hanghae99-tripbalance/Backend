@@ -4,16 +4,13 @@ import com.move.TripBalance.controller.response.ResponseDto;
 import com.move.TripBalance.domain.Member;
 import com.move.TripBalance.jwt.TokenProvider;
 import com.move.TripBalance.repository.PostRepository;
-import io.swagger.annotations.Api;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -31,11 +28,6 @@ public class MainPageService {
     @Transactional
     public ResponseDto<?> getTop5Posts(){
         return ResponseDto.success(postRepository.findTop5ByHearts(LocalDateTime.now()));
-    }
-
-    @Transactional
-    public ResponseDto<?> getPeopleData() throws IOException, ParseException {
-        return ResponseDto.success(apiService.getPeopleNum());
     }
 
     @Transactional

@@ -44,15 +44,17 @@ public class ApiService {
 
     private final ResultRepository resultRepository;
 
-    public void getGraph() {
+    private final MapService mapService;
+
+   /* public void getGraph() {
         String result = "서울특별시 종로구";
         if (resultRepository.findByLocation(result).size() != 0) {
             Result result1 = new Result();
         }
-    }
+    }*/
 
-    public String getLawCode() throws IOException, ParseException {
-        String result = "서울특별시 종로구";
+    public String getLawCode(Double lon, Double lat) throws IOException, ParseException {
+        String result = mapService.mapCode(lon, lat);
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + regionCode); /*Service Key*/
@@ -98,7 +100,7 @@ public class ApiService {
         return lawCode;
     }
 
-    public JSONObject getPeopleNum() throws IOException, ParseException {
+    public JSONObject getPeopleNum(Double lon, Double lat) throws IOException, ParseException {
         OkHttpClient client = new OkHttpClient();
 
         List<String> genGrp = new ArrayList<>();
@@ -129,7 +131,7 @@ public class ApiService {
 
         Request request = new Request.Builder()
                 .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                        getLawCode() +
+                        getLawCode(lon, lat) +
                         "?gender=all&ageGrp=all&companionType=all")
                 .get()
                 .addHeader("accept", "application/json")
@@ -179,7 +181,7 @@ public class ApiService {
                 // 최초로 그 지역의 정보를 불러오는 거라면 새로 추출
                 Request requestGen = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode() +
+                                getLawCode(lon, lat) +
                                 "?gender=" +
                                 gender + "&ageGrp=all&companionType=all")
                         .get()
@@ -247,7 +249,7 @@ public class ApiService {
 
                 Request requestAge = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode() +
+                                getLawCode(lon, lat) +
                                 "?gender=all&ageGrp=" + age +
                                 "&companionType=all")
                         .get()
@@ -315,7 +317,7 @@ public class ApiService {
 
                 Request requestComp = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode() +
+                                getLawCode(lon, lat) +
                                 "?gender=all&ageGrp=all&companionType=" + comp)
                         .get()
                         .addHeader("accept", "application/json")

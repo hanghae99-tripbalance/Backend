@@ -67,7 +67,7 @@ public class SecurityConfiguration {
                 "/tb/bestfive", //메인 페이지
                 "/tb/besttrip",
                 "/tb/apitest",
-                "/api/graph"
+                "/tb/kakao"
 
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
