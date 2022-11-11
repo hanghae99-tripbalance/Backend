@@ -1,5 +1,7 @@
 package com.move.TripBalance.service;
 
+import com.move.TripBalance.controller.request.LocationRequestDto;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -28,18 +31,20 @@ public class MapService {
 
     @Value("${kakao.key}")
     private String key;
-
     private String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?";
 
-    public ResponseEntity kakaoMap(Double lon, Double lat) {
+    public ResponseEntity kakaoMap(LocationRequestDto requestDto) {
+        String latRes = requestDto.getLat();
+        String lonRes = requestDto.getLon();
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "KakaoAK " + key); //Authorization 설정
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders); //엔티티로 만들기
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(url) //기본 url
-                .queryParam("x", lon) //인자
-                .queryParam("y", lat) //인자
+                .queryParam("x", lonRes) //인자
+                .queryParam("y", latRes) //인자
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
@@ -51,9 +56,10 @@ public class MapService {
         return response; //내용 반환
     }
 
-    public String mapCode(Double lon, Double lat) throws ParseException {
+    public String mapCode(LocationRequestDto requestDto) throws ParseException {
+
         JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(kakaoMap(lon,lat).getBody().toString());
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(kakaoMap(requestDto).getBody().toString());
         JSONParser docuParser = new JSONParser();
         // documents만 도출
         JSONArray docuArray = (JSONArray) jsonObject.get("documents");
@@ -64,7 +70,9 @@ public class MapService {
         String regionTwo = docuObject.get("region_2depth_name").toString();
         // 넘겨줘야 할 법정동 주소
         String regionName = regionOne + " " + regionTwo;
+
         return regionName;
     }
+
 
 }

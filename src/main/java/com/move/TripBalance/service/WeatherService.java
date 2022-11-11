@@ -1,6 +1,7 @@
 package com.move.TripBalance.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.move.TripBalance.controller.request.LocationRequestDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -34,7 +35,11 @@ public class WeatherService {
     String key;
 
     String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-    public JSONObject getWeather(String lat,String lon) throws IOException, ParseException {
+    public JSONObject getWeather(LocationRequestDto requestDto) throws IOException, ParseException {
+
+        //받아온 위도와 경도를 앞 2,3자리 숫자만 가져오기
+        String latRes = requestDto.getLat().substring(0, 2);
+        String lonRes = requestDto.getLon().substring(0, 3);
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); /*Service Key*/
@@ -43,8 +48,8 @@ public class WeatherService {
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
         urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*‘21년 6월 28일 발표*/
         urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode("0800", "UTF-8")); /*06시 발표(정시단위) */
-        urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(lat, "UTF-8")); /*예보지점의 X 좌표값*/
-        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(lon, "UTF-8")); /*예보지점의 Y 좌표값*/
+        urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(latRes, "UTF-8")); /*예보지점의 X 좌표값*/
+        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(lonRes, "UTF-8")); /*예보지점의 Y 좌표값*/
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");

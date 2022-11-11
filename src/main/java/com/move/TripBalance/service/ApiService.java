@@ -3,6 +3,7 @@ package com.move.TripBalance.service;
 import com.move.TripBalance.apiDB.ResultAge;
 import com.move.TripBalance.apiDB.ResultComp;
 import com.move.TripBalance.apiDB.ResultGender;
+import com.move.TripBalance.controller.request.LocationRequestDto;
 import com.move.TripBalance.domain.Result;
 import com.move.TripBalance.repository.ResultRepository;
 import com.squareup.okhttp.OkHttpClient;
@@ -45,6 +46,7 @@ public class ApiService {
     private final ResultRepository resultRepository;
 
     private final MapService mapService;
+    private final WeatherService weatherService;
 
    /* public void getGraph() {
         String result = "서울특별시 종로구";
@@ -53,8 +55,9 @@ public class ApiService {
         }
     }*/
 
-    public String getLawCode(Double lon, Double lat) throws IOException, ParseException {
-        String result = mapService.mapCode(lon, lat);
+    public String getLawCode(LocationRequestDto requestDto) throws IOException, ParseException {
+
+        String result = mapService.mapCode(requestDto);
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + regionCode); /*Service Key*/
@@ -100,7 +103,7 @@ public class ApiService {
         return lawCode;
     }
 
-    public JSONObject getPeopleNum(Double lon, Double lat) throws IOException, ParseException {
+    public JSONObject getPeopleNum(LocationRequestDto requestDto) throws IOException, ParseException {
         OkHttpClient client = new OkHttpClient();
 
         List<String> genGrp = new ArrayList<>();
@@ -131,7 +134,7 @@ public class ApiService {
 
         Request request = new Request.Builder()
                 .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                        getLawCode(lon, lat) +
+                        getLawCode(requestDto) +
                         "?gender=all&ageGrp=all&companionType=all")
                 .get()
                 .addHeader("accept", "application/json")
@@ -181,7 +184,7 @@ public class ApiService {
                 // 최초로 그 지역의 정보를 불러오는 거라면 새로 추출
                 Request requestGen = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode(lon, lat) +
+                                getLawCode(requestDto) +
                                 "?gender=" +
                                 gender + "&ageGrp=all&companionType=all")
                         .get()
@@ -249,7 +252,7 @@ public class ApiService {
 
                 Request requestAge = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode(lon, lat) +
+                                getLawCode(requestDto) +
                                 "?gender=all&ageGrp=" + age +
                                 "&companionType=all")
                         .get()
@@ -317,7 +320,7 @@ public class ApiService {
 
                 Request requestComp = new Request.Builder()
                         .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                getLawCode(lon, lat) +
+                                getLawCode(requestDto) +
                                 "?gender=all&ageGrp=all&companionType=" + comp)
                         .get()
                         .addHeader("accept", "application/json")
@@ -353,5 +356,11 @@ public class ApiService {
             }
         }
         return jsonObject;
+    }
+    public JSONObject mapResult(LocationRequestDto requestDto) throws IOException, ParseException {
+        JSONObject resultObj = new JSONObject();
+        resultObj.put("peopleCnt", getPeopleNum(requestDto));
+        resultObj.put("weather", weatherService.getWeather(requestDto));
+        return  resultObj;
     }
 }

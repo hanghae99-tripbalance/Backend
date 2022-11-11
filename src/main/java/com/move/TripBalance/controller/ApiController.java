@@ -1,16 +1,15 @@
 package com.move.TripBalance.controller;
 
+import com.move.TripBalance.controller.request.LocationRequestDto;
 import com.move.TripBalance.service.ApiService;
 import com.move.TripBalance.service.MapService;
 import com.move.TripBalance.service.WeatherService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -26,17 +25,21 @@ public class ApiController {
     private final WeatherService weatherService;
 
     @GetMapping("/apitest")
-    public String getApi(@RequestParam Double lon, @RequestParam Double lat) throws IOException, ParseException {
-        return apiService.getLawCode(lon,lat);
+    public JSONObject getApi(@RequestBody LocationRequestDto requestDto) throws IOException, ParseException {
+        return apiService.mapResult(requestDto);
+    }
+    @PostMapping("/apitest")
+    public JSONObject getLocation(@RequestBody LocationRequestDto requestDto) throws IOException, ParseException {
+        return apiService.mapResult(requestDto);
     }
 
-    @GetMapping("/kakao")
-    public String getMap(@RequestParam Double lon, @RequestParam Double lat) throws ParseException {
-        return mapService.mapCode(lon, lat);
+   /* @GetMapping("/kakao")
+    public String getMap(@RequestBody LocationRequestDto requestDto) throws ParseException {
+        return mapService.mapCode(requestDto);
     }
 
     @GetMapping("/weather")
-    public JSONObject getWeather(@RequestParam String lat, @RequestParam String lon) throws IOException, ParseException {
-        return weatherService.getWeather(lat, lon);
-    }
+    public JSONObject getWeather(@RequestBody LocationRequestDto requestDto) throws IOException, ParseException {
+        return weatherService.getWeather(requestDto);
+    }*/
 }
