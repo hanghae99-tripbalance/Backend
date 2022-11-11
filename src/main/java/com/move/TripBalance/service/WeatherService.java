@@ -39,7 +39,7 @@ public class WeatherService {
 
         //받아온 위도와 경도를 앞 2,3자리 숫자만 가져오기
         String latRes = requestDto.getLat().substring(0, 2);
-        String lonRes = requestDto.getLon().substring(0, 3);
+        String lonRes = requestDto.getLng().substring(0, 3);
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); /*Service Key*/

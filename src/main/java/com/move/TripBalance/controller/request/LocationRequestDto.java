@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LocationRequestDto {
     private String lat;
-    private String lon;
+    private String lng;
 
 }

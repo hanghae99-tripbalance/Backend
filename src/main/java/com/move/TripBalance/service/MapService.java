@@ -35,7 +35,7 @@ public class MapService {
 
     public ResponseEntity kakaoMap(LocationRequestDto requestDto) {
         String latRes = requestDto.getLat();
-        String lonRes = requestDto.getLon();
+        String lonRes = requestDto.getLng();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
