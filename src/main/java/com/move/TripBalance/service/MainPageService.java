@@ -22,9 +22,7 @@ public class MainPageService {
 
     private final PostRepository postRepository;
     private final TokenProvider tokenProvider;
-
     private final ApiService apiService;
-
     @Transactional
     public ResponseDto<?> getTop5Posts(){
         return ResponseDto.success(postRepository.findTop5ByHearts(LocalDateTime.now()));

@@ -28,11 +28,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MapService {
-
     @Value("${kakao.key}")
     private String key;
     private String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?";
-
     public ResponseEntity kakaoMap(LocationRequestDto requestDto) {
         String latRes = requestDto.getLat();
         String lonRes = requestDto.getLng();
@@ -48,11 +46,9 @@ public class MapService {
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
-
         //GetForObject는 헤더를 정의할 수 없음
         ResponseEntity<Map> result = restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class);
         ResponseEntity response= restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, String.class);
-
         return response; //내용 반환
     }
 
