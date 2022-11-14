@@ -253,11 +253,10 @@ public class ApiService {
 
         Location loca = locationRepository.findByLatAndLng(lat, lng);
         String districtName = loca.getResult();
+        // 이미 저장된 내역이 있다면 repository 에서 불러오기
 
         // 성별을 기준으로 정보 출력
         for (String gender : genGrp){
-
-            // 이미 저장된 내역이 있다면 repository 에서 불러오기
             Result genResult = resultRepository.findByLocationAndGender(districtName, gender);
             if (genResult != null) {
                 gender = genResult.getGender();
@@ -272,22 +271,18 @@ public class ApiService {
                 System.out.println("성별 리스트: " + resultGenderList);
                 System.out.println("최종리스트: " + resultList);
 
-                //gen_arr.add(genData);
-                //jsonObject.put("GenderData", gen_arr);
                 peopleCnt.add(resultGender);
 
             }
         }
         List<ResultAge> resultAgeList = new ArrayList<>();
-        JSONArray age_arr = new JSONArray();
+        //JSONArray age_arr = new JSONArray();
 
         // 연령대를 기준으로 정보 추출하기
         for (String age : ageGrp) {
 
             // 이미 저장된 내역이 있다면 repository 에서 불러오기
-
             Result ageResult = resultRepository.findByLocationAndAge(districtName, age);
-
             if (ageResult != null) {
                 age = ageResult.getAge();
                 Long results = ageResult.getPeopleCnt();
@@ -322,7 +317,6 @@ public class ApiService {
                 resultList.add(compResult);
                 System.out.println("타입별 리스트: " + resultCompList);
                 System.out.println("최종리스트: " + resultList);
-
                 peopleCnt.add(resultComp);
             }
         }

@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-public class Result extends Timestamped{
+public class Result{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -20,6 +19,4 @@ public class Result extends Timestamped{
     private String type;
     private String gender;
     private Long peopleCnt;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 }
