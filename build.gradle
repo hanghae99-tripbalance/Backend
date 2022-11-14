@@ -56,6 +56,17 @@ dependencies {
     // querydsl 디펜던시 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // JSONObject
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.json:json:20220924'
+
+    //okhttp
+    implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.10'
+
 }
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
@@ -79,15 +90,6 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 
-       // JSONObject
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-    implementation 'org.json:json:20220924'
-
-    //okhttp
-    implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
-
-    //gson
-    implementation 'com.google.code.gson:gson:2.10'
 
 
     //jsp
