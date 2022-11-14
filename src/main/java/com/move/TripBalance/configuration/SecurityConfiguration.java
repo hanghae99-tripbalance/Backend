@@ -65,7 +65,13 @@ public class SecurityConfiguration {
                 "/tb/login",//로그인
                 "/tb/posts/{postId}",
                 "/tb/bestfive", //메인 페이지
-                "/tb/besttrip"
+                "/tb/besttrip",
+                "/tb/apitest",
+                "/tb/kakao",
+                "/tb/treetest",
+                "/tb/weather"
+
+
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",
