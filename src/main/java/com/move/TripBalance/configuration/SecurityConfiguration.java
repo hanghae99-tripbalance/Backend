@@ -1,6 +1,6 @@
 package com.move.TripBalance.configuration;
 
-//import com.move.review.jwt.AccessDeniedHandlerException;
+
 import com.move.TripBalance.jwt.AccessDeniedHandlerException;
 import com.move.TripBalance.jwt.AuthenticationEntryPointException;
 import com.move.TripBalance.jwt.TokenProvider;
@@ -59,12 +59,19 @@ public class SecurityConfiguration {
 
         .and()
         .authorizeRequests()
-        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // 추가
+        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
         .antMatchers(
-                "/tb/signup",
-                "/tb/join",
-                "/tb/bestfive",
-                "/tb/besttrip"
+                "/tb/signup",//회원가입
+                "/tb/login",//로그인
+                "/tb/posts/{postId}",
+                "/tb/bestfive", //메인 페이지
+                "/tb/besttrip",
+                "/tb/apitest",
+                "/tb/kakao",
+                "/tb/treetest",
+                "/tb/weather"
+
+
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",

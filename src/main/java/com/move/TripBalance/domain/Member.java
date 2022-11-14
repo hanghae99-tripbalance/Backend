@@ -20,6 +20,7 @@ import java.util.Objects;
 @Entity
 public class Member extends Timestamped {
 
+    //고유 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;

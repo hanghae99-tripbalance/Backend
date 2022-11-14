@@ -47,6 +47,7 @@ public class MemberService {
     // 회원 정보 저장
     Member member = Member.builder()
             .email(requestDto.getEmail())
+            .nickName(requestDto.getNickName())
                 .pw(passwordEncoder.encode(requestDto.getPw()))
                     .build();
     memberRepository.save(member);
