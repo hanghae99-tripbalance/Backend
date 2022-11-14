@@ -1,13 +1,14 @@
 package com.move.TripBalance.controller.response;
 
 
-//import com.move.TripBalance.domain.Media;
-import com.move.TripBalance.domain.Local;
+
+import com.move.TripBalance.domain.Media;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,11 +18,12 @@ public class PostResponseDto {
     private String title;
     private String nickName;
     private String local;
+    private String localdetail;
     private int pet;
     private String content;
-//    private Media media;
+    private List<String> mediaList;
+    private List<Media> image;
     private Long heartNum;
     private boolean heartYn = false;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+
 }
