@@ -1,10 +1,8 @@
 package com.move.TripBalance.domain;
 
 import com.move.TripBalance.controller.request.PostRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
+@Setter
 public class Post extends Timestamped{
 
     // 고유 아이디
@@ -34,6 +33,11 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private Local local;
 
+    // 지역 디테일
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LocalDetail localDetail;
+
     //반려동물
     @Column(nullable = false)
     private int pet;
@@ -53,28 +57,20 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>();
 
-//    //미디어 파일
-//    @OneToMany(
-//            mappedBy = "post",
-//            fetch = FetchType.LAZY,
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true)
-//    private List<Media> medias;
+    //미디어 파일
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Media> imgURL = new ArrayList<>();
 
     @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
-    private Long countVisit;
 
     public void update(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.pet = postRequestDto.getPet();
         this.content = postRequestDto.getContent();
         this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
-    }
-    private void updateVisit(Long countVisit){
-        this.countVisit = countVisit;
+        this.imgURL = postRequestDto.getMediaList();
     }
 
     public boolean validateMember(Member member) {
