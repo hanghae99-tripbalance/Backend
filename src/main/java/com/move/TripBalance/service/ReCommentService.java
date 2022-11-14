@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReCommentService {
 
     private final ReCommentRepository reCommentRepository;
-//    private final ReCommentLikeRepository ReCommentLikeRepository;
-
     private final TokenProvider tokenProvider;
     private final CommentService commentService;
 
@@ -48,11 +46,11 @@ public class ReCommentService {
                 .member(member)
                 .content(requestDto.getContent())
                 .build();
-        ReCommentRepository.save(reComment);
+        reCommentRepository.save(reComment);
         return ResponseDto.success(
                 ReCommentResponseDto.builder()
                         .id(reComment.getId())
-                        .author(member.getNickname())
+                        .nickName(member.getNickName())
                         .content(reComment.getContent())
                         .createdAt(reComment.getCreatedAt())
                         .modifiedAt(reComment.getModifiedAt())
@@ -114,7 +112,7 @@ public class ReCommentService {
         return ResponseDto.success(
                 ReCommentResponseDto.builder()
                         .id(reComment.getId())
-                        .author(member.getNickname())
+                        .nickName(member.getNickName())
                         .content(reComment.getContent())
                         .createdAt(reComment.getCreatedAt())
                         .modifiedAt(reComment.getModifiedAt())
