@@ -1,10 +1,15 @@
 package com.move.TripBalance.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Getter
+@Setter
 @Entity
 public class Question {
     @Id
@@ -25,59 +30,4 @@ public class Question {
 
     private String trip;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public Long getLeftId() {
-        return leftId;
-    }
-
-    public void setLeftId(Long leftId) {
-        this.leftId = leftId;
-    }
-
-    public Long getRightId() {
-        return rightId;
-    }
-
-    public void setRightId(Long rightId) {
-        this.rightId = rightId;
-    }
-
-    public String getLeftAnswer() {
-        return leftAnswer;
-    }
-
-    public void setLeftAnswer(String leftAnswer) {
-        this.leftAnswer = leftAnswer;
-    }
-
-    public String getRightAnswer() {
-        return rightAnswer;
-    }
-
-    public void setRightAnswer(String rightAnswer) {
-        this.rightAnswer = rightAnswer;
-    }
 }

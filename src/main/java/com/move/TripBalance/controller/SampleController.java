@@ -133,12 +133,14 @@ public class SampleController {
         Optional<Question> question2 = questionRepository.findById(questionTree.getQuestion2());
         Optional<Question> question3 = questionRepository.findById(questionTree.getQuestion3());
         Optional<Question> question4 = questionRepository.findById(questionTree.getQuestion4());
-        Optional<Question> question5 = questionRepository.findById(questionTree.getLastId());
+        Optional<Question> question5 = questionRepository.findById(questionTree.getQuestion5());
+        Optional<Question> question6 = questionRepository.findById(questionTree.getLastId());
         questionList.add(question1.get());
         questionList.add(question2.get());
         questionList.add(question3.get());
         questionList.add(question4.get());
         questionList.add(question5.get());
+        questionList.add(question6.get());
 
 
         return questionList;

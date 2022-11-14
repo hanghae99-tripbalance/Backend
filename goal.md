@@ -1,4 +1,16 @@
--- data-postgresql.sql
+- [x] 회원 및 문제 저장(Initial..)
+##### Member
+```sql
+INSERT INTO Member(name) VALUES('yuri')
+```
+##### Question
+```aidl
+   1
+ 2   3
+4 5 6 7  
+```
+
+```sql
 INSERT INTO Question(id, question, parent_id, left_id, right_id, left_answer, right_answer, trip) VALUES
                                                                                                       (1, '쉬러감 or 놀러감', null, 2, 3, '쉬러감', '놀러감', null),
                                                                                                       (2, '힐링 or 도시락', 1, 4, 5, '힐링', '도시락', null),
@@ -63,3 +75,88 @@ INSERT INTO Question(id, question, parent_id, left_id, right_id, left_answer, ri
                                                                                                       (61, '양', 30, null, null, null, null,'평창'),
                                                                                                       (62, '조개', 31, null, null, null, null,'태안'),
                                                                                                       (63, '빙어', 31, null, null, null, null,'양평');
+```
+
+##### QuestionTree
+```sql
+INSERT INTO question_tree(last_id, question1, question2, question3, question4, question5) VALUES
+                                                                                              (32, 1, 2, 4, 8, 16),
+                                                                                              (33, 1, 2, 4, 8, 16),
+                                                                                              (34, 1, 2, 4, 8, 17),
+                                                                                              (35, 1, 2, 4, 8, 17),
+                                                                                              (36, 1, 2, 4, 9, 18),
+                                                                                              (37, 1, 2, 4, 9, 18),
+                                                                                              (38, 1, 2, 4, 9, 19),
+                                                                                              (39, 1, 2, 4, 9, 19),
+                                                                                              (40, 1, 2, 5, 10, 20),
+                                                                                              (41, 1, 2, 5, 10, 20),
+                                                                                              (42, 1, 2, 5, 10, 21),
+                                                                                              (43, 1, 2, 5, 10, 21),
+                                                                                              (44, 1, 2, 5, 11, 22),
+                                                                                              (45, 1, 2, 5, 11, 22),
+                                                                                              (46, 1, 2, 5, 11, 23),
+                                                                                              (47, 1, 2, 5, 11, 23),
+                                                                                              (48, 1, 3, 6, 12, 24),
+                                                                                              (49, 1, 3, 6, 12, 24),
+                                                                                              (50, 1, 3, 6, 12, 25),
+                                                                                              (51, 1, 3, 6, 12, 25),
+                                                                                              (52, 1, 3, 6, 13, 26),
+                                                                                              (53, 1, 3, 6, 13, 26),
+                                                                                              (54, 1, 3, 6, 13, 27),
+                                                                                              (55, 1, 3, 6, 13, 27),
+                                                                                              (56, 1, 3, 7, 14, 28),
+                                                                                              (57, 1, 3, 7, 14, 28),
+                                                                                              (58, 1, 3, 7, 14, 29),
+                                                                                              (59, 1, 3, 7, 14, 29),
+                                                                                              (60, 1, 3, 7, 15, 30),
+                                                                                              (61, 1, 3, 7, 15, 30),
+                                                                                              (62, 1, 3, 7, 15, 31),
+                                                                                              (63, 1, 3, 7, 15, 31);
+```
+- [x] 회원의 현재 대답 저장(Insert Member current answer)
+- [x] 회원의 현재 가져오기
+- [x] 회원의 최종 대답 저장
+---
+## APIs
+### question 번호에 대한 문제 내용 가져오기
+- `GET` {host}/question/{questionId}
+#### Response body
+```json
+{
+    "id": 1,
+    "question": "산 or 바다?",
+    "parentId": null,
+    "leftId": 2,
+    "rightId": 3,
+    "leftAnswer": "산",
+    "rightAnswer": "바다"
+}
+```
+
+### member의 현재 question 번호 가져오기
+- `GET` {host}/member/{memberId}/answer
+```json
+{
+    "memberId": 1, // 회원 번호
+    "questionId": 1 // 문제 번호
+}
+```
+- 이전에 문제를 풀었던 이력이 없으면 questionId 1번을 반환 
+
+### `POST` {host}/member/{memberId}/answer
+##### Request body
+```json
+{
+    "questionId": 4, // 문제 번호
+    "checkLeft": true // 왼쪽을 선택했는지 여부
+}
+```
+
+#### Response body
+```json
+{
+    "memberId": 1, // 회원 번호
+    "questionId": 2 // 문제 번호
+}
+```
+- 마지막 문제인 경우에 현재 아무 값도 반환하지 않음. -> client가 사용함에 있어서 편리한 방향으로 수정하시면 됩니다.
