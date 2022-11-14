@@ -25,9 +25,7 @@ import java.util.Optional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-//    private final CommentLikeRepository commentLikeRepository;
     private final ReCommentRepository reCommentRepository;
-//    private final SubCommentLikeRepository subCommentLikeRepository;
 
     private final TokenProvider tokenProvider;
     private final PostService postService;
@@ -55,7 +53,7 @@ public class CommentService {
         return ResponseDto.success(
                 CommentResponseDto.builder()
                         .id(comment.getId())
-                        .author(comment.getMember().getNickname())
+                        .nickName(comment.getMember().getNickName())
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .modifiedAt(comment.getModifiedAt())
@@ -78,7 +76,7 @@ public class CommentService {
             commentResponseDtoList.add(
                     CommentResponseDto.builder()
                             .id(comment.getId())
-                            .author(comment.getMember().getNickname())
+                            .nickName(comment.getMember().getNickName())
                             .content(comment.getContent())
 //                            .likes(countLikesComment(comment))
                             .createdAt(comment.getCreatedAt())
@@ -144,7 +142,7 @@ public class CommentService {
                     ReCommentResponseDto.builder()
                             .id(reComment.getId())
                             .content(reComment.getContent())
-                            .author(reComment.getMember().getNickname())
+                            .nickName(reComment.getMember().getNickName())
 //                            .likes(countLikesReCommentLike(reComment))
                             .createdAt(reComment.getCreatedAt())
                             .modifiedAt(reComment.getModifiedAt())
@@ -156,7 +154,7 @@ public class CommentService {
         return ResponseDto.success(
                 CommentResponseDto.builder()
                         .id(comment.getId())
-                        .author(comment.getMember().getNickname())
+                        .nickName(comment.getMember().getNickName())
                         .content(comment.getContent())
 //                        .likes(countLikesComment(comment))
                         .reComments(reCommentResponseDtoList)

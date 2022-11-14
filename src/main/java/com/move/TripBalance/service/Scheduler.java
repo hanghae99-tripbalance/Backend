@@ -20,7 +20,7 @@ public class Scheduler {
     private final ResultRepository resultRepository;
     private final ApiService apiService;
 
-    @Scheduled(cron = "0 0 9 1 * ?")
+    @Scheduled(cron = "0 0 23 1 * ?")
     public void mapResult() throws IOException, ParseException {
         apiService.getResultList();
     }

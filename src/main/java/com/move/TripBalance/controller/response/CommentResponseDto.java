@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentResponseDto {
     private Long id;
-    private String author;
+    private String nickName;
     private String content;
     private List<ReCommentResponseDto> reComments;
     private LocalDateTime createdAt;
