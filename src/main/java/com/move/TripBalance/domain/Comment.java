@@ -1,8 +1,8 @@
 package com.move.TripBalance.domain;
 
 import javax.persistence.*;
-
 import com.move.TripBalance.controller.request.CommentRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +25,7 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @JsonIgnore
     @JoinColumn(name = "postId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
@@ -33,7 +34,7 @@ public class Comment extends Timestamped {
     private String content;
 
     @Column(nullable = false)
-    private String author;
+    private String nickName;
 
     @JoinColumn(name = "parentId")
     @ManyToOne(fetch = FetchType.LAZY)

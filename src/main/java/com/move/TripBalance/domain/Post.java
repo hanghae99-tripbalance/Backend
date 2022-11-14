@@ -1,10 +1,7 @@
 package com.move.TripBalance.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.move.TripBalance.controller.request.PostRequestDto;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 @Entity
+@Setter
 public class Post extends Timestamped{
 
     // 고유 아이디
@@ -29,12 +26,17 @@ public class Post extends Timestamped{
 
     // 작성자
     @Column(nullable = false)
-    private String author;
+    private String nickName;
 
-    // 카테고리
+    // 지역
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Local local;
+
+    // 지역 디테일
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LocalDetail localDetail;
 
     //반려동물
     @Column(nullable = false)
@@ -44,6 +46,9 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private int myHeart;
+
     // 댓글
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
@@ -52,15 +57,23 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>();
 
-    // 게시글 작성 시 같이 업로드할 미디어 파일들 (존재하지 않을 수도 있음)
-//    @OneToMany(
-//            mappedBy = "post",
-//            fetch = FetchType.LAZY,
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true)
-//    private List<Media> medias;
+    //미디어 파일
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Media> imgURL = new ArrayList<>();
 
     @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.pet = postRequestDto.getPet();
+        this.content = postRequestDto.getContent();
+        this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
+        this.imgURL = postRequestDto.getMediaList();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }

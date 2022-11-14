@@ -1,5 +1,8 @@
 package com.move.TripBalance.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.move.TripBalance.controller.request.MediaRequestDto;
+import com.move.TripBalance.controller.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,25 +15,19 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Media extends Timestamped{
+public class Media{
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long id;
+    private Long Mediaid;
 
     @Column(nullable = false)
-    private String mediaName;
+    private String imgURL;
 
-    @Column(nullable = false)
-    private String mediaUrl;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="postId")
+    private Post post;
 
-    @Column
-    private Long post_id = 0L;
+    }
 
-//    @JsonIgnore
-//    @JoinColumn(name = "postId", nullable = false)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Post post;
-
-
-}

@@ -1,15 +1,12 @@
 package com.move.TripBalance.domain;
 
-// 카테고리 enum으로 변경 2022 - 10 -29 오후 10시26분 수정
 public enum Local {
 
-    여성의류( 1),
-    남성의류(2),
-    신발(3),
-    가방(4),
-    시계쥬얼리(5),
-    패션액세서리(6),
-    디지털가전(7);
+    수도권(1),
+    경상_강원도(2),
+    충청_전라도(3),
+    제주도(4),
+    기타(5);
 
     private int num;
 
@@ -19,22 +16,17 @@ public enum Local {
     public static Local partsValue(int num) {
         switch (num) {
             case 1:
-                return 여성의류;
+                return 수도권;
             case 2:
-                return 남성의류;
+                return 경상_강원도;
             case 3:
-                return 신발;
+                return 충청_전라도;
             case 4:
-                return 가방;
+                return 제주도;
             case 5:
-                return 시계쥬얼리;
-            case 6:
-                return 패션액세서리;
-            case 7:
-                return 디지털가전;
+                return 기타;
+
         }
         return null;
     }
-
-
 }
