@@ -1,11 +1,9 @@
 package com.move.TripBalance.service;
 
+import com.move.TripBalance.controller.response.LocalResponseDto;
 import com.move.TripBalance.controller.response.ResponseDto;
 import com.move.TripBalance.controller.response.TopFiveResponseDto;
-import com.move.TripBalance.domain.Heart;
-import com.move.TripBalance.domain.Member;
-import com.move.TripBalance.domain.Post;
-import com.move.TripBalance.domain.UserDetailsImpl;
+import com.move.TripBalance.domain.*;
 import com.move.TripBalance.jwt.TokenProvider;
 import com.move.TripBalance.repository.HeartRepository;
 import com.move.TripBalance.repository.PostRepository;
@@ -58,6 +56,22 @@ public class MainPageService {
             topFiveList.add(topFiveResponseDto);
         }
         return ResponseDto.success(topFiveList);
+    }
+
+    @Transactional
+    public ResponseDto<?> getLocalPost(Long local){
+        Local localEnum = Local.partsValue(Math.toIntExact(local));
+        List<Post> localPostList = postRepository.findAllByLocalOrderByCreatedAtDesc(localEnum);
+        List<LocalResponseDto> localList = new ArrayList<>();
+        for(Post post : localPostList){
+            LocalResponseDto localResponseDto = new LocalResponseDto();
+            localResponseDto.setTitle(post.getTitle());
+            localResponseDto.setContent(post.getContent());
+            localResponseDto.setLocaldetail(post.getLocalDetail().toString());
+            localResponseDto.setImg(post.getImgURL().get(0).toString());
+            localList.add(localResponseDto);
+        }
+        return ResponseDto.success(localList);
     }
 
     @Transactional

@@ -122,10 +122,10 @@ public class ApiService {
 
         List<Location> locationList = new ArrayList<>();
         locationList.addAll(locationRepository.findAll());
-        for(int i = 1; i < locationList.size(); i++) {
+        for(int i = 0; i < locationList.size(); i++) {
 
-            String lat = locationList.get(i-1).getLat();
-            String lng = locationList.get(i-1).getLng();
+            String lat = locationList.get(i).getLat();
+            String lng = locationList.get(i).getLng();
             LocationRequestDto requestDto = new LocationRequestDto(lat, lng);
 
             // 성별을 기준으로 정보 저장
@@ -253,7 +253,6 @@ public class ApiService {
 
         Location loca = locationRepository.findByLatAndLng(lat, lng);
         String districtName = loca.getResult();
-        // 이미 저장된 내역이 있다면 repository 에서 불러오기
 
         // 성별을 기준으로 정보 출력
         for (String gender : genGrp){
