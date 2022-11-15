@@ -1,12 +1,9 @@
 package com.move.TripBalance.mypage;
 
-import com.move.TripBalance.controller.request.LocationRequestDto;
-import com.move.TripBalance.controller.response.ResponseDto;
-import com.move.TripBalance.domain.Local;
-import com.move.TripBalance.domain.UserDetailsImpl;
-import com.move.TripBalance.service.ApiService;
-import com.move.TripBalance.service.MainPageService;
+import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
+import com.move.TripBalance.mainpage.service.ApiService;
 import com.move.TripBalance.mainpage.service.MainPageService;
+import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;

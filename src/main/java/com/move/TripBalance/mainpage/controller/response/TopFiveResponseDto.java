@@ -1,9 +1,8 @@
-package com.move.TripBalance.controller.response;
+package com.move.TripBalance.mainpage.controller.response;
 
-import com.move.TripBalance.domain.Media;
+
 import lombok.*;
 
-import java.util.List;
 
 @Builder
 @Getter

@@ -1,4 +1,4 @@
-package com.move.TripBalance.controller.response;
+package com.move.TripBalance.mainpage.controller.response;
 
 import lombok.*;
 
