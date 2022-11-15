@@ -11,4 +11,5 @@ import java.util.List;
 public interface MediaRepository extends JpaRepository<Media, Long> {
     List<Media> findAllByPost(Post post);
     List<Media> findFirstByPost(Post post);
+    List<Media> deleteAllByPost(Post post);
 }

@@ -1,14 +1,6 @@
-- [x] 회원 및 문제 저장(Initial..)
-##### Member
-```sql
-INSERT INTO Member(name) VALUES('yuri')
-```
-##### Question
-```aidl
-   1
- 2   3
-4 5 6 7  
-```
+- [x] 문제 DB 저장
+
+
 
 ```sql
 INSERT INTO Question(id, question, parent_id, left_id, right_id, left_answer, right_answer, trip) VALUES
@@ -119,17 +111,18 @@ INSERT INTO question_tree(last_id, question1, question2, question3, question4, q
 ---
 ## APIs
 ### question 번호에 대한 문제 내용 가져오기
-- `GET` {host}/question/{questionId}
+- `GET` tb/question/{questionId}
 #### Response body
 ```json
 {
-    "id": 1,
-    "question": "산 or 바다?",
-    "parentId": null,
-    "leftId": 2,
-    "rightId": 3,
-    "leftAnswer": "산",
-    "rightAnswer": "바다"
+  "id": 1,
+  "question": "쉬러감 or 놀러감",
+  "parentId": null,
+  "leftId": 2,
+  "rightId": 3,
+  "leftAnswer": "쉬러감",
+  "rightAnswer": "놀러감",
+  "trip": null
 }
 ```
 

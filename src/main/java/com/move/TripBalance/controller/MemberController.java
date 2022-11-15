@@ -1,6 +1,5 @@
 package com.move.TripBalance.controller;
 
-import com.move.TripBalance.configuration.SwaggerAnnotation;
 import com.move.TripBalance.controller.request.LoginRequestDto;
 import com.move.TripBalance.controller.request.MemberRequestDto;
 import com.move.TripBalance.exception.PrivateResponseBody;
@@ -23,14 +22,12 @@ public class MemberController {
   private final MemberService memberService;
 
   //회원 가입 API
-  @SwaggerAnnotation
   @PostMapping(value = "/signup")
   public ResponseEntity<PrivateResponseBody> signup(@RequestBody MemberRequestDto requestDto) {
     return memberService.createMember(requestDto);
   }
 
   //로그인 API
-  @SwaggerAnnotation
   @PostMapping(value = "/login")
   public ResponseEntity<PrivateResponseBody> login(@RequestBody LoginRequestDto requestDto,
                                                    HttpServletResponse response) {
@@ -38,7 +35,6 @@ public class MemberController {
   }
 
   //로그아웃 API
-  @SwaggerAnnotation
   @PostMapping(value = "/logout")
   public ResponseEntity<PrivateResponseBody> logout(HttpServletRequest request) {
     return memberService.logout(request);

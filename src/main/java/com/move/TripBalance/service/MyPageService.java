@@ -56,7 +56,7 @@ public class MyPageService {
         for(Post post : myPosts){
             Long heartNum = heartRepository.countByPost(post);
             myPostList.add(PostResponseDto.builder()
-                            .id(post.getPostId())
+                    .postId(post.getPostId())
                     .title(post.getTitle())
                     .nickName(post.getNickName())
                     .local(post.getLocal().toString())
@@ -87,7 +87,7 @@ public class MyPageService {
 
            postHeartList.add(
                    PostResponseDto.builder()
-                           .id(post.getPostId())
+                           .postId(post.getPostId())
                            .title(post.getTitle())
                            .nickName(post.getNickName())
                            .local(post.getLocal().toString())

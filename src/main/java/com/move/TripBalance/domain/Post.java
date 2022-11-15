@@ -1,5 +1,6 @@
 package com.move.TripBalance.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.controller.request.PostRequestDto;
 import lombok.*;
 
@@ -58,9 +59,10 @@ public class Post extends Timestamped{
     private List<Heart> hearts = new ArrayList<>();
 
     //미디어 파일
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Media> imgURL = new ArrayList<>();
 
+    @JsonIgnore
     @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -70,7 +72,7 @@ public class Post extends Timestamped{
         this.pet = postRequestDto.getPet();
         this.content = postRequestDto.getContent();
         this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
-        this.imgURL = postRequestDto.getMediaList();
+//        this.imgURL = postRequestDto.getMediaList();
     }
 
     public boolean validateMember(Member member) {

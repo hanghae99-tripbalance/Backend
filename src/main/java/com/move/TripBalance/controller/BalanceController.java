@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 @RequestMapping("/tb")
 @RestController
-public class SampleController {
+public class BalanceController {
 
     @Autowired
     private MemberRepository memberRepository;

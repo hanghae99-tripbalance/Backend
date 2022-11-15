@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponseDto {
-    private Long id;
+    private Long postId;
     private String title;
     private String nickName;
     private String local;

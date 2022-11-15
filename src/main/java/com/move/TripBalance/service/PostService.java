@@ -3,6 +3,7 @@ package com.move.TripBalance.service;
 import com.move.TripBalance.controller.request.PostRequestDto;
 import com.move.TripBalance.controller.response.PostResponseDto;
 import com.move.TripBalance.domain.*;
+import com.move.TripBalance.domain.Member;
 import com.move.TripBalance.exception.PrivateException;
 import com.move.TripBalance.exception.PrivateResponseBody;
 import com.move.TripBalance.exception.StatusCode;
@@ -72,6 +73,7 @@ public class PostService {
             List<Media> oneimage = mediaRepository.findFirstByPost(post);
             postResponseDtos.add(
                     PostResponseDto.builder()
+                            .postId(post.getPostId())
                             .title(post.getTitle())
                             .image(oneimage)
                             .heartNum(heartNum)
@@ -127,10 +129,12 @@ public class PostService {
     @Transactional
     public ResponseEntity<PrivateResponseBody> updatePost(Long postId, PostRequestDto postRequestDto, HttpServletRequest request) {
 
+
         // 토큰 확인
         Member member = authorizeToken(request);
 
         Post post = isPresentPost(postId);
+
         if (null == post) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND,null),HttpStatus.OK);
         }
@@ -138,20 +142,23 @@ public class PostService {
         if (post.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST,null),HttpStatus.OK);
         }
+        //저장된 미디어 목록 삭제
+        mediaRepository.deleteAllByPost(post);
         post.update(postRequestDto);
 
-//        //미디어 목록
-//        List<Media> mediaList = mediaRepository.findAllByPost(post);
-//
-//        List<Media> mediaList1 = new ArrayList<>();
-//        Media media;
-//
-//        for(int i = 0; i < postRequestDto.getMediaList().size(); i++){
-//            media = Media.builder()
-//                    .post(post)
-//                    .imgURL(postRequestDto.getMediaList().get(i).getImgURL()).build();
-//            mediaList1.add(media);
-//        }
+
+        //수정된 미디어 목록 저장
+        List<Media> mediaList = new ArrayList<>();
+        Media media;
+
+        for(int i = 0; i < postRequestDto.getMediaList().size(); i++){
+            media = Media.builder()
+                    .post(post)
+                    .imgURL(postRequestDto.getMediaList().get(i).getImgURL()).build();
+            mediaRepository.save(media);
+            mediaList.add(media);
+        }
+        post.setImgURL(mediaList);
 
         return new ResponseEntity<>(new PrivateResponseBody
                 (StatusCode.OK,"게시글 수정 완료"),HttpStatus.OK);
@@ -172,7 +179,7 @@ public class PostService {
         if (post.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST,null),HttpStatus.OK);
         }
-
+        mediaRepository.deleteAllByPost(post);
         postRepository.delete(post);
         return new ResponseEntity<>(new PrivateResponseBody
                 (StatusCode.OK,"게시글 삭제 완료"),HttpStatus.OK);

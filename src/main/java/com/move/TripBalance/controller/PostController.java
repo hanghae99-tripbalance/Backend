@@ -1,6 +1,5 @@
 package com.move.TripBalance.controller;
 
-import com.move.TripBalance.configuration.SwaggerAnnotation;
 import com.move.TripBalance.controller.request.PostRequestDto;
 import com.move.TripBalance.domain.UserDetailsImpl;
 import com.move.TripBalance.exception.PrivateResponseBody;
@@ -23,7 +22,6 @@ public class PostController {
 //    private final ImageUpload imageUpload;
 
     // 게시글 작성 (미디어 포함)
-    @SwaggerAnnotation
     @ResponseBody
     @PostMapping(value = "/posts")
     public ResponseEntity<PrivateResponseBody> createPost(@RequestBody PostRequestDto postRequestDto,HttpServletRequest request){
@@ -31,7 +29,6 @@ public class PostController {
     }
 
     //게시글 목록 조회
-    @SwaggerAnnotation
     @ResponseBody
     @GetMapping("/posts")
     public ResponseEntity<PrivateResponseBody> getAllPost() {
@@ -39,7 +36,6 @@ public class PostController {
     }
 
     //게시글 상세 조회
-    @SwaggerAnnotation
     @ResponseBody
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> getPost(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -47,7 +43,6 @@ public class PostController {
     }
 
     //게시글 수정
-    @SwaggerAnnotation
     @ResponseBody
     @PutMapping(value = "/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> updatePost(
