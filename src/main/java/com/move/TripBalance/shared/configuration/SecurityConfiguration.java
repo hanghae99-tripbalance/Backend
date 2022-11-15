@@ -68,7 +68,10 @@ public class SecurityConfiguration {
                 "/tb/besttrip",
                 "/tb/apimap",
                 "/tb/treetest",
-                "/tb/localpost/**"
+                "/tb/localpost/**",
+                "/tb/question/**",
+                "/tb/member/answer",
+                "/tb/blog"
 
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
