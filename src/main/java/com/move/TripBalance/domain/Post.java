@@ -46,9 +46,6 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private int myHeart;
-
     // 댓글
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();

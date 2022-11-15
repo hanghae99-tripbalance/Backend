@@ -66,7 +66,7 @@ public class SecurityConfiguration {
                 "/tb/posts/{postId}",
                 "/tb/bestfive", //메인 페이지
                 "/tb/besttrip",
-                "/tb/apitest",
+                "/tb/apimap",
                 "/tb/kakao",
                 "/tb/treetest",
                 "/tb/weather"
