@@ -20,11 +20,11 @@ public class Heart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long heartId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="memberId")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="postId")
     private Post post;
 }
