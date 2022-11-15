@@ -1,4 +1,4 @@
-package com.move.TripBalance.mypage;
+package com.move.TripBalance.mainpage.controller;
 
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.service.ApiService;
