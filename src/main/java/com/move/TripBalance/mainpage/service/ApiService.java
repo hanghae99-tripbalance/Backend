@@ -50,6 +50,7 @@ public class ApiService {
     private final MapService mapService;
     private final WeatherService weatherService;
 
+    // 법정동 코드 불러오기
     public String getLawCode(LocationRequestDto requestDto) throws IOException, ParseException {
 
         String result = mapService.mapCode(requestDto);
@@ -97,6 +98,7 @@ public class ApiService {
         return lawCode;
     }
 
+    // 결과를 DB에 저장하기
     public void getResultList() throws IOException, ParseException {
         resultRepository.deleteAll();
 

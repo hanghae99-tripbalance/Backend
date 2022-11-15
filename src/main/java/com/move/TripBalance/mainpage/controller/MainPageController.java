@@ -19,8 +19,8 @@ public class MainPageController {
     private final MainPageService mainPageService;
     private final ApiService apiService;
     @GetMapping("/tb/bestfive")
-    public ResponseDto<?> getBestFive(UserDetailsImpl userDetails){
-        return mainPageService.getTop5Posts(userDetails);
+    public ResponseDto<?> getBestFive(){
+        return mainPageService.getTop5Posts();
     }
     @GetMapping("/tb/apimap")
     public void getApi() throws IOException, ParseException {
