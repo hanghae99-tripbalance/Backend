@@ -1,6 +1,7 @@
 package com.move.TripBalance.repository;
 
 import com.move.TripBalance.domain.Heart;
+import com.move.TripBalance.domain.Local;
 import com.move.TripBalance.domain.Member;
 import com.move.TripBalance.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findTop5ByHeartsIn(List<Heart> hearts);
     List<Post> findAllByMember(Member member);
-    List<Post> findAllByLocal(String local);
+    List<Post> findAllByLocalOrderByCreatedAtDesc(Local localEnum);
 
 
     List<Post> findAllByOrderByModifiedAtDesc();

@@ -2,16 +2,14 @@ package com.move.TripBalance.controller;
 
 import com.move.TripBalance.controller.request.LocationRequestDto;
 import com.move.TripBalance.controller.response.ResponseDto;
+import com.move.TripBalance.domain.Local;
 import com.move.TripBalance.domain.UserDetailsImpl;
 import com.move.TripBalance.service.ApiService;
 import com.move.TripBalance.service.MainPageService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -32,5 +30,9 @@ public class MainPageController {
     @PostMapping("/tb/apimap")
     public JSONObject getLocation(@RequestBody LocationRequestDto requestDto) throws IOException, ParseException {
         return apiService.mapResult(requestDto);
+    }
+    @GetMapping("/tb/localpost/{local}")
+    public ResponseDto<?> getLocalPostList(@PathVariable Long local){
+        return mainPageService.getLocalPost(local);
     }
 }
