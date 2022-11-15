@@ -3,7 +3,7 @@
 
 
 ```sql
-INSERT INTO Question(id, question, parent_id, left_id, right_id, left_answer, right_answer, trip) VALUES
+INSERT INTO question(id, question, parent_id, left_id, right_id, left_answer, right_answer, trip) VALUES
                                                                                                       (1, '쉬러감 or 놀러감', null, 2, 3, '쉬러감', '놀러감', null),
                                                                                                       (2, '힐링 or 도시락', 1, 4, 5, '힐링', '도시락', null),
                                                                                                       (3, '액티비티 or 체험', 1, 6, 7, '액티비티', '체험', null),
