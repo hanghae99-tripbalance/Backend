@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocalResponseDto {
+    private Long postId;
     private String title;
     private String content;
     private String localdetail;

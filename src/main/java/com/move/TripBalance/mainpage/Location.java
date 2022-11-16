@@ -15,6 +15,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+// 위도와 경도를 통해 도출한 지역 정보
 public class Location {
 
     @Id

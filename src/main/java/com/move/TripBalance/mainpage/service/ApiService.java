@@ -50,16 +50,19 @@ public class ApiService {
     private final MapService mapService;
     private final WeatherService weatherService;
 
+    // 법정동 코드 불러오기
     public String getLawCode(LocationRequestDto requestDto) throws IOException, ParseException {
 
         String result = mapService.mapCode(requestDto);
 
-        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList"); /*URL*/
+        // 법정동 주소 url 정보 불러오기
+        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1741000/StanReginCd/getStanReginCdList"); //URL
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + regionCode); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*한 페이지 결과 수*/
-        urlBuilder.append("&" + URLEncoder.encode("type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*호출문서(xml, json) default : xml*/
-        urlBuilder.append("&" + URLEncoder.encode("locatadd_nm", "UTF-8") + "=" + URLEncoder.encode(result, "UTF-8")); /*지역주소명*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); //페이지번호
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); //한 페이지 결과 수
+        urlBuilder.append("&" + URLEncoder.encode("type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); //호출문서(xml, json) default : xml
+        urlBuilder.append("&" + URLEncoder.encode("locatadd_nm", "UTF-8") + "=" + URLEncoder.encode(result, "UTF-8")); //지역주소명
+
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -92,20 +95,26 @@ public class ApiService {
 
         JSONArray jsonRow = (JSONArray) stanReginCd.get("row");
         JSONObject results = (JSONObject) jsonRow.get(0);
+        // 법정동 코드 추출 및 string  변환
         String lawCode = (String) results.get("region_cd");
 
         return lawCode;
     }
 
+    // 결과를 DB에 저장하기
     public void getResultList() throws IOException, ParseException {
+
+        // 지난 달의 정보를 지워준다
         resultRepository.deleteAll();
 
         OkHttpClient client = new OkHttpClient();
 
+        // 성별 그룹
         List<String> genGrp = new ArrayList<>();
         genGrp.add("male");
         genGrp.add("female");
 
+        // 연령대별 그룹
         List<String> ageGrp = new ArrayList<>();
         ageGrp.add("10");
         ageGrp.add("20");
@@ -114,11 +123,13 @@ public class ApiService {
         ageGrp.add("50");
         ageGrp.add("60_over");
 
+        // 방문 형태별 그룹
         List<String> companion = new ArrayList<>();
         companion.add("family");
         companion.add("not_family");
         companion.add("family_w_child");
 
+        // 저장되어있는 장소에서 위도 경도 추출
         List<Location> locationList = new ArrayList<>();
         locationList.addAll(locationRepository.findAll());
         for(int i = 0; i < locationList.size(); i++) {
@@ -210,10 +221,6 @@ public class ApiService {
                 JSONObject jsonRow = (JSONObject) arr.get("raw");
                 Long comResults = (Long) jsonRow.get("travelerCount");
 
-              /*  ResultComp resultComp = new ResultComp();
-                resultComp.setPeopleCnt(comResults);
-                resultComp.setType(comp);
-                resultComp.setLocation(comDistrictName);*/
                 Result compResults = new Result();
                 compResults.setPeopleCnt(comResults);
                 compResults.setType(comp);
@@ -223,11 +230,15 @@ public class ApiService {
         }
     }
 
+    // repo에 저장된 인구 통계를 바탕으로 그래프를 그릴 정보를 추출
     public JSONArray getPeopleNum(LocationRequestDto requestDto)  {
+
+        // 성별 그룹
         List<String> genGrp = new ArrayList<>();
         genGrp.add("male");
         genGrp.add("female");
 
+        // 연령별 그룹
         List<String> ageGrp = new ArrayList<>();
         ageGrp.add("10");
         ageGrp.add("20");
@@ -236,6 +247,7 @@ public class ApiService {
         ageGrp.add("50");
         ageGrp.add("60_over");
 
+        // 방문 형태별 그룹
         List<String> companion = new ArrayList<>();
         companion.add("family");
         companion.add("not_family");
@@ -255,6 +267,7 @@ public class ApiService {
 
         // 성별을 기준으로 정보 출력
         for (String gender : genGrp){
+            //repo에서 저장된 정보 불러오기
             Result genResult = resultRepository.findByLocationAndGender(districtName, gender);
             if (genResult != null) {
                 gender = genResult.getGender();
@@ -265,7 +278,6 @@ public class ApiService {
                 resultGender.setPeopleCnt(results);
                 resultGenderList.add(resultGender);
                 resultList.add(genResult);
-                //genData.put("Gender", resultGender);
                 System.out.println("성별 리스트: " + resultGenderList);
                 System.out.println("최종리스트: " + resultList);
 
@@ -274,12 +286,10 @@ public class ApiService {
             }
         }
         List<ResultAge> resultAgeList = new ArrayList<>();
-        //JSONArray age_arr = new JSONArray();
-
         // 연령대를 기준으로 정보 추출하기
         for (String age : ageGrp) {
 
-            // 이미 저장된 내역이 있다면 repository 에서 불러오기
+            //repo에서 저장된 정보 불러오기
             Result ageResult = resultRepository.findByLocationAndAge(districtName, age);
             if (ageResult != null) {
                 age = ageResult.getAge();
@@ -290,7 +300,6 @@ public class ApiService {
                 resultAge.setPeopleCnt(results);
                 resultAgeList.add(resultAge);
                 resultList.add(ageResult);
-
                 System.out.println("나이대별 리스트: " + resultAgeList);
                 System.out.println("최종리스트: " + resultList);
                 peopleCnt.add(resultAge);
@@ -320,6 +329,8 @@ public class ApiService {
         }
         return peopleCnt;
     }
+
+    // 인구 통계와 날씨 정보를 클라이언트에 넘겨줌
     public JSONObject mapResult(LocationRequestDto requestDto) throws IOException, ParseException {
         JSONObject resultObj = new JSONObject();
         resultObj.put("cnt", getPeopleNum(requestDto));

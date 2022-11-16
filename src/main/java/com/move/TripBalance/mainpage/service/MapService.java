@@ -28,10 +28,17 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MapService {
+
+    // 카카오 앱키
     @Value("${kakao.key}")
     private String key;
+    // 카카오맵 api url
     private String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?";
+
+    // 카카오맵 api를 통해 위도, 경도로 지역 정보 추출
     public ResponseEntity kakaoMap(LocationRequestDto requestDto) {
+
+        // 클라이언트에서 넘겨받은 위도 경도
         String latRes = requestDto.getLat();
         String lonRes = requestDto.getLng();
 
@@ -46,17 +53,19 @@ public class MapService {
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
+
         //GetForObject는 헤더를 정의할 수 없음
         ResponseEntity<Map> result = restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class);
         ResponseEntity response= restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, String.class);
         return response; //내용 반환
     }
 
+    // 법정동 코드 추출을 위해 지역 정보 반환
     public String mapCode(LocationRequestDto requestDto) throws ParseException {
 
+        // kakaoMap 메소드에서 받은 정보 json parsing
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(kakaoMap(requestDto).getBody().toString());
-        JSONParser docuParser = new JSONParser();
         // documents만 도출
         JSONArray docuArray = (JSONArray) jsonObject.get("documents");
         // 첫번째 배열만 도출
