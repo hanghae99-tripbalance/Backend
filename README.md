@@ -21,7 +21,7 @@
 ---
 
 <br>
----
 
 <h4 align="center">커밋 규칙</h4>
-![image.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ee31cfd2-5acd-426c-8e12-b8003ff8c2c8/image.png)
+
+<img src="https://user-images.githubusercontent.com/77573910/202077029-c6936e97-57be-489f-b0cb-37572643fbb6.png" align="center">
