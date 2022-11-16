@@ -30,21 +30,27 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WeatherService {
 
+    // 공공데이터 포털 키
     @Value(value = "${weather.key}")
     String key;
 
+    // 기상청 api를 통해 날씨 정보 불러오기
     public JSONObject getWeather(LocationRequestDto requestDto) throws IOException, ParseException {
+        // api에 맞는 날짜 포맷 변환
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         LocalTime now = LocalTime.now();
         int hour = now.getHour();
+        String time = "0200";
+
+        // 오전 2시보다 이른 시간이면 어제의 마지막 데이터를 반환
         if(hour <= 2){
             date = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            time = "2000";
         }else if(hour > 2){
             date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         }
 
         // 최대한 현재 시간과 가까운 시간의 예보 정보 불러오기
-        String time = "0200";
         if(2 < hour && hour <= 5 ){ time = "0200"; }
         if(5 < hour && hour <= 8 ){ time = "0500"; }
         if(8 < hour && hour <= 11 ){ time = "0800"; }
@@ -102,9 +108,13 @@ public class WeatherService {
         String category;
         JSONObject datalist = new JSONObject();
         for (int i = 0; i < arr.size(); i++) {
-            valueObj = (JSONObject) arr.get(i); // 해당 item을 가져오기
+            // 해당 item을 가져오기
+            valueObj = (JSONObject) arr.get(i);
             Object obsrValue = valueObj.get("fcstValue");
-            category = (String) valueObj.get("category");// item에서 카테고리를 검색해오기
+            // 해당 category를 가져오기
+            category = (String) valueObj.get("category");
+
+            // 꼭 필요한 정보에 대해 영어 코드를 한글로 변환해서 클라이언트에 반환
             if(Objects.equals(category, "POP")){
                category = "강수확률";
             } else if (Objects.equals(category, "SKY")) {

@@ -21,6 +21,7 @@ public class Scheduler {
     private final ResultRepository resultRepository;
     private final ApiService apiService;
 
+    // 매달 1일 23시에 저번달의 인구 통계를 가져오는 스케쥴러
     @Scheduled(cron = "0 0 23 1 * ?")
     public void mapResult() throws IOException, ParseException {
         apiService.getResultList();
