@@ -16,10 +16,12 @@
 ---
 
 <br>
-<h3 align="center"><b><a href="">⚙ API 명세서 ⚙</a></b></h3>
+<h3 align="center"><b><a href="https://www.notion.so/88ade06f435b4b69b4a9854e7ab180ac?v=c2768b47b2074d9d9ae18e92087eedbf">⚙ API 명세서 ⚙</a></b></h3>
 
 ---
 
 <br>
+---
 
-
+<h4 align="center">커밋 규칙</h4>
+![image.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ee31cfd2-5acd-426c-8e12-b8003ff8c2c8/image.png)
