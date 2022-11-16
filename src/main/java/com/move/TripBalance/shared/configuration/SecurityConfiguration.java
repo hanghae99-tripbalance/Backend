@@ -71,6 +71,7 @@ public class SecurityConfiguration {
                 "/tb/localpost/**",
                 "/tb/question/**",
                 "/tb/member/answer",
+                "/tb/questionanswer/**",
                 "/tb/blog"
 
         ).permitAll()
