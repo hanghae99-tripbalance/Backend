@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -26,5 +27,6 @@ public class PostResponseDto {
     private List<Media> image;
     private Long heartNum;
     private boolean heartYn = false;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 }

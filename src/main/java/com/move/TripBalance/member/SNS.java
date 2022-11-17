@@ -1,14 +1,14 @@
 package com.move.TripBalance.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.move.TripBalance.mypage.controller.request.SNSRequestDto;
+import lombok.*;
+
 import javax.persistence.*;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -31,13 +31,32 @@ public class SNS {
     @Column
     private String facebook;
 
-    //twitter
+    //유투브
     @Column
-    private String twitter;
+    private String youtube;
 
     @JsonIgnore
     @JoinColumn(name = "memberId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public void updateinsts(SNSRequestDto requestDto){
+        this.insta = "https://www.instagram.com/" + requestDto.getInsta();
+    }
+    public void updatefacebook(SNSRequestDto requestDto){
+        this.facebook = "https://www.facebook.com/" +requestDto.getFacebook();
+    }
+    public void updateyoutube(SNSRequestDto requestDto){
+        this.youtube = "https://www.youtube.com/" + requestDto.getYoutube();
+    }
+    public void updateblog(SNSRequestDto requestDto){
+        this.blog = "https://blog.naver.com/" + requestDto.getBlog();
+    }
+
+
+
+
+
+
 
 }
