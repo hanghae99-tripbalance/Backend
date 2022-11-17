@@ -2,6 +2,7 @@ package com.move.TripBalance.balance;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.move.TripBalance.balance.controller.request.ChoiceRequestDto;
 import com.move.TripBalance.member.Member;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Setter
-public class GameTest {
+public class GameResult {
 
     // 고유 아이디
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +41,17 @@ public class GameTest {
 
     //회원고유 아이디
     @JsonIgnore
-    @JoinColumn(name = "memberId", nullable = false)
+    @JoinColumn(name = "memberId")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public void update(ChoiceRequestDto ChoiceRequestDto) {
+        this.answer1 = ChoiceRequestDto.getAnswer1();
+        this.answer2 = ChoiceRequestDto.getAnswer2();
+        this.answer3 = ChoiceRequestDto.getAnswer3();
+        this.answer4 = ChoiceRequestDto.getAnswer4();
+        this.answer5 = ChoiceRequestDto.getAnswer5();
+        this.gameResult = ChoiceRequestDto.getTrip();
+    }
 
 }
