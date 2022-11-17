@@ -81,6 +81,7 @@ public class MemberService {
     // Message 및 Status를 Return
     return new ResponseEntity<>(new PrivateResponseBody
             (StatusCode.OK, MemberResponseDto.builder()
+                    .email(member.getEmail())
                     .nickName(member.getNickName())
                     .build()),HttpStatus.OK);
   }
