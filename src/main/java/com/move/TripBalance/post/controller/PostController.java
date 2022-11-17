@@ -20,7 +20,7 @@ public class PostController {
 
     private final PostService postService;
 
-    // 게시글 작성 (미디어 포함)
+    // 게시글 작성
     @ResponseBody
     @PostMapping(value = "/posts")
     public ResponseEntity<PrivateResponseBody> createPost(@RequestBody PostRequestDto postRequestDto,HttpServletRequest request){
