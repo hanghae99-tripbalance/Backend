@@ -29,7 +29,7 @@ public class BalanceController {
 
     // 게임결과를 통해 여행지 및 전체 선택지 저장
     @ResponseBody
-    @PostMapping("/questionresult/{gameId}/{lastId}")
+    @PostMapping("/game/result/{gameId}/{lastId}")
     public ResponseEntity<PrivateResponseBody> questionResult(@PathVariable Long gameId, @PathVariable Long lastId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return balanceService.questionResult(gameId ,lastId, userDetails);
     }

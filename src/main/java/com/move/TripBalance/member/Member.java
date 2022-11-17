@@ -1,8 +1,7 @@
 package com.move.TripBalance.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.mypage.controller.request.MyImgRequestDto;
-import com.move.TripBalance.balance.GameTest;
+import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.shared.domain.Timestamped;
 import com.move.TripBalance.post.Post;
 import lombok.*;
@@ -58,7 +57,7 @@ public class Member extends Timestamped {
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GameTest> gameTests = new ArrayList<>();
+    private List<GameResult> gameTests = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

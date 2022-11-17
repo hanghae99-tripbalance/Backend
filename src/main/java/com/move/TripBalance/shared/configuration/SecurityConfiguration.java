@@ -71,6 +71,8 @@ public class SecurityConfiguration {
                 "/tb/localpost/**",
                 "/tb/question/**",
                 "/tb/member/answer",
+                "/tb/game/**",
+                "/tb/blog"
                 "/tb/blog",
                 "/tb/members/info/**"
                 "/tb/questionanswer/**",
