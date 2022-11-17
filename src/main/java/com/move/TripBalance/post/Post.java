@@ -73,7 +73,6 @@ public class Post extends Timestamped {
         this.pet = postRequestDto.getPet();
         this.content = postRequestDto.getContent();
         this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
-//        this.imgURL = postRequestDto.getMediaList();
     }
 
     public boolean validateMember(Member member) {

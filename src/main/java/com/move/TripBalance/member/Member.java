@@ -40,6 +40,20 @@ public class Member extends Timestamped {
     @JsonIgnore
     private String pw;
 
+    //자기소개
+    @Column
+    private String self;
+
+    //프로필 사진
+    @Column
+    private String profileURL;
+
+    //SNS
+    @JsonIgnore
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SNS> snsList = new ArrayList<>();
+
+    //게시글
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
