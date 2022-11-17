@@ -31,7 +31,7 @@ public class Post extends Timestamped {
 
     // 작성자
     @Column(nullable = false)
-    private String nickName;
+    private String author;
 
     // 지역
     @Enumerated(EnumType.STRING)
@@ -73,6 +73,7 @@ public class Post extends Timestamped {
         this.pet = postRequestDto.getPet();
         this.content = postRequestDto.getContent();
         this.local = Local.partsValue(Integer.parseInt(postRequestDto.getLocal()));
+        this.localDetail = LocalDetail.partsValue(Integer.parseInt(postRequestDto.getLocaldetail()));
     }
 
     public boolean validateMember(Member member) {

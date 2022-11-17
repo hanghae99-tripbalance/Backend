@@ -5,13 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.annotation.Nullable;
-
 @Builder
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-@Nullable
 public class SNSRequestDto {
     private String insta;
     private String facebook;

@@ -1,6 +1,5 @@
 package com.move.TripBalance.mypage.controller;
 
-import com.move.TripBalance.mypage.controller.request.MyImgRequestDto;
 import com.move.TripBalance.mypage.service.MyPageService;
 import com.move.TripBalance.mypage.controller.request.SNSRequestDto;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController

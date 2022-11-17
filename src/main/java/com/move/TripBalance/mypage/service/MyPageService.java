@@ -6,7 +6,6 @@ import com.move.TripBalance.member.Member;
 import com.move.TripBalance.member.SNS;
 import com.move.TripBalance.member.repository.MemberRepository;
 import com.move.TripBalance.member.repository.SNSRepository;
-import com.move.TripBalance.mypage.controller.request.MyImgRequestDto;
 import com.move.TripBalance.mypage.controller.request.SNSRequestDto;
 import com.move.TripBalance.mypage.controller.response.MyHeartResponseDto;
 import com.move.TripBalance.mypage.controller.response.MyPageResponseDto;
@@ -212,7 +211,7 @@ public class MyPageService {
                             .postId(post.getPostId())
                             .title(post.getTitle())
                             .img(img.getImgURL())
-                            .nickName(post.getNickName())
+                            .nickName(post.getAuthor())
                             .profileImg(member.getProfileImg())
                             .build());
         }

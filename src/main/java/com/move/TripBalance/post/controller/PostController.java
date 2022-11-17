@@ -66,5 +66,11 @@ public class PostController {
         return postService.searchPosts(keyword);
     }
 
+    // 좋아요가 가장 많은 게시글 5개
+    @GetMapping("/posts/bestfive")
+    public ResponseEntity<PrivateResponseBody> getBestFive(){
+        return postService.getTop5Posts();
+    }
+
 
 }

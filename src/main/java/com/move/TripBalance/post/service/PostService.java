@@ -6,6 +6,7 @@ import com.move.TripBalance.post.controller.response.PostResponseDto;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.heart.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
+import com.move.TripBalance.post.controller.response.TopFiveResponseDto;
 import com.move.TripBalance.post.repository.MediaRepository;
 import com.move.TripBalance.post.repository.PostRepository;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
@@ -41,7 +42,7 @@ public class PostService {
 
         Post post = Post.builder()
                 .title(postRequestDto.getTitle())
-                .nickName(member.getNickName())
+                .author(member.getNickName())
                 .local(Local.partsValue(Integer.parseInt(postRequestDto.getLocal())))
                 .localDetail(LocalDetail.partsValue(Integer.parseInt(postRequestDto.getLocaldetail())))
                 .content(postRequestDto.getContent())
@@ -90,6 +91,8 @@ public class PostService {
     //게시글 세부 조회
     @Transactional(readOnly = true)
     public ResponseEntity<PrivateResponseBody> getPost(Long postId, UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+
         Post post = isPresentPost(postId);
 
         if (null == post) {
@@ -109,7 +112,6 @@ public class PostService {
         //좋아요 여부
         boolean heartYn = false;
         if(userDetails != null) {
-            Member member = userDetails.getMember();
             Optional<Heart> heart = heartRepository.findByMemberAndPost(member, post);
             if(heart.isPresent()) {
                 heartYn = true;
@@ -118,13 +120,15 @@ public class PostService {
 
         PostResponseDto postList = PostResponseDto.builder()
                 .title(post.getTitle())
-                .nickName(post.getNickName())
+                .author(post.getAuthor())
                 .local(post.getLocal().toString())
                 .localdetail(post.getLocalDetail().toString())
                 .pet(post.getPet())
                 .content(post.getContent())
                 .heartNum(heartNum)
                 .heartYn(heartYn)
+                .nickName(member.getNickName())
+                .profileImg(member.getProfileImg())
                 .mediaList(list)
                 .build();
 
@@ -241,5 +245,28 @@ public class PostService {
 
         // 인증된 유저 정보 반환
         return member;
+    }
+    // 좋아요 순으로 포스트 5개
+    @javax.transaction.Transactional
+    public ResponseEntity<PrivateResponseBody> getTop5Posts() {
+        List<TopFiveResponseDto> topFiveList = new ArrayList<>();
+        List<Heart> hearts = heartRepository.findAll();
+        List<Post> fivePostList = postRepository.findTop5ByHeartsIn(hearts);
+
+        // 미디어, 좋아요 갯수 추출 및 할당
+        for (Post post : fivePostList) {
+            List<Media> oneimage = mediaRepository.findFirstByPost(post);
+            String img = oneimage.get(0).getImgURL();
+            Long heartNum = heartRepository.countByPost(post);
+
+            topFiveList.add(TopFiveResponseDto.builder()
+                    .postId(post.getPostId())
+                    .title(post.getTitle())
+                    .img(img)
+                    .heartNum(heartNum)
+                    .build());
+        }
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                topFiveList), HttpStatus.OK);
     }
 }

@@ -20,12 +20,6 @@ public class MainPageController {
     private final MainPageService mainPageService;
     private final ApiService apiService;
 
-    // 좋아요가 가장 많은 게시글 5개
-    @GetMapping("/bestfive")
-    public ResponseEntity<PrivateResponseBody> getBestFive(){
-        return mainPageService.getTop5Posts();
-    }
-
     // sk api로 인구 통계 불러오기
     @GetMapping("/apimap")
     public void getApi() throws IOException, ParseException {

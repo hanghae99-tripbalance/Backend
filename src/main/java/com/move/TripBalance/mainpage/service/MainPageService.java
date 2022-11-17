@@ -3,7 +3,7 @@ package com.move.TripBalance.mainpage.service;
 import com.move.TripBalance.heart.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
 import com.move.TripBalance.mainpage.controller.response.LocalResponseDto;
-import com.move.TripBalance.mainpage.controller.response.TopFiveResponseDto;
+import com.move.TripBalance.post.controller.response.TopFiveResponseDto;
 import com.move.TripBalance.post.Local;
 import com.move.TripBalance.post.Media;
 import com.move.TripBalance.post.Post;
@@ -36,29 +36,7 @@ public class MainPageService {
     private final HeartRepository heartRepository;
     private final MediaRepository mediaRepository;
 
-    // 좋아요 순으로 포스트 5개
-    @Transactional
-    public ResponseEntity<PrivateResponseBody> getTop5Posts() {
-        List<TopFiveResponseDto> topFiveList = new ArrayList<>();
-        List<Heart> hearts = heartRepository.findAll();
-        List<Post> fivePostList = postRepository.findTop5ByHeartsIn(hearts);
 
-        // 미디어, 좋아요 갯수 추출 및 할당
-        for (Post post : fivePostList) {
-            List<Media> oneimage = mediaRepository.findFirstByPost(post);
-            String img = oneimage.get(0).getImgURL();
-            Long heartNum = heartRepository.countByPost(post);
-
-            topFiveList.add(TopFiveResponseDto.builder()
-                    .postId(post.getPostId())
-                    .title(post.getTitle())
-                    .img(img)
-                    .heartNum(heartNum)
-                    .build());
-        }
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                topFiveList), HttpStatus.OK);
-    }
 
     // 지역 별 글 목록
     @Transactional
