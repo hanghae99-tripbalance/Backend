@@ -20,8 +20,8 @@ public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String lat;
-    private String lng;
-    private String result;
+    private Long id = 5L;
+    private String lat = "35.85316944";
+    private String lng = "129.2270222";
+    private String result = "경상북도 경주시";
 }

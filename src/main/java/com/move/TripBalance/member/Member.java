@@ -1,12 +1,10 @@
 package com.move.TripBalance.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.move.TripBalance.mypage.controller.request.MyImgRequestDto;
 import com.move.TripBalance.shared.domain.Timestamped;
 import com.move.TripBalance.post.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,6 +15,7 @@ import java.util.Objects;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -46,12 +45,12 @@ public class Member extends Timestamped {
 
     //프로필 사진
     @Column
-    private String profileURL;
+    private String profileImg;
 
     //SNS
     @JsonIgnore
-    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SNS> snsList = new ArrayList<>();
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private SNS sns = new SNS();
 
     //게시글
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,6 +68,15 @@ public class Member extends Timestamped {
         return memberId != null && Objects.equals(memberId, member.memberId);
     }
 
+    // 프로필 이미지 업데이트
+    public void updateProfileImg(MyImgRequestDto requestDto){
+        this.profileImg = requestDto.getProfileImg();
+    }
+
+    // 자기소개 업데이트
+    public void updateSelf(String self){
+        this.self = self;
+    }
     @Override
     public int hashCode() {
         return getClass().hashCode();

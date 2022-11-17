@@ -71,7 +71,8 @@ public class SecurityConfiguration {
                 "/tb/localpost/**",
                 "/tb/question/**",
                 "/tb/member/answer",
-                "/tb/blog"
+                "/tb/blog",
+                "/tb/members/info/**"
 
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()

@@ -1,8 +1,10 @@
 package com.move.TripBalance.member.service;
 
 import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.SNS;
 import com.move.TripBalance.member.controller.request.LoginRequestDto;
 import com.move.TripBalance.member.controller.request.MemberRequestDto;
+import com.move.TripBalance.member.repository.SNSRepository;
 import com.move.TripBalance.shared.jwt.controller.request.TokenDto;
 import com.move.TripBalance.member.controller.response.MemberResponseDto;
 import com.move.TripBalance.member.repository.MemberRepository;
@@ -26,8 +28,9 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
 
-  private final PasswordEncoder passwordEncoder;
-  private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    private final SNSRepository snsRepository;
 
   //회원가입
   @Transactional
@@ -49,8 +52,17 @@ public class MemberService {
             .email(requestDto.getEmail())
             .nickName(requestDto.getNickName())
                 .pw(passwordEncoder.encode(requestDto.getPw()))
-                    .build();
-    memberRepository.save(member);
+                .profileImg("기본사진 입니다.")
+                .self("자기소개를 등록해주세요")
+                .build();
+        memberRepository.save(member);
+        snsRepository.save(SNS.builder()
+                .blog("블로그를 등록해주세요")
+                .insta("인스타를 등록해주세요")
+                .youtube("유튜브를 등록해주세요")
+                .facebook("페이스북을 등록해주세요")
+                .member(member)
+                .build());
 
     // Message 및 Status를 Return
     return new ResponseEntity<>(new PrivateResponseBody
