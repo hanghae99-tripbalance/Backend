@@ -73,6 +73,8 @@ public class SecurityConfiguration {
                 "/tb/member/answer",
                 "/tb/blog",
                 "/tb/members/info/**"
+                "/tb/questionanswer/**",
+
 
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
