@@ -25,8 +25,8 @@ public class MyPageController {
 
     // 프로필 이미지 수정
     @PostMapping("/mypage/myimg")
-    public ResponseEntity<PrivateResponseBody> setMyImg(@RequestBody MyImgRequestDto requestDto, HttpServletRequest request){
-        return myPageService.myImg(requestDto, request);}
+    public ResponseEntity<PrivateResponseBody> setMyImg(@RequestBody JSONObject img, HttpServletRequest request){
+        return myPageService.myImg(img, request);}
 
     // sns 주소 등록
     @PostMapping("/mypage/mysns")

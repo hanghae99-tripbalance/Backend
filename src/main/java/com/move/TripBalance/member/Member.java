@@ -57,7 +57,7 @@ public class Member extends Timestamped {
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GameResult> gameTests = new ArrayList<>();
+    private List<GameResult> gameResults = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -72,8 +72,8 @@ public class Member extends Timestamped {
     }
 
     // 프로필 이미지 업데이트
-    public void updateProfileImg(MyImgRequestDto requestDto){
-        this.profileImg = requestDto.getProfileImg();
+    public void updateProfileImg(String img){
+        this.profileImg = img;
     }
 
     // 자기소개 업데이트

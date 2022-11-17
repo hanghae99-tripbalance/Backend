@@ -63,11 +63,10 @@ public class MyPageService {
     String noHearts;
 
     // 프로필 사진 수정
-    public ResponseEntity<PrivateResponseBody> myImg(MyImgRequestDto requestDto, HttpServletRequest request){
+    public ResponseEntity<PrivateResponseBody> myImg(JSONObject img, HttpServletRequest request){
         Member member = validateMember(request);
         Optional<Member> mem = memberRepository.findById(member.getMemberId());
-
-        mem.get().updateProfileImg(requestDto);
+        mem.get().updateProfileImg(img.get("img").toString());
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
                 "프로필사진 수정 완료"), HttpStatus.OK);
