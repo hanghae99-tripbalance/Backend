@@ -57,7 +57,7 @@ public class Member extends Timestamped {
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GameTest> gameTests = new ArrayList<>();
+    private List<GameResult> gameTests = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

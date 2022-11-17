@@ -24,4 +24,5 @@ public class ChoiceRequestDto {
     private Long answer5;
 
     private String trip;
+
 }
