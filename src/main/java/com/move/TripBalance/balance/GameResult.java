@@ -2,7 +2,7 @@ package com.move.TripBalance.balance;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.balance.controller.request.ChoiceRequestDto;
+import com.move.TripBalance.balance.controller.response.ChoiceResponseDto;
 import com.move.TripBalance.member.Member;
 import lombok.*;
 
@@ -45,13 +45,13 @@ public class GameResult {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    public void update(ChoiceRequestDto ChoiceRequestDto) {
-        this.answer1 = ChoiceRequestDto.getAnswer1();
-        this.answer2 = ChoiceRequestDto.getAnswer2();
-        this.answer3 = ChoiceRequestDto.getAnswer3();
-        this.answer4 = ChoiceRequestDto.getAnswer4();
-        this.answer5 = ChoiceRequestDto.getAnswer5();
-        this.gameResult = ChoiceRequestDto.getTrip();
+    public void update(ChoiceResponseDto ChoiceResponseDto) {
+        this.answer1 = ChoiceResponseDto.getAnswer1();
+        this.answer2 = ChoiceResponseDto.getAnswer2();
+        this.answer3 = ChoiceResponseDto.getAnswer3();
+        this.answer4 = ChoiceResponseDto.getAnswer4();
+        this.answer5 = ChoiceResponseDto.getAnswer5();
+        this.gameResult = ChoiceResponseDto.getTrip();
     }
 
 }

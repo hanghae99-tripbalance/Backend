@@ -69,12 +69,10 @@ public class SecurityConfiguration {
                 "/tb/apimap",
                 "/tb/treetest",
                 "/tb/localpost/**",
-                "/tb/question/**",
                 "/tb/member/answer",
                 "/tb/game/**",
                 "/tb/blog",
-                "/tb/members/info/**",
-                "/tb/questionanswer/**"
+                "/tb/members/info/**"
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",

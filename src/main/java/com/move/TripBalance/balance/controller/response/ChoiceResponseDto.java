@@ -1,4 +1,4 @@
-package com.move.TripBalance.balance.controller.request;
+package com.move.TripBalance.balance.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChoiceRequestDto {
+public class ChoiceResponseDto {
 
     private Long gameId;
 

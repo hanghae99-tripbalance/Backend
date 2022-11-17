@@ -33,4 +33,10 @@ public class BalanceController {
     public ResponseEntity<PrivateResponseBody> questionResult(@PathVariable Long gameId, @PathVariable Long lastId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return balanceService.questionResult(gameId ,lastId, userDetails);
     }
+
+    // 게임 결과 페이지
+    @GetMapping("/game/result/{gameId}")
+    public ResponseEntity<PrivateResponseBody> result(@PathVariable Long gameId){
+        return balanceService.result(gameId);
+    }
   }

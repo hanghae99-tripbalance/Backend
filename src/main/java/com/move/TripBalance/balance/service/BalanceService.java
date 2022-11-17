@@ -3,7 +3,7 @@ package com.move.TripBalance.balance.service;
 import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.balance.Question;
 import com.move.TripBalance.balance.QuestionTree;
-import com.move.TripBalance.balance.controller.request.ChoiceRequestDto;
+import com.move.TripBalance.balance.controller.response.ChoiceResponseDto;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.balance.repository.QuestionRepository;
 import com.move.TripBalance.balance.repository.QuestionTreeRepository;
@@ -99,9 +99,6 @@ public class BalanceService {
         return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, questionList),HttpStatus.OK );
     }
 
-    //다음 게임 문제
-
-
     // 게임결과를 통해 여행지 및 전체 선택지 저장
     @Transactional
     public ResponseEntity<PrivateResponseBody> questionResult(Long gameId, Long lastId, UserDetailsImpl userDetails) {
@@ -117,7 +114,7 @@ public class BalanceService {
         GameResult gameResult = isPresentGame(gameId);
 
         // 결과 업데이트
-        ChoiceRequestDto choiceRequestDto = ChoiceRequestDto.builder()
+        ChoiceResponseDto choiceResponseDto = ChoiceResponseDto.builder()
                 .answer1(questionTree.getQuestion2())
                 .answer2(questionTree.getQuestion3())
                 .answer3(questionTree.getQuestion4())
@@ -126,11 +123,23 @@ public class BalanceService {
                 .trip(question.getTrip())
                 .build();
 
-            gameResult.update(choiceRequestDto);
+            gameResult.update(choiceResponseDto);
 
-            return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, choiceRequestDto), HttpStatus.OK);
-
+            return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, choiceResponseDto), HttpStatus.OK);
     }
+
+    //게임 결과 페이지
+    @Transactional
+    public ResponseEntity<PrivateResponseBody> result(Long gameId){
+        // 게임 아이디 확인
+        GameResult gameResult = isPresentGame(gameId);
+
+        // 객체 부여
+        String trip = gameResult.getGameResult();
+
+        return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, trip), HttpStatus.OK);
+    }
+
 
     //답변
     @Transactional(readOnly = true)
