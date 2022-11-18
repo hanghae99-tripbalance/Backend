@@ -2,40 +2,38 @@ package com.move.TripBalance.comment.controller;
 
 import com.move.TripBalance.comment.service.ReCommentService;
 import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
+import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-@Validated
-@RequiredArgsConstructor
+@RequestMapping("/tb")
 @RestController
+@RequiredArgsConstructor
 public class ReCommentController {
+
     private final ReCommentService reCommentService;
-//  대댓글 생성
-    @RequestMapping(value = "/tb/recomments", method = RequestMethod.POST)
-    public ResponseDto<?> createComment(@RequestBody ReCommentRequestDto requestDto,
-                                        HttpServletRequest request) {
+
+    //대댓글 작성
+    @PostMapping(value = "/recomments")
+    public ResponseEntity<PrivateResponseBody> createReComment(@RequestBody ReCommentRequestDto requestDto,
+                                                               HttpServletRequest request) {
         return reCommentService.createReComment(requestDto, request);
     }
-//  대댓글 수정
-    @RequestMapping(value = "/tb/recomments/{id}", method = RequestMethod.POST)
-    public ResponseDto<?> updateReComment(
-            @PathVariable Long id,
-            @RequestBody ReCommentRequestDto requestDto,
-            HttpServletRequest request) {
+
+    //대댓글 수정
+    @PutMapping(value = "/recomments/{id}")
+    public ResponseEntity<PrivateResponseBody> updateReComment(@PathVariable Long id, @RequestBody ReCommentRequestDto requestDto,
+                                          HttpServletRequest request) {
         return reCommentService.updateReComment(id, requestDto, request);
     }
-//  대댓글 삭제
-    @RequestMapping(value = "/tb/recomments/{id}", method = RequestMethod.DELETE)
-    public ResponseDto<?> createComment(@PathVariable Long id,
-                                        HttpServletRequest request) {
+
+    //대댓글 삭제
+    @DeleteMapping(value = "/recomments/{id}")
+    public ResponseEntity<PrivateResponseBody> deleteReComment(@PathVariable Long id,
+                                          HttpServletRequest request) {
         return reCommentService.deleteReComment(id, request);
     }
-//    대댓글 보기
-//    @RequestMapping(value = "/api/auth/sub-comment", method = RequestMethod.GET)
-//    public ResponseDto<?> getAllPostByMember(HttpServletRequest request) {
-//        return reCommentService.getAllReCommentByMember(request);
-//    }
 }

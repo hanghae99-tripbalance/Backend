@@ -19,18 +19,23 @@ public class ReComment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long recommentId;
 
-    @JoinColumn(name = "member_id", nullable = false)
+    //대댓글을 작성할 멤버 id
+    @JsonIgnore
+    @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    private Long commentId;
+    //댓글 id
+    @JsonIgnore
+    @JoinColumn(name = "commentId", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Comment comment;
+
 
     @Column(nullable = false)
     private String content;
-
-
 
     public void update(ReCommentRequestDto requestDto) {
         this.content = requestDto.getContent();

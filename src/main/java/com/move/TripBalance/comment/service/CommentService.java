@@ -41,7 +41,7 @@ public class CommentService {
 
         Post post = postService.isPresentPost(requestDto.getPostId());
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
         Comment comment = Comment.builder()
@@ -51,41 +51,49 @@ public class CommentService {
                 .build();
         commentRepository.save(comment);
 
-        return ResponseDto.success(
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
-                        .id(comment.getId())
-                        .nickName(comment.getMember().getNickName())
-                        .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
-                        .build()
-        );
+                .commentId(comment.getCommentId())
+                .nickName(comment.getMember().getNickName())
+                .content(comment.getContent())
+                .build()), HttpStatus.OK);
     }
 
     //게시글 별 코멘트 보기
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllCommentsByPost(Long postId) {
+    public ResponseEntity<PrivateResponseBody> getAllCommentsByPost(Long postId) {
         Post post = postService.isPresentPost(postId);
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
         List<Comment> commentList = commentRepository.findAllByPost(post);
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
         for (Comment comment : commentList) {
+            List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
+            List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
+            // 해당 댓글에 달린 대댓글 담기
+            for(ReComment reComment : reCommentList){
+                reCommentResponseDtoList.add(ReCommentResponseDto.builder()
+                        .recommentId(reComment.getRecommentId())
+                        .nickName(reComment.getMember().getNickName())
+                        .content(reComment.getContent())
+                        .build());
+            }
+            // commentResponseDto에 여러 댓글 담기
             commentResponseDtoList.add(
-                    CommentResponseDto.builder()
-                            .id(comment.getId())
-                            .nickName(comment.getMember().getNickName())
-                            .content(comment.getContent())
-//                            .likes(countLikesComment(comment))
-                            .createdAt(comment.getCreatedAt())
-                            .modifiedAt(comment.getModifiedAt())
-                            .build()
-            );
-        }
-        return ResponseDto.success(commentResponseDtoList);
+                        CommentResponseDto.builder()
+                                .commentId(comment.getCommentId())
+                                .nickName(comment.getMember().getNickName())
+                                .content(comment.getContent())
+                                .reComments(reCommentResponseDtoList)
+                                .build()
+                );
+            }
+
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                commentResponseDtoList),HttpStatus.OK);
     }
 
 ////    멤버별 코멘트 보기
@@ -116,32 +124,29 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public ResponseDto<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<PrivateResponseBody> updateComment(Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
         Post post = postService.isPresentPost(requestDto.getPostId());
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
-        Comment comment = isPresentComment(id);
+        Comment comment = isPresentComment(commentId);
         if (null == comment) {
-            return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
+        comment.update(requestDto);
 
-        if (comment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "only author can update");
-        }
-
-        List<ReComment> reCommentList = reCommentRepository.findAllByCommentId(comment.getId());
+        List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
         List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
         for (ReComment reComment : reCommentList) {
             reCommentResponseDtoList.add(
                     ReCommentResponseDto.builder()
-                            .id(reComment.getId())
+                            .recommentId(reComment.getRecommentId())
                             .content(reComment.getContent())
                             .nickName(reComment.getMember().getNickName())
 //                            .likes(countLikesReCommentLike(reComment))
@@ -151,44 +156,41 @@ public class CommentService {
             );
         }
 
-        comment.update(requestDto);
-        return ResponseDto.success(
+
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
-                        .id(comment.getId())
+                        .commentId(comment.getCommentId())
                         .nickName(comment.getMember().getNickName())
                         .content(comment.getContent())
-//                        .likes(countLikesComment(comment))
                         .reComments(reCommentResponseDtoList)
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
-                        .build()
-        );
+                        .build()),HttpStatus.OK);
     }
 
     //댓글 삭제
     @Transactional
-    public ResponseDto<?> deleteComment(Long id, HttpServletRequest request) {
+    public ResponseEntity<PrivateResponseBody> deleteComment(Long commentId, HttpServletRequest request) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
-        Comment comment = isPresentComment(id);
+        Comment comment = isPresentComment(commentId);
         if (null == comment) {
-            return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
 
         if (comment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "only author can update");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
 
-        List<ReComment> reCommentList = reCommentRepository.findAllByCommentId(comment.getId());
+        List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
         for (ReComment reComment : reCommentList) {
             reCommentRepository.delete(reComment);
         }
 
         commentRepository.delete(comment);
-        return ResponseDto.success("success");
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK,"댓글 삭제 완료"),HttpStatus.OK);
     }
 
 //    @Transactional(readOnly = true)

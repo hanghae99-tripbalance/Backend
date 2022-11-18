@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReCommentResponseDto {
-    private Long id;
+    private Long recommentId;
     private String nickName;
     private String content;
     private LocalDateTime createdAt;
