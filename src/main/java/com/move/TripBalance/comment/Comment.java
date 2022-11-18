@@ -31,6 +31,10 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    // 작성자
+    @Column(nullable = false)
+    private String author;
+
     @JsonIgnore
     @JoinColumn(name = "postId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

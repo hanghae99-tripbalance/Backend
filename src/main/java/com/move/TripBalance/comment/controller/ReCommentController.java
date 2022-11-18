@@ -24,16 +24,16 @@ public class ReCommentController {
     }
 
     //대댓글 수정
-    @PutMapping(value = "/recomments/{id}")
-    public ResponseEntity<PrivateResponseBody> updateReComment(@PathVariable Long id, @RequestBody ReCommentRequestDto requestDto,
+    @PutMapping(value = "/recomments/{reCommentId}")
+    public ResponseEntity<PrivateResponseBody> updateReComment(@PathVariable Long reCommentId, @RequestBody ReCommentRequestDto requestDto,
                                           HttpServletRequest request) {
-        return reCommentService.updateReComment(id, requestDto, request);
+        return reCommentService.updateReComment(reCommentId, requestDto, request);
     }
 
     //대댓글 삭제
-    @DeleteMapping(value = "/recomments/{id}")
-    public ResponseEntity<PrivateResponseBody> deleteReComment(@PathVariable Long id,
+    @DeleteMapping(value = "/recomments/{reCommentId}")
+    public ResponseEntity<PrivateResponseBody> deleteReComment(@PathVariable Long reCommentId,
                                           HttpServletRequest request) {
-        return reCommentService.deleteReComment(id, request);
+        return reCommentService.deleteReComment(reCommentId, request);
     }
 }

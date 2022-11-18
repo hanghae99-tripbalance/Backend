@@ -22,6 +22,14 @@ public class ReComment extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recommentId;
 
+    //내용
+    @Column(nullable = false)
+    private String content;
+
+    // 작성자
+    @Column(nullable = false)
+    private String author;
+
     //대댓글을 작성할 멤버 id
     @JsonIgnore
     @JoinColumn(name = "memberId", nullable = false)
@@ -33,10 +41,6 @@ public class ReComment extends Timestamped {
     @JoinColumn(name = "commentId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
-
-
-    @Column(nullable = false)
-    private String content;
 
     public void update(ReCommentRequestDto requestDto) {
         this.content = requestDto.getContent();

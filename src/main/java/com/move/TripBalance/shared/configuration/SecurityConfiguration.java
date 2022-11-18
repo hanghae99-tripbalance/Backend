@@ -63,16 +63,17 @@ public class SecurityConfiguration {
         .antMatchers(
                 "/tb/signup",//회원가입
                 "/tb/login",//로그인
+                "/tb/posts/**",
                 "/tb/posts/{postId}",
                 "/tb/bestfive", //메인 페이지
                 "/tb/besttrip",
                 "/tb/apimap",
-                "/tb/treetest",
                 "/tb/localpost/**",
                 "/tb/member/answer",
                 "/tb/game/**",
                 "/tb/hotel/**",
                 "/tb/blog/**",
+                "/tb/comments/**",
                 "/tb/members/info/**"
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()

@@ -52,7 +52,7 @@ public class PostService {
         postRepository.save(post);
         List<Media> mediaList = new ArrayList<>();
         Media media;
-        for(int i = 0; i < postRequestDto.getMediaList().size(); i++){
+        for (int i = 0; i < postRequestDto.getMediaList().size(); i++) {
             media = Media.builder()
                     .post(post)
                     .imgURL(postRequestDto.getMediaList().get(i).getImgURL()).build();
@@ -61,7 +61,7 @@ public class PostService {
         }
         post.setImgURL(mediaList);
 
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 "게시글 생성 완료"), HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
 
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : postList)  {
+        for (Post post : postList) {
             Long heartNum = heartRepository.countByPost(post);
             List<Media> oneimage = mediaRepository.findFirstByPost(post);
             postResponseDtos.add(
@@ -96,7 +96,7 @@ public class PostService {
         Post post = isPresentPost(postId);
 
         if (null == post) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND,null),HttpStatus.OK);
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
         //좋아요 갯수
         Long heartNum = heartRepository.countByPost(post);
@@ -105,15 +105,15 @@ public class PostService {
         //미디어 목록
         List<Media> mediaList = mediaRepository.findAllByPost(post);
         List<String> list = new ArrayList<>();
-        for(int i = 0; i < mediaList.size(); i++){
+        for (int i = 0; i < mediaList.size(); i++) {
             list.add(mediaList.get(i).getImgURL());
         }
 
         //좋아요 여부
         boolean heartYn = false;
-        if(userDetails != null) {
+        if (userDetails != null) {
             Optional<Heart> heart = heartRepository.findByMemberAndPost(member, post);
-            if(heart.isPresent()) {
+            if (heart.isPresent()) {
                 heartYn = true;
             }
         }
@@ -132,7 +132,7 @@ public class PostService {
                 .mediaList(list)
                 .build();
 
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,postList), HttpStatus.OK);
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK, postList), HttpStatus.OK);
     }
 
     //게시글 수정
@@ -146,11 +146,11 @@ public class PostService {
         Post post = isPresentPost(postId);
 
         if (null == post) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND,null),HttpStatus.OK);
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
         if (post.validateMember(member)) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST,null),HttpStatus.OK);
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
         //저장된 미디어 목록 삭제
         mediaRepository.deleteAllByPost(post);
@@ -161,7 +161,7 @@ public class PostService {
         List<Media> mediaList = new ArrayList<>();
         Media media;
 
-        for(int i = 0; i < postRequestDto.getMediaList().size(); i++){
+        for (int i = 0; i < postRequestDto.getMediaList().size(); i++) {
             media = Media.builder()
                     .post(post)
                     .imgURL(postRequestDto.getMediaList().get(i).getImgURL()).build();
@@ -171,7 +171,7 @@ public class PostService {
         post.setImgURL(mediaList);
 
         return new ResponseEntity<>(new PrivateResponseBody
-                (StatusCode.OK,"게시글 수정 완료"),HttpStatus.OK);
+                (StatusCode.OK, "게시글 수정 완료"), HttpStatus.OK);
     }
 
     //게시글 삭제
@@ -183,17 +183,18 @@ public class PostService {
 
         Post post = isPresentPost(postId);
         if (null == post) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND,null),HttpStatus.OK);
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
         if (post.validateMember(member)) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST,null),HttpStatus.OK);
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
         mediaRepository.deleteAllByPost(post);
         postRepository.delete(post);
         return new ResponseEntity<>(new PrivateResponseBody
-                (StatusCode.OK,"게시글 삭제 완료"),HttpStatus.OK);
+                (StatusCode.OK, "게시글 삭제 완료"), HttpStatus.OK);
     }
+
     //게시글 검색
     @Transactional
     public ResponseEntity<PrivateResponseBody> searchPosts(String keyword) {
@@ -218,6 +219,37 @@ public class PostService {
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 postResponseDtos), HttpStatus.OK
         );
+    }
+
+    //카테고리별 게시글 검색
+    @Transactional
+    public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword) {
+
+        // enum으로 나눈 지역 코드 불러오기
+        Local localEnum = Local.partsValue(Math.toIntExact(local));
+
+        // keyword를 통해서 게시글 불러오기
+        List<Post> postList = postRepository.search(keyword);
+
+        // 리스트 생성
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        for (Post post : postList) {
+            //지역 분류 진행
+            if (post.getLocal().equals(localEnum)) {
+                // 미디어 파일 추출 및 할당
+                List<Media> oneimage = mediaRepository.findFirstByPost(post);
+
+                postResponseDtos.add(PostResponseDto
+                        .builder()
+                        .postId(post.getPostId())
+                        .title(post.getTitle())
+                        .image(oneimage)
+                        .localdetail(post.getLocalDetail().toString())
+                        .build());
+            }
+        }
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                postResponseDtos), HttpStatus.OK);
     }
 
 
@@ -246,6 +278,7 @@ public class PostService {
         // 인증된 유저 정보 반환
         return member;
     }
+
     // 좋아요 순으로 포스트 5개
     @javax.transaction.Transactional
     public ResponseEntity<PrivateResponseBody> getTop5Posts() {

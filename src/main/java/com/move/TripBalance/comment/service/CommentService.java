@@ -53,13 +53,14 @@ public class CommentService {
                 .member(member)
                 .post(post)
                 .content(requestDto.getContent())
+                .author(member.getNickName())
                 .build();
         commentRepository.save(comment);
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
                 .commentId(comment.getCommentId())
-                .nickName(comment.getMember().getNickName())
+                .author(comment.getMember().getNickName())
                 .content(comment.getContent())
                 .build()), HttpStatus.OK);
     }
@@ -82,7 +83,7 @@ public class CommentService {
             for(ReComment reComment : reCommentList){
                 reCommentResponseDtoList.add(ReCommentResponseDto.builder()
                         .recommentId(reComment.getRecommentId())
-                        .nickName(reComment.getMember().getNickName())
+                        .author(reComment.getMember().getNickName())
                         .content(reComment.getContent())
                         .build());
             }
@@ -90,7 +91,7 @@ public class CommentService {
             commentResponseDtoList.add(
                         CommentResponseDto.builder()
                                 .commentId(comment.getCommentId())
-                                .nickName(comment.getMember().getNickName())
+                                .author(comment.getAuthor())
                                 .content(comment.getContent())
                                 .reComments(reCommentResponseDtoList)
                                 .build()
@@ -127,7 +128,7 @@ public class CommentService {
                     ReCommentResponseDto.builder()
                             .recommentId(reComment.getRecommentId())
                             .content(reComment.getContent())
-                            .nickName(reComment.getMember().getNickName())
+                            .author(reComment.getMember().getNickName())
                             .build()
             );
         }
@@ -136,7 +137,7 @@ public class CommentService {
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
-                        .nickName(comment.getMember().getNickName())
+                        .author(comment.getMember().getNickName())
                         .content(comment.getContent())
                         .reComments(reCommentResponseDtoList)
                         .build()),HttpStatus.OK);
@@ -168,18 +169,6 @@ public class CommentService {
         return new ResponseEntity<>(new PrivateResponseBody
                 (StatusCode.OK,"댓글 삭제 완료"),HttpStatus.OK);
     }
-
-//    @Transactional(readOnly = true)
-//    public int countLikesComment(Comment comment) {
-//        List<CommentLike> commentLikeList = commentLikeRepository.findAllByComment(comment);
-//        return commentLikeList.size();
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int countLikesSubCommentLike(SubComment subComment) {
-//        List<SubCommentLike> subCommentLikeList = subCommentLikeRepository.findAllBySubComment(subComment);
-//        return subCommentLikeList.size();
-//    }
 
     @Transactional(readOnly = true)
     public Comment isPresentComment(Long id) {

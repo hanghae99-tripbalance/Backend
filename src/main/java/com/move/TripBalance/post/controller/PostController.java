@@ -66,6 +66,13 @@ public class PostController {
         return postService.searchPosts(keyword);
     }
 
+    // 카테고리별 게시글 검색
+    @ResponseBody
+    @GetMapping("/posts/search/{local}")
+    public ResponseEntity<PrivateResponseBody> searchLocal(@PathVariable Long local, @RequestParam(value = "keyword") String keyword){
+        return postService.searchLocalPosts(local, keyword);
+    }
+
     // 좋아요가 가장 많은 게시글 5개
     @GetMapping("/posts/bestfive")
     public ResponseEntity<PrivateResponseBody> getBestFive(){

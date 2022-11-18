@@ -48,12 +48,13 @@ public class ReCommentService {
                 .comment(comment)
                 .member(member)
                 .content(requestDto.getContent())
+                .author(member.getNickName())
                 .build();
         reCommentRepository.save(reComment);
-//객체 담기
+         //객체 담기
         ReCommentResponseDto reCommentResponseDto = ReCommentResponseDto.builder()
                 .recommentId(reComment.getRecommentId())
-                .nickName(member.getNickName())
+                .author(reComment.getAuthor())
                 .content(reComment.getContent())
                 .build();
 
@@ -65,7 +66,7 @@ public class ReCommentService {
     //대댓글 수정
     @Transactional
     public ResponseEntity<PrivateResponseBody> updateReComment(
-            Long id,
+            Long reCommentId,
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
@@ -78,7 +79,7 @@ public class ReCommentService {
         if (null == comment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
-        ReComment reComment = isPresentReComment(id);
+        ReComment reComment = isPresentReComment(reCommentId);
         if (null == reComment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }
@@ -91,7 +92,7 @@ public class ReCommentService {
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 ReCommentResponseDto.builder()
                         .recommentId(reComment.getRecommentId())
-                        .nickName(member.getNickName())
+                        .author(reComment.getAuthor())
                         .content(reComment.getContent())
                         .build()),HttpStatus.OK);
 
@@ -100,19 +101,14 @@ public class ReCommentService {
     //대댓글 삭제
     @Transactional
     public ResponseEntity<PrivateResponseBody> deleteReComment(
-            Long id,
+            Long reCommentId,
             HttpServletRequest request
     ) {
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
-        Comment comment = commentService.isPresentComment(id);
-        if (null == comment) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
-        }
-        ReComment reComment = isPresentReComment(id);
+        ReComment reComment = isPresentReComment(reCommentId);
         if (null == reComment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }

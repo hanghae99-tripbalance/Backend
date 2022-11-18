@@ -92,7 +92,7 @@ public class ResultService {
         String keyword = gameResult.getGameResult();
 
         List<Hotel> hotels = new ArrayList<>();
-        String url = "https://www.goodchoice.kr/product/result?keyword=" + keyword;
+        String url = "https://www.goodchoice.kr/product/result?keyword=" + keyword + " 호텔";
         try {
             Document doc = Jsoup.connect(url).get();
             Elements stockTableBody = doc.select("div.list_wrap li");
