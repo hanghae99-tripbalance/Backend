@@ -14,6 +14,4 @@ public class ReCommentResponseDto {
     private Long recommentId;
     private String nickName;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 }

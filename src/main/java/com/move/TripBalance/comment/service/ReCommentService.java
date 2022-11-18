@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Component
 public class ReCommentService {
 
     private final ReCommentRepository reCommentRepository;

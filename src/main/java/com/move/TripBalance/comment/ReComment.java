@@ -1,5 +1,6 @@
 package com.move.TripBalance.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.shared.domain.Timestamped;

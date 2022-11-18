@@ -22,6 +22,7 @@ import java.util.List;
 @Entity
 public class Comment extends Timestamped {
 
+    // 고유 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;

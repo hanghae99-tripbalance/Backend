@@ -9,10 +9,14 @@ import com.move.TripBalance.comment.repository.CommentRepository;
 import com.move.TripBalance.comment.repository.ReCommentRepository;
 import com.move.TripBalance.post.service.PostService;
 import com.move.TripBalance.post.Post;
-import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
+import com.move.TripBalance.shared.exception.PrivateResponseBody;
+import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.shared.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Component
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -33,10 +38,10 @@ public class CommentService {
 
     //댓글 작성
     @Transactional
-    public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<PrivateResponseBody> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
         Post post = postService.isPresentPost(requestDto.getPostId());
@@ -96,32 +101,6 @@ public class CommentService {
                 commentResponseDtoList),HttpStatus.OK);
     }
 
-////    멤버별 코멘트 보기
-//    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllCommentsByMember(HttpServletRequest request) {
-//        Member member = validateMember(request);
-//        if (null == member) {
-//            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
-//        }
-//
-//        List<Comment> commentList = commentRepository.findAllByMember(member);
-//        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-//
-//        for (Comment comment : commentList) {
-//            commentResponseDtoList.add(
-//                    CommentResponseDto.builder()
-//                            .id(comment.getId())
-//                            .author(comment.getMember().getNickname())
-//                            .content(comment.getContent())
-////                            .likes(countLikesComment(comment))
-//                            .createdAt(comment.getCreatedAt())
-//                            .modifiedAt(comment.getModifiedAt())
-//                            .build()
-//            );
-//        }
-//        return ResponseDto.success(commentResponseDtoList);
-//    }
-
     //댓글 수정
     @Transactional
     public ResponseEntity<PrivateResponseBody> updateComment(Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
@@ -149,9 +128,6 @@ public class CommentService {
                             .recommentId(reComment.getRecommentId())
                             .content(reComment.getContent())
                             .nickName(reComment.getMember().getNickName())
-//                            .likes(countLikesReCommentLike(reComment))
-                            .createdAt(reComment.getCreatedAt())
-                            .modifiedAt(reComment.getModifiedAt())
                             .build()
             );
         }
