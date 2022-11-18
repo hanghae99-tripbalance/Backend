@@ -27,6 +27,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findTop5ByHeartsIn(List<Heart> hearts);
     Page<Post> findAllByMember(Member member, Pageable pageable);
-    List<Post> findAllByLocalOrderByCreatedAtDesc(Local localEnum);
+  List<Post> findAllByMember(Member member);
+
+  List<Post> findAllByLocalOrderByCreatedAtDesc(Local localEnum);
 
 }

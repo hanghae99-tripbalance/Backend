@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-public class SNSRequestDto {
+public class MyPageRequestDto {
+    private String nickName;
+    private String profileImg;
+    private String self;
     private String insta;
     private String facebook;
     private String youtube;

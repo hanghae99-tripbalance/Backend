@@ -2,6 +2,7 @@ package com.move.TripBalance.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.balance.GameResult;
+import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import com.move.TripBalance.shared.domain.Timestamped;
 import com.move.TripBalance.post.Post;
 import lombok.*;
@@ -71,14 +72,11 @@ public class Member extends Timestamped {
         return memberId != null && Objects.equals(memberId, member.memberId);
     }
 
-    // 프로필 이미지 업데이트
-    public void updateProfileImg(String img){
-        this.profileImg = img;
-    }
-
-    // 자기소개 업데이트
-    public void updateSelf(String self){
-        this.self = self;
+    // 개인정보 업데이트
+    public void updateInfo(MyPageRequestDto requestDto){
+        this.nickName = requestDto.getNickName();
+        this.profileImg = requestDto.getProfileImg();
+        this.self = requestDto.getSelf();
     }
     @Override
     public int hashCode() {
