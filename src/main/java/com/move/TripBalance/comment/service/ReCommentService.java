@@ -1,156 +1,131 @@
 package com.move.TripBalance.comment.service;
 
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-
 import com.move.TripBalance.comment.Comment;
 import com.move.TripBalance.comment.ReComment;
 import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
 import com.move.TripBalance.comment.controller.response.ReCommentResponseDto;
 import com.move.TripBalance.comment.repository.ReCommentRepository;
-import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import com.move.TripBalance.member.Member;
+import com.move.TripBalance.shared.exception.PrivateResponseBody;
+import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
+@Component
 public class ReCommentService {
 
     private final ReCommentRepository reCommentRepository;
     private final TokenProvider tokenProvider;
     private final CommentService commentService;
 
-    //대댓글 작성
+    //대댓글 생성
     @Transactional
-    public ResponseDto<?> createReComment(
+    public ResponseEntity<PrivateResponseBody> createReComment(
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
         Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-        if (null == comment)
-            return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
-
+        if (null == comment) {
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
+        }
         ReComment reComment = ReComment.builder()
-                .commentId(comment.getId())
+                .comment(comment)
                 .member(member)
                 .content(requestDto.getContent())
                 .build();
         reCommentRepository.save(reComment);
-        return ResponseDto.success(
-                ReCommentResponseDto.builder()
-                        .id(reComment.getId())
-                        .nickName(member.getNickName())
-                        .content(reComment.getContent())
-                        .createdAt(reComment.getCreatedAt())
-                        .modifiedAt(reComment.getModifiedAt())
-                        .build()
-        );
+//객체 담기
+        ReCommentResponseDto reCommentResponseDto = ReCommentResponseDto.builder()
+                .recommentId(reComment.getRecommentId())
+                .nickName(member.getNickName())
+                .content(reComment.getContent())
+                .build();
+
+        // 객체 Return
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                reCommentResponseDto),HttpStatus.OK);
     }
-////  대댓글 보기
-//    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllReCommentByMember(HttpServletRequest request) {
-//        Member member = validateMember(request);
-//        if (null == member) {
-//            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
-//        }
-//
-//        List<ReComment> reCommentList = reCommentRepository.findAllByMember(member);
-//        List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
-//
-//        for (ReComment reComment : reCommentList) {
-//            reCommentResponseDtoList.add(
-//                    ReCommentResponseDto.builder()
-//                            .id(reComment.getId())
-//                            .author(reComment.getMember().getNickname())
-//                            .content(reComment.getContent())
-////                            .likes(countLikesReCommentLike(ReComment))
-//                            .createdAt(reComment.getCreatedAt())
-//                            .modifiedAt(reComment.getModifiedAt())
-//                            .build()
-//            );
-//        }
-//        return ResponseDto.success(reCommentResponseDtoList);
-//    }
 
     //대댓글 수정
     @Transactional
-    public ResponseDto<?> updateReComment(
+    public ResponseEntity<PrivateResponseBody> updateReComment(
             Long id,
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
         Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-        if (null == comment)
-            return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
-
+        if (null == comment) {
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
+        }
         ReComment reComment = isPresentReComment(id);
         if (null == reComment) {
-            return ResponseDto.fail("NOT_FOUND", "Re comment id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }
 
         if (reComment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "only author can update");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
-
         reComment.update(requestDto);
-        return ResponseDto.success(
+
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 ReCommentResponseDto.builder()
-                        .id(reComment.getId())
+                        .recommentId(reComment.getRecommentId())
                         .nickName(member.getNickName())
                         .content(reComment.getContent())
-                        .createdAt(reComment.getCreatedAt())
-                        .modifiedAt(reComment.getModifiedAt())
-                        .build()
-        );
+                        .build()),HttpStatus.OK);
+
     }
 
     //대댓글 삭제
     @Transactional
-    public ResponseDto<?> deleteReComment(
+    public ResponseEntity<PrivateResponseBody> deleteReComment(
             Long id,
             HttpServletRequest request
     ) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
 
         Comment comment = commentService.isPresentComment(id);
-        if (null == comment)
-            return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
-
+        if (null == comment) {
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
+        }
         ReComment reComment = isPresentReComment(id);
         if (null == reComment) {
-            return ResponseDto.fail("NOT_FOUND", "Re comment id is not exist");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }
 
         if (reComment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "only author can update");
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
 
         reCommentRepository.delete(reComment);
-        return ResponseDto.success("success");
-    }
 
-//    @Transactional(readOnly = true)
-//    public int countLikesReCommentLike(ReComment ReComment) {
-//        List<ReCommentLike> ReCommentLikeList = ReCommentLikeRepository.findAllByReComment(ReComment);
-//        return ReCommentLikeList.size();
-//    }
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK,"대댓글 삭제 완료"),HttpStatus.OK);
+    }
 
     @Transactional(readOnly = true)
     public ReComment isPresentReComment(Long id) {
@@ -165,5 +140,4 @@ public class ReCommentService {
         }
         return tokenProvider.getMemberFromAuthentication();
     }
-
 }

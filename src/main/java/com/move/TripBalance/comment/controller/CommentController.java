@@ -4,46 +4,43 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.move.TripBalance.comment.service.CommentService;
 import com.move.TripBalance.comment.controller.request.CommentRequestDto;
+import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Validated
-@RequiredArgsConstructor
+@RequestMapping("/tb")
 @RestController
+@RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
     //댓글작성
-    @RequestMapping(value = "/tb/comments", method = RequestMethod.POST)
-    public ResponseDto<?> createComment(@RequestBody CommentRequestDto requestDto,
-                                        HttpServletRequest request) {
+    @PostMapping(value = "/comments")
+    public ResponseEntity<PrivateResponseBody> createComment(@RequestBody CommentRequestDto requestDto,
+                                                             HttpServletRequest request) {
         return commentService.createComment(requestDto, request);
     }
 
     //댓글 전체 가지고 오기
-    @RequestMapping(value = "/tb/comments/{id}", method = RequestMethod.GET)
-    public ResponseDto<?> getAllComments(@PathVariable Long id) {
-        return commentService.getAllCommentsByPost(id);
+    @GetMapping(value = "/comments/{postId}")
+    public ResponseEntity<PrivateResponseBody> getAllComments(@PathVariable Long postId) {
+        return commentService.getAllCommentsByPost(postId);
     }
 
     //댓글 수정하기
-    @RequestMapping(value = "/tb/comments/{id}", method = RequestMethod.PUT)
-    public ResponseDto<?> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto requestDto,
+    @PutMapping(value = "/comments/{commentId}")
+    public ResponseEntity<PrivateResponseBody> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto,
                                         HttpServletRequest request) {
-        return commentService.updateComment(id, requestDto, request);
+        return commentService.updateComment(commentId, requestDto, request);
     }
     //댓글 삭제하기
-    @RequestMapping(value = "/tb/comments/{id}", method = RequestMethod.DELETE)
-    public ResponseDto<?> deleteComment(@PathVariable Long id,
+    @DeleteMapping(value = "/comments/{commentId}")
+    public ResponseEntity<PrivateResponseBody> deleteComment(@PathVariable Long commentId,
                                         HttpServletRequest request) {
-        return commentService.deleteComment(id, request);
+        return commentService.deleteComment(commentId, request);
     }
 
 

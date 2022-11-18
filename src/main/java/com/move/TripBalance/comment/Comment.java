@@ -11,8 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -21,29 +22,28 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 public class Comment extends Timestamped {
 
+    // 고유 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long commentId;
 
-    @JoinColumn(name = "memberId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    // 내용
+    @Column(nullable = false)
+    private String content;
 
     @JsonIgnore
     @JoinColumn(name = "postId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
-    @Column(nullable = false)
-    private String content;
 
-    @Column(nullable = false)
-    private String nickName;
 
-    @JoinColumn(name = "parentId")
+    // 멤버
+    @JsonIgnore
+    @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Comment parent;
+    private Member member;
+
     public void update(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
     }
