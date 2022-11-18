@@ -3,6 +3,8 @@ package com.move.TripBalance.mypage.service;
 import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.balance.repository.QuestionRepository;
+import com.move.TripBalance.comment.Comment;
+import com.move.TripBalance.comment.repository.CommentRepository;
 import com.move.TripBalance.heart.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
 import com.move.TripBalance.member.Member;
@@ -45,7 +47,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Getter
-@PropertySource(value = "classpath:/messages.properties", encoding = "")
+@PropertySource(value = "classpath:/messages.properties")
 public class MyPageService {
 
     private final PostRepository postRepository;
@@ -55,7 +57,7 @@ public class MyPageService {
     private final SNSRepository snsRepository;
     private final MediaRepository mediaRepository;
     private final GameChoiceRepository gameChoiceRepository;
-
+    private final CommentRepository commentRepository;
     private final QuestionRepository questionRepository;
 
     // 내가 작성한 포스트가 없을 때 메시지
@@ -85,7 +87,6 @@ public class MyPageService {
 
         // 회원 정보 불러오기
         Member member = validateMember(request);
-
         SNS sns = snsRepository.findByMember(member);
 
         // sns 정보 불러오기
@@ -95,6 +96,18 @@ public class MyPageService {
         snsList.add(sns.getYoutube());
         snsList.add(sns.getBlog());
 
+        // 작성 글 갯수 불러오기
+        List<Post> postList = postRepository.findAllByMember(member);
+        Long postCnt = Long.valueOf(postList.size());
+
+        // 작성 댓글 갯수 불러오기
+        List<Comment> commentList = commentRepository.findAllByMember(member);
+        Long commentCnt = Long.valueOf(commentList.size());
+
+        // 실행한 게임 횟수 불러오기
+        List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member);
+        Long gameCnt = Long.valueOf(gameResults.size());
+
         // 멤버 정보 빌드
         MyPageResponseDto responseDto = MyPageResponseDto.builder()
                 .memberId(member.getMemberId())
@@ -103,6 +116,9 @@ public class MyPageService {
                 .profileImg(member.getProfileImg())
                 .self(member.getSelf())
                 .sns(snsList)
+                .postCnt(postCnt)
+                .commentCnt(commentCnt)
+                .gameCnt(gameCnt)
                 .build();
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
@@ -127,6 +143,9 @@ public class MyPageService {
 
         // 선택지와 선택 횟수 매칭한 결과값
         Map<String, Long> countAns = new HashMap<>();
+
+        // 총 게임 횟수 저장
+        countAns.put("total", Long.valueOf(gameResults.size()));
 
         // 나의 게임 결과값 가져오기
         for(GameResult results : gameResults) {
@@ -186,6 +205,10 @@ public class MyPageService {
 
         // 여행지와 선택 횟수 매칭한 결과값
         Map<String, Long> countTrip = new HashMap<>();
+
+        // 총 게임 횟수 저장
+        countTrip.put("total", Long.valueOf(gameResults.size()));
+
 
         // 나의 게임 결과값 가져오기
         for (GameResult results : gameResults) {
@@ -334,12 +357,26 @@ public class MyPageService {
         // 회원 정보 불러오기
         Optional<Member> member = memberRepository.findById(id);
         SNS sns = snsRepository.findByMember(member.get());
+
         // sns 정보 불러오기
         List<String> snsList = new ArrayList<>();
         snsList.add(sns.getInsta());
         snsList.add(sns.getFacebook());
         snsList.add(sns.getYoutube());
         snsList.add(sns.getBlog());
+
+        // 작성 글 갯수 불러오기
+        List<Post> postList = postRepository.findAllByMember(member.get());
+        Long postCnt = Long.valueOf(postList.size());
+
+        // 작성 댓글 갯수 불러오기
+        List<Comment> commentList = commentRepository.findAllByMember(member.get());
+        Long commentCnt = Long.valueOf(commentList.size());
+
+        // 실행한 게임 횟수 불러오기
+        List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member.get());
+        Long gameCnt = Long.valueOf(gameResults.size());
+
 
         // 멤버 정보 빌드
         MyPageResponseDto responseDto = MyPageResponseDto.builder()
@@ -349,6 +386,9 @@ public class MyPageService {
                 .profileImg(member.get().getProfileImg())
                 .self(member.get().getSelf())
                 .sns(snsList)
+                .postCnt(postCnt)
+                .commentCnt(commentCnt)
+                .gameCnt(gameCnt)
                 .build();
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
@@ -462,6 +502,9 @@ public class MyPageService {
         // 선택지와 선택 횟수 매칭한 결과값
         Map<String, Long> countAns = new HashMap<>();
 
+        // 총 게임 횟수 저장
+        countAns.put("total", Long.valueOf(gameResults.size()));
+
         // 회원의 게임 결과값 가져오기
         for(GameResult results : gameResults) {
             ansList.add(results.getAnswer1());
@@ -469,6 +512,7 @@ public class MyPageService {
             ansList.add(results.getAnswer3());
             ansList.add(results.getAnswer4());
             ansList.add(results.getAnswer5());
+
 
             // 짝수번째 번호면 leftId 를 통해서 선택지 가져오기
             List<Long> leftAns = ansList.stream().filter(a -> a % 2 == 0).collect(Collectors.toList());
@@ -529,6 +573,9 @@ public class MyPageService {
 
         // 여행지와 선택 횟수 매칭한 결과값
         Map<String, Long> countTrip = new HashMap<>();
+
+        // 총 게임 횟수 저장
+        countTrip.put("total", Long.valueOf(gameResults.size()));
 
         // 게임 결과값 가져오기
         for (GameResult results : gameResults) {
