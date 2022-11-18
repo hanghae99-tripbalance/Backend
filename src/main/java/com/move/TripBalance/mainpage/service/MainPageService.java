@@ -1,9 +1,7 @@
 package com.move.TripBalance.mainpage.service;
 
-import com.move.TripBalance.heart.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
 import com.move.TripBalance.mainpage.controller.response.LocalResponseDto;
-import com.move.TripBalance.post.controller.response.TopFiveResponseDto;
 import com.move.TripBalance.post.Local;
 import com.move.TripBalance.post.Media;
 import com.move.TripBalance.post.Post;

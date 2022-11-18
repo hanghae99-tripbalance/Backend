@@ -18,4 +18,7 @@ public class MyPageResponseDto {
     private String profileImg;
     private String self;
     private List<String> sns;
+    private Long postCnt = 0L;
+    private Long commentCnt = 0L;
+    private Long gameCnt = 0L;
 }

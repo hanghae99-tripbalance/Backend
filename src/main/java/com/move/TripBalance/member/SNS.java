@@ -1,7 +1,7 @@
 package com.move.TripBalance.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.mypage.controller.request.SNSRequestDto;
+import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -40,16 +40,16 @@ public class SNS {
     @OneToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    public void updateinsts(SNSRequestDto requestDto){
+    public void updateinsta(MyPageRequestDto requestDto){
         this.insta = "https://www.instagram.com/" + requestDto.getInsta();
     }
-    public void updatefacebook(SNSRequestDto requestDto){
+    public void updatefacebook(MyPageRequestDto requestDto){
         this.facebook = "https://www.facebook.com/" +requestDto.getFacebook();
     }
-    public void updateyoutube(SNSRequestDto requestDto){
+    public void updateyoutube(MyPageRequestDto requestDto){
         this.youtube = "https://www.youtube.com/" + requestDto.getYoutube();
     }
-    public void updateblog(SNSRequestDto requestDto){
+    public void updateblog(MyPageRequestDto requestDto){
         this.blog = "https://blog.naver.com/" + requestDto.getBlog();
     }
 
