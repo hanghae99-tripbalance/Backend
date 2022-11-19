@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReCommentRequestDto {
+    //댓글Id
     private Long commentId;
+
+    //대댓글
     private String content;
 }

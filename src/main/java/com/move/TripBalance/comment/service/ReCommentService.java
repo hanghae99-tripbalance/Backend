@@ -35,15 +35,17 @@ public class ReCommentService {
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
+        //멤버 확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
+        //댓글 확인
         Comment comment = commentService.isPresentComment(requestDto.getCommentId());
         if (null == comment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
+        //대댓글repo에 저장
         ReComment reComment = ReComment.builder()
                 .comment(comment)
                 .member(member)
@@ -51,11 +53,12 @@ public class ReCommentService {
                 .author(member.getNickName())
                 .build();
         reCommentRepository.save(reComment);
-         //객체 담기
+        //객체 담기
         ReCommentResponseDto reCommentResponseDto = ReCommentResponseDto.builder()
                 .recommentId(reComment.getRecommentId())
                 .author(reComment.getAuthor())
                 .content(reComment.getContent())
+                .profileImg(member.getProfileImg())
                 .build();
 
         // 객체 Return
@@ -70,30 +73,34 @@ public class ReCommentService {
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
+        //멤버 확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
+        //댓글 확인
         Comment comment = commentService.isPresentComment(requestDto.getCommentId());
         if (null == comment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
+        //대댓글 확인
         ReComment reComment = isPresentReComment(reCommentId);
         if (null == reComment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }
-
+        //대댓글을 작성한 멤버 확인
         if (reComment.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
+        //대댓글 수정
         reComment.update(requestDto);
-
+        //확인 되면 리턴
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 ReCommentResponseDto.builder()
                         .recommentId(reComment.getRecommentId())
                         .author(reComment.getAuthor())
                         .content(reComment.getContent())
+                        .profileImg(member.getProfileImg())
                         .build()),HttpStatus.OK);
 
     }
@@ -104,31 +111,35 @@ public class ReCommentService {
             Long reCommentId,
             HttpServletRequest request
     ) {
+        //멤버확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
+        //대댓글 id 확인
         ReComment reComment = isPresentReComment(reCommentId);
         if (null == reComment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
         }
-
+        //대댓글 멤버 확인
         if (reComment.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
 
+        //대댓글 삭제
         reCommentRepository.delete(reComment);
 
         return new ResponseEntity<>(new PrivateResponseBody
                 (StatusCode.OK,"대댓글 삭제 완료"),HttpStatus.OK);
     }
 
+    //id 별 확인
     @Transactional(readOnly = true)
     public ReComment isPresentReComment(Long id) {
         Optional<ReComment> optionalReComment = reCommentRepository.findById(id);
         return optionalReComment.orElse(null);
     }
-
+    //멤버 확인
     @Transactional
     public Member validateMember(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {

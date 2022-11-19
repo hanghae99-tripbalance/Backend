@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.move.TripBalance.comment.service.CommentService;
 import com.move.TripBalance.comment.controller.request.CommentRequestDto;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
-import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
