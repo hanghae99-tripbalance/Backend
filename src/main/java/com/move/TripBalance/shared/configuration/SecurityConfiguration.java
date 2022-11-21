@@ -63,6 +63,7 @@ public class SecurityConfiguration {
         .antMatchers(
                 "/tb/signup",//회원가입
                 "/tb/login",//로그인
+                "/tb/ouath/kakao", // 카카오 로그인
                 "/tb/posts/**",// 포스트 조회
                 "/tb/posts/{postId}",
                 "/tb/besttrip", // 메인페이지
