@@ -132,7 +132,7 @@ public class ApiService {
         // 저장되어있는 장소에서 위도 경도 추출
         List<Location> locationList = new ArrayList<>();
         locationList.addAll(locationRepository.findAll());
-        for(int i = 0; i < locationList.size(); i++) {
+        for (int i = 0; i < locationList.size(); i++) {
 
             String lat = locationList.get(i).getLat();
             String lng = locationList.get(i).getLng();
@@ -231,7 +231,7 @@ public class ApiService {
     }
 
     // repo에 저장된 인구 통계를 바탕으로 그래프를 그릴 정보를 추출
-    public JSONArray getPeopleNum(LocationRequestDto requestDto)  {
+    public JSONArray getPeopleNum(LocationRequestDto requestDto) {
 
         // 성별 그룹
         List<String> genGrp = new ArrayList<>();
@@ -266,7 +266,7 @@ public class ApiService {
         String districtName = loca.getResult();
 
         // 성별을 기준으로 정보 출력
-        for (String gender : genGrp){
+        for (String gender : genGrp) {
             //repo에서 저장된 정보 불러오기
             Result genResult = resultRepository.findByLocationAndGender(districtName, gender);
             if (genResult != null) {
@@ -332,9 +332,33 @@ public class ApiService {
 
     // 인구 통계와 날씨 정보를 클라이언트에 넘겨줌
     public JSONObject mapResult(LocationRequestDto requestDto) throws IOException, ParseException {
+
         JSONObject resultObj = new JSONObject();
+
+        // 날씨와 인구 데이터 불러오기
         resultObj.put("cnt", getPeopleNum(requestDto));
         resultObj.put("weather", weatherService.getWeather(requestDto));
-        return  resultObj;
+        return resultObj;
+    }
+
+    // 기본 메인페이지에 서울 정보 띄워주기
+    public JSONObject seoulResult() throws IOException, ParseException {
+
+        JSONObject resultObj = new JSONObject();
+
+        // 서울의 위도와 경도 정보를 넘겨주기
+        String lat = "37.584009";
+        String lng = "126.970626";
+
+        // 위도와 경도 정보를 API에 넣기
+        LocationRequestDto requestDto = LocationRequestDto.builder()
+                .lat(lat)
+                .lng(lng)
+                .build();
+
+        // 날씨와 인구 데이터 불러오기
+        resultObj.put("cnt", getPeopleNum(requestDto));
+        resultObj.put("weather", weatherService.getWeather(requestDto));
+        return resultObj;
     }
 }
