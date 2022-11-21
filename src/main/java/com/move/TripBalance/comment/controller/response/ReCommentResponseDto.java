@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReCommentResponseDto {
 
+    //댓글 id
+    private Long commentId;
+
     //대댓글id
     private Long recommentId;
 

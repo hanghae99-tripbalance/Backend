@@ -85,10 +85,11 @@ public class CommentService {
             // 해당 댓글에 달린 대댓글 담기
             for(ReComment reComment : reCommentList){
                 reCommentResponseDtoList.add(ReCommentResponseDto.builder()
+                        .commentId(reComment.getComment().getCommentId())
                         .recommentId(reComment.getRecommentId())
                         .author(reComment.getMember().getNickName())
                         .content(reComment.getContent())
-
+                        .profileImg(reComment.getMember().getProfileImg())
                         .build());
             }
             // commentResponseDto에 여러 댓글 담기
@@ -98,6 +99,7 @@ public class CommentService {
                             .author(comment.getAuthor())
                             .content(comment.getContent())
                             .reComments(reCommentResponseDtoList)
+                            .profileImg(comment.getMember().getProfileImg())
                             .build()
             );
         }

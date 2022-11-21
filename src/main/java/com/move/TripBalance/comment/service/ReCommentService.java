@@ -55,6 +55,7 @@ public class ReCommentService {
         reCommentRepository.save(reComment);
         //객체 담기
         ReCommentResponseDto reCommentResponseDto = ReCommentResponseDto.builder()
+                .commentId(reComment.getComment().getCommentId())
                 .recommentId(reComment.getRecommentId())
                 .author(reComment.getAuthor())
                 .content(reComment.getContent())
@@ -97,6 +98,7 @@ public class ReCommentService {
         //확인 되면 리턴
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 ReCommentResponseDto.builder()
+                        .commentId(reComment.getComment().getCommentId())
                         .recommentId(reComment.getRecommentId())
                         .author(reComment.getAuthor())
                         .content(reComment.getContent())
