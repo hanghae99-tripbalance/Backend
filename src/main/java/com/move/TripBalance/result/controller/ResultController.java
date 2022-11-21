@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,9 +20,9 @@ public class ResultController {
 
     // Blog List
     @ResponseBody
-    @GetMapping("/blog")
-    public List<Blog> getAllBlog(@RequestParam("query") String query)throws ParseException {
-        return resultService.getAllPost(query);
+    @GetMapping("/blog/{gameId}")
+    public ResponseEntity<PrivateResponseBody> getAllBlog(@PathVariable Long gameId) throws ParseException{
+        return resultService.getAllPost(gameId);
     }
 
     // Hotel List
