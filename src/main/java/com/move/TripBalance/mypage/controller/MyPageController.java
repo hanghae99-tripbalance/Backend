@@ -26,15 +26,15 @@ public class MyPageController {
     public MyPageResponseDto setMyInfo(@RequestBody MyPageRequestDto requestDto, HttpServletRequest request){
         return myPageService.setMyInfo(requestDto, request);}
 
-    // 나의 밸런스 게임 선택지 통계
-    @GetMapping("/mypage/balancedb")
-    public ResponseEntity<PrivateResponseBody> getMyGame(HttpServletRequest request){
-        return myPageService.myBalance(request);}
-
     // 나의 밸런스 게임 여행지 통계
     @GetMapping("/mypage/tripdb")
     public ResponseEntity<PrivateResponseBody> getMyTrip(HttpServletRequest request){
         return myPageService.myTrip(request);}
+
+    // 전체 밸런스 게임 여행지 통계
+    @GetMapping("/mypage/totaldb")
+    public ResponseEntity<PrivateResponseBody> getTotalTrip(){
+        return myPageService.totalGame();}
 
     // 내가 작성한 글 목록
     @GetMapping(value = "/mypage/posts")
@@ -50,12 +50,6 @@ public class MyPageController {
     @GetMapping(value = "/memberinfo/{memberId}")
     public ResponseEntity<PrivateResponseBody> getMemberInfo(@PathVariable Long memberId){
         return myPageService.getMemberInfo(memberId); }
-
-    // 회원의 밸런스 게임 선택지 통계
-    @GetMapping(value = "/memberinfo/balancedb/{memberId}")
-    public ResponseEntity<PrivateResponseBody> getMemberGame(@PathVariable Long memberId){
-        return myPageService.getMemberBalance(memberId);
-    }
 
     // 회원의 밸런스 게임 여행지 통계
     @GetMapping(value = "/memberinfo/tripdb/{memberId}")
