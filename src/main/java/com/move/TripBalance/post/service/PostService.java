@@ -15,6 +15,10 @@ import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -67,8 +71,12 @@ public class PostService {
 
     //전체 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseEntity<PrivateResponseBody> getAllPost() {
-        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+    public ResponseEntity<PrivateResponseBody> getAllPost(int page) {
+
+        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
+        Pageable pageable =  PageRequest.of(page, 20, Sort.by("createdAt").descending());
+
+        Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : postList) {
@@ -197,8 +205,11 @@ public class PostService {
 
     //게시글 검색
     @Transactional
-    public ResponseEntity<PrivateResponseBody> searchPosts(String keyword) {
-        List<Post> postList = postRepository.search(keyword);
+    public ResponseEntity<PrivateResponseBody> searchPosts(String keyword, int page) {
+        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
+        Pageable pageable =  PageRequest.of(page, 20);
+
+        Page<Post> postList = postRepository.search(keyword, pageable);
         // 검색된 항목 담아줄 리스트 생성
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
 
@@ -223,13 +234,16 @@ public class PostService {
 
     //카테고리별 게시글 검색
     @Transactional
-    public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword) {
+    public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword, int page) {
+
+        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
+        Pageable pageable =  PageRequest.of(page, 20);
 
         // enum으로 나눈 지역 코드 불러오기
         Local localEnum = Local.partsValue(Math.toIntExact(local));
 
         // keyword를 통해서 게시글 불러오기
-        List<Post> postList = postRepository.search(keyword);
+        Page<Post> postList = postRepository.search(keyword, pageable);
 
         // 리스트 생성
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
