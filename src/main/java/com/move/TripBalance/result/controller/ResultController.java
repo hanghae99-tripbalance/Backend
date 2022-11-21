@@ -20,9 +20,9 @@ public class ResultController {
 
     // Blog List
     @ResponseBody
-    @GetMapping("/blog/{gameId}")
-    public ResponseEntity<PrivateResponseBody> getAllBlog(@PathVariable Long gameId) throws ParseException{
-        return resultService.getAllPost(gameId);
+    @GetMapping("/blog")
+    public ResponseEntity<PrivateResponseBody> getAllBlog(String query) throws ParseException{
+        return resultService.getAllPost(query);
     }
 
     // Hotel List

@@ -48,13 +48,7 @@ public class ResultService {
     private String hotelUrl = "https://www.goodchoice.kr/product/result?keyword=";
 
     // 다음 블로그 크롤링
-    public ResponseEntity daumCraw(Long gameId)  {
-
-        // 게임 아이디 확인
-        GameResult gameResult = isPresentGame(gameId);
-
-        // 게임 결과를 검색어에 포함하는 객체 부여
-        String keyword = gameResult.getGameResult();
+    public ResponseEntity daumCraw(String query) {
 
         // 크롤링 결과값 추출
         RestTemplate restTemplate = new RestTemplate();
@@ -71,7 +65,7 @@ public class ResultService {
         // 전송할 최종 URL 만들기 및 인코딩
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(blogUrl)
-                .queryParam("query", keyword + " 여행")
+                .queryParam("query", query + " 여행")
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
@@ -82,12 +76,12 @@ public class ResultService {
     }
 
     // 크롤링한 결과값 담아서 보내기
-    public ResponseEntity<PrivateResponseBody> getAllPost(Long gameId) throws ParseException {
+    public ResponseEntity<PrivateResponseBody> getAllPost(String query) throws ParseException {
 
         // 결과값 JSON 파싱
         JSONParser jsonParser = new JSONParser();
 
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(daumCraw(gameId).getBody().toString());
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(daumCraw(query).getBody().toString());
 
         // documents만 도출
         JSONArray docuArray = (JSONArray) jsonObject.get("documents");
@@ -96,28 +90,31 @@ public class ResultService {
         List<Blog> blogList = new ArrayList<>();
 
         for(int i = 0; i< docuArray.size(); i++){
+
             JSONObject docuObject = (JSONObject) docuArray.get(i);
+            if(!docuObject.get("thumbnail").toString().equals("")){
 
-            // 블로그 객체 생성
-            Blog blog = new Blog();
+                // 블로그 객체 생성
+                Blog blog = new Blog();
 
-            // 블로그 이름
-            blog.setBlogName(docuObject.get("blogname").toString());
+                // 블로그 이름
+                blog.setBlogName(docuObject.get("blogname").toString());
 
-            // 연결되는 URL
-            blog.setUrl(docuObject.get("url").toString());
+                // 연결되는 URL
+                blog.setUrl(docuObject.get("url").toString());
 
-            // 게시글 제목 태그 제거 후 넣기
-            blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;]",""));
+                // 게시글 제목 태그 제거 후 넣기
+                blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]",""));
 
-            // 게시글 내용 태그 제거 후 넣기
-            blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;]",""));
+                // 게시글 내용 태그 제거 후 넣기
+                blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]",""));
 
-            // 게시글 첫 이미지
-            blog.setThumbnail(docuObject.get("thumbnail").toString());
+                // 게시글 첫 이미지
+                blog.setThumbnail(docuObject.get("thumbnail").toString());
 
-            // 반환할 리스트에 블로그 정보 추가
-            blogList.add(blog);
+                // 반환할 리스트에 블로그 정보 추가
+                blogList.add(blog);
+            }
         }
         return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, blogList), HttpStatus.OK);
     }
@@ -135,7 +132,7 @@ public class ResultService {
         List<Hotel> hotels = new ArrayList<>();
 
         // 검색 키워드에 지역이름 + 호텔 추가
-        String url = hotelUrl + keyword + " 호텔";
+        String url = hotelUrl + keyword;
 
         // 필요한 정보 파싱
         try {
