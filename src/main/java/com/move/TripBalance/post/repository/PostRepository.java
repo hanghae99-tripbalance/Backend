@@ -25,8 +25,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //  @Query(value = "SELECT p FROM Post p WHERE p.localEnum LIKE %:local% AND p.title LIKE %:keyword% ORDERBY p.created_at desc" , nativeQuery = true)
 //  List <Post> searchLocal(@Param("keyword") String keyword, @Param("local") Local localEnum);
 
-    List<Post> findTop5ByHeartsIn(List<Heart> hearts);
-    Page<Post> findAllByMember(Member member, Pageable pageable);
+  List<Post> findTop5ByHeartsIn(List<Heart> hearts);
+  Page<Post> findAllByMember(Member member, Pageable pageable);
+
   List<Post> findAllByMember(Member member);
 
   List<Post> findAllByLocalOrderByCreatedAtDesc(Local localEnum);

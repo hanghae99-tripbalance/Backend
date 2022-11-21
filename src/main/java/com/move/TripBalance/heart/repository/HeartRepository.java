@@ -9,11 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
 
-    Page<Heart> findAllByMember(Member member, Pageable pageable);
+    List<Heart> findAllByMember(Member member);
     Optional<Heart> findByMemberAndPost(Member member, Post post);
     Long countByPost(Post post);
 

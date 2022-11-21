@@ -28,17 +28,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.data.domain.Pageable;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -226,7 +221,7 @@ public class MyPageService {
     }
 
     // 내 정보 수정하기
-    public ResponseEntity<PrivateResponseBody> setMyInfo(MyPageRequestDto requestDto, HttpServletRequest request){
+    public MyPageResponseDto setMyInfo(MyPageRequestDto requestDto, HttpServletRequest request){
 
         // 로그인 한 회원 정보 추출
         Member member = validateMember(request);
@@ -269,21 +264,51 @@ public class MyPageService {
                     .build();
             sns.updateblog(snsRequestDto);}
 
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
-                "개인정보 수정 완료"), HttpStatus.OK);
+        List<String> snsList = new ArrayList<>();
+        snsList.add(sns.getInsta());
+        snsList.add(sns.getFacebook());
+        snsList.add(sns.getYoutube());
+        snsList.add(sns.getBlog());
+
+        // 작성 글 갯수 불러오기
+        List<Post> postList = postRepository.findAllByMember(member);
+        Long postCnt = Long.valueOf(postList.size());
+
+        // 작성 댓글 갯수 불러오기
+        List<Comment> commentList = commentRepository.findAllByMember(member);
+        Long commentCnt = Long.valueOf(commentList.size());
+
+        // 실행한 게임 횟수 불러오기
+        List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member);
+        Long gameCnt = Long.valueOf(gameResults.size());
+
+        // 멤버 정보 빌드
+        MyPageResponseDto responseDto = MyPageResponseDto.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .nickName(member.getNickName())
+                .profileImg(member.getProfileImg())
+                .self(member.getSelf())
+                .sns(snsList)
+                .postCnt(postCnt)
+                .commentCnt(commentCnt)
+                .gameCnt(gameCnt)
+                .build();
+
+        return responseDto;
     }
 
     // 내가 작성한 글 목록
-    public ResponseEntity<PrivateResponseBody> getMyPosts(HttpServletRequest request, int page){
+    public ResponseEntity<PrivateResponseBody> getMyPosts(HttpServletRequest request){
 
         // 로그인 한 멤버 정보 추출
         Member member = validateMember(request);
 
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
+//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
+//        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
 
         // 내가 작성한 포스트 repo에서 추출
-        Page<Post> myPosts = postRepository.findAllByMember(member, pageable);
+        List<Post> myPosts = postRepository.findAllByMember(member);
 
         // 내가 작성한 포스트가 없을 때 메시지 반환
         if(myPosts.isEmpty()){
@@ -313,16 +338,16 @@ public class MyPageService {
 
     // 내가 좋아요 한 게시물 목록
     @Transactional
-    public ResponseEntity<PrivateResponseBody> getMyHeartPosts(HttpServletRequest request, int page) {
+    public ResponseEntity<PrivateResponseBody> getMyHeartPosts(HttpServletRequest request) {
 
         // 로그인 한 멤버 정보 추출
         Member member = validateMember(request);
 
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
+//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
+//        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
 
         // 내가 좋아요 한 게시물 repo에서 추출
-        Page<Heart> heartList = heartRepository.findAllByMember(member, pageable);
+        List<Heart> heartList = heartRepository.findAllByMember(member);
 
         // 내가 좋아요 한 글이 없을 때 메시지 반환
         if (heartList.isEmpty()) {
@@ -398,17 +423,17 @@ public class MyPageService {
 
     // 회원의 좋아요 한 게시글 목록 불러오기
     @Transactional
-    public ResponseEntity<PrivateResponseBody> getMemberHeartPosts(Long memberId, int page) {
+    public ResponseEntity<PrivateResponseBody> getMemberHeartPosts(Long memberId) {
 
         // 멤버 정보 추출
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
+//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
+//        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
 
         // 좋아요 한 게시물 repo에서 추출
-        Page<Heart> heartList = heartRepository.findAllByMember(memberInfo, pageable);
+        List<Heart> heartList = heartRepository.findAllByMember(memberInfo);
 
         // 좋아요 한 글이 없을 때 메시지 반환
         if (heartList.isEmpty()) {
@@ -438,17 +463,17 @@ public class MyPageService {
     }
 
     // 회원이 작성한 글 목록
-    public ResponseEntity<PrivateResponseBody> getMemberPosts(Long memberId, int page){
+    public ResponseEntity<PrivateResponseBody> getMemberPosts(Long memberId){
 
         // 멤버 정보 추출
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
+//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
+//        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
 
         // 내가 작성한 포스트 repo에서 추출
-        Page<Post> memberPosts = postRepository.findAllByMember(memberInfo, pageable);
+        List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
 
         // 내가 작성한 포스트가 없을 때 메시지 반환
         if(memberPosts.isEmpty()){
