@@ -29,9 +29,9 @@ public class PostController {
 
     //게시글 목록 조회
     @ResponseBody
-    @GetMapping("/posts")
-    public ResponseEntity<PrivateResponseBody> getAllPost() {
-        return postService.getAllPost();
+    @GetMapping("/posts/list/{page}")
+    public ResponseEntity<PrivateResponseBody> getAllPost(@PathVariable int page) {
+        return postService.getAllPost(page);
     }
 
     //게시글 상세 조회
@@ -61,16 +61,16 @@ public class PostController {
 
     // 게시글 검색
     @ResponseBody
-    @GetMapping("/posts/search")
-    public ResponseEntity<PrivateResponseBody> search(@RequestParam(value = "keyword") String keyword){
-        return postService.searchPosts(keyword);
+    @GetMapping("/posts/search/{page}")
+    public ResponseEntity<PrivateResponseBody> search(@RequestParam(value = "keyword") String keyword, @PathVariable int page){
+        return postService.searchPosts(keyword, page);
     }
 
     // 카테고리별 게시글 검색
     @ResponseBody
-    @GetMapping("/posts/search/{local}")
-    public ResponseEntity<PrivateResponseBody> searchLocal(@PathVariable Long local, @RequestParam(value = "keyword") String keyword){
-        return postService.searchLocalPosts(local, keyword);
+    @GetMapping("/posts/search/{local}/{page}")
+    public ResponseEntity<PrivateResponseBody> searchLocal(@PathVariable Long local, @RequestParam(value = "keyword") String keyword, @PathVariable int page){
+        return postService.searchLocalPosts(local, keyword, page);
     }
 
     // 좋아요가 가장 많은 게시글 5개
