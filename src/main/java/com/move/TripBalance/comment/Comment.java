@@ -12,8 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Builder
 @Getter
@@ -35,12 +34,11 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private String author;
 
+    // 게시글
     @JsonIgnore
     @JoinColumn(name = "postId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
-
-
 
     // 멤버
     @JsonIgnore
@@ -48,10 +46,12 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    //업데이트
     public void update(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
     }
 
+    //멤버 확인
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }

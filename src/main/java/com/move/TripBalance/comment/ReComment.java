@@ -18,6 +18,7 @@ import javax.persistence.*;
 @Entity
 public class ReComment extends Timestamped {
 
+    //대댓글 Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recommentId;
@@ -42,10 +43,12 @@ public class ReComment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
 
+    //업데이트
     public void update(ReCommentRequestDto requestDto) {
         this.content = requestDto.getContent();
     }
 
+    //멤버 확인
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }

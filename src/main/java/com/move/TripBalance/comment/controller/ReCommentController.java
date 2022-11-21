@@ -3,7 +3,6 @@ package com.move.TripBalance.comment.controller;
 import com.move.TripBalance.comment.service.ReCommentService;
 import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
-import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

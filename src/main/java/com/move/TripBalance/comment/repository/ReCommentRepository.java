@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReCommentRepository extends JpaRepository<ReComment, Long> {
 
+    //댓글에서 대댓글 찾기
     List<ReComment> findAllByComment(Comment comment);
 
+    //optional로 id별로 대댓글 찾기
     Optional<ReComment> findById(Long id);
 }

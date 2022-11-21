@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -12,9 +11,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponseDto {
+    //댓글 id
     private Long commentId;
+
+    //작성자
     private String author;
+
+    //댓글
     private String content;
+
+    //대댓글
     private List<ReCommentResponseDto> reComments;
+
+    //사용자 이미지
+    private String profileImg;
 }
 

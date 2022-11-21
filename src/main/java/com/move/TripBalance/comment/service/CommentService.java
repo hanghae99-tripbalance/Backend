@@ -39,16 +39,17 @@ public class CommentService {
     //댓글 작성
     @Transactional
     public ResponseEntity<PrivateResponseBody> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+        //멤버 확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
+        //게시글 확인
         Post post = postService.isPresentPost(requestDto.getPostId());
         if (null == post) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
-
+        //레포에 저장
         Comment comment = Comment.builder()
                 .member(member)
                 .post(post)
@@ -56,23 +57,25 @@ public class CommentService {
                 .author(member.getNickName())
                 .build();
         commentRepository.save(comment);
-
+        //response에 담아서 보내주기
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
-                .commentId(comment.getCommentId())
-                .author(comment.getMember().getNickName())
-                .content(comment.getContent())
-                .build()), HttpStatus.OK);
+                        .commentId(comment.getCommentId())
+                        .author(comment.getMember().getNickName())
+                        .content(comment.getContent())
+                        .profileImg(member.getProfileImg())
+                        .build()), HttpStatus.OK);
     }
 
     //게시글 별 코멘트 보기
     @Transactional(readOnly = true)
     public ResponseEntity<PrivateResponseBody> getAllCommentsByPost(Long postId) {
+        //post 확인
         Post post = postService.isPresentPost(postId);
         if (null == post) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
-
+        //댓글 확인하기
         List<Comment> commentList = commentRepository.findAllByPost(post);
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
@@ -82,21 +85,24 @@ public class CommentService {
             // 해당 댓글에 달린 대댓글 담기
             for(ReComment reComment : reCommentList){
                 reCommentResponseDtoList.add(ReCommentResponseDto.builder()
+                        .commentId(reComment.getComment().getCommentId())
                         .recommentId(reComment.getRecommentId())
                         .author(reComment.getMember().getNickName())
                         .content(reComment.getContent())
+                        .profileImg(reComment.getMember().getProfileImg())
                         .build());
             }
             // commentResponseDto에 여러 댓글 담기
             commentResponseDtoList.add(
-                        CommentResponseDto.builder()
-                                .commentId(comment.getCommentId())
-                                .author(comment.getAuthor())
-                                .content(comment.getContent())
-                                .reComments(reCommentResponseDtoList)
-                                .build()
-                );
-            }
+                    CommentResponseDto.builder()
+                            .commentId(comment.getCommentId())
+                            .author(comment.getAuthor())
+                            .content(comment.getContent())
+                            .reComments(reCommentResponseDtoList)
+                            .profileImg(comment.getMember().getProfileImg())
+                            .build()
+            );
+        }
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 commentResponseDtoList),HttpStatus.OK);
@@ -105,20 +111,22 @@ public class CommentService {
     //댓글 수정
     @Transactional
     public ResponseEntity<PrivateResponseBody> updateComment(Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
+        //멤버 확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
+        //게시글 확인
         Post post = postService.isPresentPost(requestDto.getPostId());
         if (null == post) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
-
+        //댓글 확인
         Comment comment = isPresentComment(commentId);
         if (null == comment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
+        //댓글 업댓완료
         comment.update(requestDto);
 
         List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
@@ -132,50 +140,53 @@ public class CommentService {
                             .build()
             );
         }
-
-
+        //댓글 결과 리턴
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 CommentResponseDto.builder()
                         .commentId(comment.getCommentId())
                         .author(comment.getMember().getNickName())
                         .content(comment.getContent())
                         .reComments(reCommentResponseDtoList)
+                        .profileImg(member.getProfileImg())
                         .build()),HttpStatus.OK);
     }
 
     //댓글 삭제
     @Transactional
     public ResponseEntity<PrivateResponseBody> deleteComment(Long commentId, HttpServletRequest request) {
+        //멤버 확인
         Member member = validateMember(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
-
+        //댓글확인
         Comment comment = isPresentComment(commentId);
         if (null == comment) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
-
+        //댓글 멤버 확인
         if (comment.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
         }
-
+        //댓글 삭제하기
         List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
         for (ReComment reComment : reCommentList) {
             reCommentRepository.delete(reComment);
         }
-
+        //댓글 삭제하기
         commentRepository.delete(comment);
         return new ResponseEntity<>(new PrivateResponseBody
                 (StatusCode.OK,"댓글 삭제 완료"),HttpStatus.OK);
     }
 
+    //id 별 확인
     @Transactional(readOnly = true)
     public Comment isPresentComment(Long id) {
         Optional<Comment> optionalComment = commentRepository.findById(id);
         return optionalComment.orElse(null);
     }
 
+    //멤버 확인
     @Transactional
     public Member validateMember(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
