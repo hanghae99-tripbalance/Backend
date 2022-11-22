@@ -106,6 +106,9 @@ public class  ResultService {
                 // 블로그 객체 생성
                 Blog blog = new Blog();
 
+                // 블로그 아이디 할당
+                blog.setId(i);
+
                 // 블로그 이름
                 blog.setBlogName(docuObject.get("blogname").toString());
 
@@ -155,6 +158,9 @@ public class  ResultService {
             for (int i =0; i < 4; i++) {
                 Hotel hotel = new Hotel();
 
+                // 호텔 정보 아이디 할당
+                int id = i;
+
                 // 호텔 이름
                 String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
 
@@ -165,6 +171,7 @@ public class  ResultService {
                 String URL = stockTableBody.get(i).select("a").attr("href");
 
                 // 호텔 결과값 만들기
+                hotel.setId(id);
                 hotel.setTitle(text);
                 hotel.setImg(img);
                 hotel.setURL(URL);
@@ -192,6 +199,9 @@ public class  ResultService {
             for (int i =0; i < 8; i++) {
                 Hotel hotel = new Hotel();
 
+                // 호텔 정보 아이디 할당
+                int id = i;
+
                 // 호텔 이름
                 String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
 
@@ -202,6 +212,7 @@ public class  ResultService {
                 String URL = stockTableBody.get(i).select("a").attr("href");
 
                 // 호텔 결과값 만들기
+                hotel.setId(id);
                 hotel.setTitle(text);
                 hotel.setImg(img);
                 hotel.setURL(URL);
