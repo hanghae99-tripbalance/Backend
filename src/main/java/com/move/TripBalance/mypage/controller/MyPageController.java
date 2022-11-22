@@ -36,7 +36,13 @@ public class MyPageController {
     public ResponseEntity<PrivateResponseBody> getTotalTrip(){
         return myPageService.totalGame();}
 
-    // 내가 작성한 글 목록
+    // 전체 중 상위 10개 밸런스 게임 여행지 통계
+    @GetMapping("/mypage/totalten")
+    public ResponseEntity<PrivateResponseBody> getTotalDB(){
+        return myPageService.totalTenGame();
+    }
+
+        // 내가 작성한 글 목록
     @GetMapping(value = "/mypage/posts")
     public ResponseEntity<PrivateResponseBody> getMyPosts(HttpServletRequest request) {
         return myPageService.getMyPosts(request); }
