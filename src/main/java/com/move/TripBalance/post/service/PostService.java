@@ -1,7 +1,10 @@
 package com.move.TripBalance.post.service;
 
+import com.move.TripBalance.member.repository.MemberRepository;
+import com.move.TripBalance.mypage.controller.response.MyPostResponseDto;
 import com.move.TripBalance.post.*;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
+import com.move.TripBalance.post.controller.response.OtherPostResponseDto;
 import com.move.TripBalance.post.controller.response.PostResponseDto;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.heart.Heart;
@@ -38,6 +41,7 @@ public class PostService {
     private final MediaRepository mediaRepository;
     private final TokenProvider tokenProvider;
 
+    private final MemberRepository memberRepository;
     //게시글 생성
     @Transactional
     public ResponseEntity<PrivateResponseBody> createPost(
@@ -315,5 +319,40 @@ public class PostService {
         }
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 topFiveList), HttpStatus.OK);
+    }
+
+    // ~님의 다른 글
+    public ResponseEntity<PrivateResponseBody> getOtherPosts(Long memberId){
+
+        // 멤버 정보 추출
+        Optional<Member> member = memberRepository.findById(memberId);
+        Member memberInfo = member.get();
+
+        // 내가 작성한 포스트 repo에서 추출
+        List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
+
+        // 내가 작성한 포스트가 없을 때 메시지 반환
+        if(memberPosts.isEmpty()){
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
+        }
+
+        List<OtherPostResponseDto> myPostList = new ArrayList<>();
+
+        // 내가 작성한 포스트 목록 반환
+        for(Post post : memberPosts){
+
+            // 이미지 파일 넣어주기
+            Media img = mediaRepository.findFirstByPost(post).get(0);
+            myPostList.add(OtherPostResponseDto.builder()
+                    .nickName(memberInfo.getNickName())
+                    .profileImg(memberInfo.getProfileImg())
+                    .author(post.getAuthor())
+                    .content(post.getContent())
+                    .img(img.getImgURL())
+                    .build());
+        }
+
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                myPostList), HttpStatus.OK);
     }
 }
