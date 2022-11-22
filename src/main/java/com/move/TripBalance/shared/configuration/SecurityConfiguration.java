@@ -68,6 +68,7 @@ public class SecurityConfiguration {
                 "/tb/posts/{postId}",
                 "/tb/besttrip", // 메인페이지
                 "/tb/apimap/**",
+                "/tb/apimap",
                 "/tb/localpost/**",
                 "/tb/member/answer", // 밸런스 게임
                 "/tb/game/**",
@@ -75,7 +76,8 @@ public class SecurityConfiguration {
                 "/tb/blog/**",
                 "/tb/comments/**", // 댓글
                 "/tb/memberinfo/**", // 회원 정보
-                "/tb/mypage/totaldb"
+                "/tb/mypage/totaldb",
+                "/tb/mypage/totalten"
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",
