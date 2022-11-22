@@ -173,6 +173,15 @@ public class MyPageService {
         // 회원정보 업데이트
         mem.get().updateInfo(requestDto);
 
+        // 내가 작성한 글 목록에서 닉네임 업데이트
+        // 내가 작성한 포스트 repo에서 추출
+        List<Post> myPosts = postRepository.findAllByMember(member);
+
+        // 내가 작성한 포스트에 업데이트 된 정보 반영
+        for(Post post : myPosts){
+            post.updateMember(mem.get());
+        }
+
         //각각의 sns 계정 값이 비어있지 않을 때 도메인과 함께 저장
         // 인스타그램
         if(requestDto.getInsta()!= null){
@@ -222,11 +231,11 @@ public class MyPageService {
 
         // 멤버 정보 빌드
         MyPageResponseDto responseDto = MyPageResponseDto.builder()
-                .memberId(member.getMemberId())
-                .email(member.getEmail())
-                .nickName(member.getNickName())
-                .profileImg(member.getProfileImg())
-                .self(member.getSelf())
+                .memberId(mem.get().getMemberId())
+                .email(mem.get().getEmail())
+                .nickName(mem.get().getNickName())
+                .profileImg(mem.get().getProfileImg())
+                .self(mem.get().getSelf())
                 .sns(snsList)
                 .postCnt(postCnt)
                 .commentCnt(commentCnt)
@@ -265,7 +274,6 @@ public class MyPageService {
                     .createdAt(post.getCreatedAt())
                     .build());
         }
-
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 myPostList), HttpStatus.OK);
@@ -507,14 +515,69 @@ public class MyPageService {
             }
         }
 
-        // 내림차순 정렬
-        SortedMap<Integer, String> newMap = new TreeMap<>((s1, s2) -> s2 - s1);
-        for (String key : map.keySet()) {
-            newMap.put(map.get(key), key);
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+        List<String> tenResult = result.subList(0, 9);
+
+        System.out.println("총 게임 통계");
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                result), HttpStatus.OK);
+    }
+
+    // 전체 밸런스 게임 중 상위 10개 통계
+    public ResponseEntity<PrivateResponseBody> totalTenGame() {
+
+        // 전체 밸런스 게임 통계
+        List<GameResult> allGame = gameChoiceRepository.findAll();
+
+        // 게임 결과값이 있는 것만 리스트에 넣기
+        List<GameResult> trueGame = new ArrayList<>();
+        for(int i = 0; i < allGame.size(); i++){
+            if(allGame.get(i).getGameResult()!=null){
+                trueGame.add(allGame.get(i));
+            }
         }
 
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : trueGame) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
+        }
+
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+        List<String> tenResult = result.subList(0, 9);
+
+        System.out.println("총 게임 통계");
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                newMap), HttpStatus.OK);
+                tenResult), HttpStatus.OK);
     }
 
     // 로그인 한 회원 정보 확인
