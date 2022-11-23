@@ -16,12 +16,16 @@ public class OtherPostResponseDto {
 
     // 닉네임
     private String nickName;
+
     // 프로필 사진
     private String profileImg;
-    // 작성자
-    private String author;
-    //내용
-    private String content;
+
+    // 제목
+    private String title;
+
+    // 지역
+    private String local;
+
     //이미지
     private String img;
 

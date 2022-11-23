@@ -346,8 +346,8 @@ public class PostService {
             myPostList.add(OtherPostResponseDto.builder()
                     .nickName(memberInfo.getNickName())
                     .profileImg(memberInfo.getProfileImg())
-                    .author(post.getAuthor())
-                    .content(post.getContent())
+                    .title(post.getTitle())
+                    .local(post.getLocal().toString())
                     .img(img.getImgURL())
                     .build());
         }
