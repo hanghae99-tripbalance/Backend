@@ -91,5 +91,10 @@ public class PostController {
         return postService.getTop5Posts();
     }
 
+    //~님의 다른 글 보기
+    @GetMapping(value = "/posts/otherpost/{memberId}")
+    public ResponseEntity<PrivateResponseBody> getOtherPosts(@PathVariable Long memberId) {
+        return postService.getOtherPosts(memberId);
+    }
 
 }

@@ -7,6 +7,7 @@ import com.move.TripBalance.mainpage.apiDB.ResultGender;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.repository.LocationRepository;
 import com.move.TripBalance.mainpage.repository.ResultRepository;
+import com.move.TripBalance.result.service.ResultService;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -49,6 +50,9 @@ public class ApiService {
 
     private final MapService mapService;
     private final WeatherService weatherService;
+
+    private final ResultService resultService;
+
 
     // 법정동 코드 불러오기
     public String getLawCode(LocationRequestDto requestDto) throws IOException, ParseException {
@@ -136,7 +140,10 @@ public class ApiService {
 
             String lat = locationList.get(i).getLat();
             String lng = locationList.get(i).getLng();
-            LocationRequestDto requestDto = new LocationRequestDto(lat, lng);
+            LocationRequestDto requestDto = LocationRequestDto.builder()
+                    .lat(lat)
+                    .lng(lng)
+                    .build();
 
             // 성별을 기준으로 정보 저장
             for (String gender : genGrp) {
@@ -338,6 +345,8 @@ public class ApiService {
         // 날씨와 인구 데이터 불러오기
         resultObj.put("cnt", getPeopleNum(requestDto));
         resultObj.put("weather", weatherService.getWeather(requestDto));
+        resultObj.put("blog", resultService.getMapBlog(requestDto));
+        resultObj.put("hotel", resultService.getMapHotel(requestDto));
         return resultObj;
     }
 
@@ -349,16 +358,21 @@ public class ApiService {
         // 서울의 위도와 경도 정보를 넘겨주기
         String lat = "37.584009";
         String lng = "126.970626";
+        String location = "서울특별시 종로구";
 
         // 위도와 경도 정보를 API에 넣기
         LocationRequestDto requestDto = LocationRequestDto.builder()
                 .lat(lat)
                 .lng(lng)
+                .location(location)
                 .build();
 
         // 날씨와 인구 데이터 불러오기
         resultObj.put("cnt", getPeopleNum(requestDto));
         resultObj.put("weather", weatherService.getWeather(requestDto));
+        resultObj.put("blog", resultService.getMapBlog(requestDto));
+        resultObj.put("hotel", resultService.getMapHotel(requestDto));
+
         return resultObj;
     }
 }

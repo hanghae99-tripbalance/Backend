@@ -76,6 +76,11 @@ public class Post extends Timestamped {
         this.localDetail = LocalDetail.partsValue(Integer.parseInt(postRequestDto.getLocaldetail()));
     }
 
+    // 닉네임 변경시 바로 반영을 위한 업데이트
+    public void updateMember(Member member){
+        this.author = member.getNickName();
+    }
+
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }
