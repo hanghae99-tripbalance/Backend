@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class MyPostResponseDto {
     private Long postId;
     private String title;
-    private String nickName;
     private String img;
     private LocalDateTime createdAt;
 }

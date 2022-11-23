@@ -23,8 +23,10 @@ import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
+import io.swagger.models.auth.In;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -35,13 +37,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 @Getter
+@Setter
 @PropertySource(value = "classpath:/messages.properties")
 public class MyPageService {
 
@@ -121,70 +124,6 @@ public class MyPageService {
     }
 
 
-    // 나의 밸런스게임 선택지 통계 불러오기
-    public ResponseEntity<PrivateResponseBody> myBalance(HttpServletRequest request){
-
-        // 나의 밸런스 게임 결과 가져오기
-        Member member = validateMember(request);
-        List<GameResult> gameResults= gameChoiceRepository.findAllByMember(member);
-
-        // 선택지 횟수를 세기 위한 List
-        List<String> resultList = new ArrayList<>();
-        List<Long> ansList = new ArrayList<>();
-
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> leftSet = new HashSet<>();
-        Set<String> rightSet = new HashSet<>();
-
-        // 선택지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countAns = new HashMap<>();
-
-        // 총 게임 횟수 저장
-        countAns.put("total", Long.valueOf(gameResults.size()));
-
-        // 나의 게임 결과값 가져오기
-        for(GameResult results : gameResults) {
-            ansList.add(results.getAnswer1());
-            ansList.add(results.getAnswer2());
-            ansList.add(results.getAnswer3());
-            ansList.add(results.getAnswer4());
-            ansList.add(results.getAnswer5());
-
-            // 짝수번째 번호면 leftId 를 통해서 선택지 가져오기
-            List<Long> leftAns = ansList.stream().filter(a -> a % 2 == 0).collect(Collectors.toList());
-
-            for (Long ans : leftAns) {
-                String leftResult = questionRepository.findByLeftId(ans).getLeftAnswer();
-                resultList.add(leftResult);
-
-                // 중복값 제거
-                leftSet.add(leftResult);
-
-                // 리스트 안의 문자열 포함 횟수를 세어주는 frequecy 메소드 사용
-                Long count = Long.valueOf(Collections.frequency(resultList, leftResult));
-                countAns.put(leftResult, count);
-            }
-
-            // 홀수번째 번호면 rightId 를 통해서 선택지 가져오기
-            List<Long> rightAns = ansList.stream().filter(a -> a % 2 == 1).collect(Collectors.toList());
-
-            for (Long ans : rightAns) {
-                String rightResult = questionRepository.findByRightId(ans).getRightAnswer();
-                resultList.add(rightResult);
-
-                // 중복값 제거
-                rightSet.add(rightResult);
-
-                // 리스트 안의 문자열 포함 횟수를 세어주는 frequecy 메소드 사용
-                Long count = Long.valueOf(Collections.frequency(resultList, rightResult));
-                countAns.put(rightResult, count);
-            }
-
-        }
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
-                countAns), HttpStatus.OK);
-    }
-
     // 나의 밸런스 게임 여행지 통계 불러오기
     public ResponseEntity<PrivateResponseBody> myTrip(HttpServletRequest request) {
 
@@ -192,32 +131,33 @@ public class MyPageService {
         Member member = validateMember(request);
         List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member);
 
-        // 선택지 횟수를 세기 위한 List
-        List<String> tripList = new ArrayList<>();
-
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> tripSet = new HashSet<>();
-
-        // 여행지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countTrip = new HashMap<>();
-
-        // 총 게임 횟수 저장
-        countTrip.put("total", Long.valueOf(gameResults.size()));
-
-
-        // 나의 게임 결과값 가져오기
-        for (GameResult results : gameResults) {
-
-            // 선택한 여행지 결과값 리스트에 넣어주기
-            String trip = results.getGameResult();
-            tripList.add(trip);
-            tripSet.add(trip);
-            Long count = Long.valueOf(Collections.frequency(tripList, trip));
-            countTrip.put(trip, count);
-
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : gameResults) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
         }
+
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                countTrip), HttpStatus.OK);
+                result), HttpStatus.OK);
     }
 
     // 내 정보 수정하기
@@ -234,6 +174,15 @@ public class MyPageService {
 
         // 회원정보 업데이트
         mem.get().updateInfo(requestDto);
+
+        // 내가 작성한 글 목록에서 닉네임 업데이트
+        // 내가 작성한 포스트 repo에서 추출
+        List<Post> myPosts = postRepository.findAllByMember(member);
+
+        // 내가 작성한 포스트에 업데이트 된 정보 반영
+        for(Post post : myPosts){
+            post.updateMember(mem.get());
+        }
 
         //각각의 sns 계정 값이 비어있지 않을 때 도메인과 함께 저장
         // 인스타그램
@@ -284,11 +233,11 @@ public class MyPageService {
 
         // 멤버 정보 빌드
         MyPageResponseDto responseDto = MyPageResponseDto.builder()
-                .memberId(member.getMemberId())
-                .email(member.getEmail())
-                .nickName(member.getNickName())
-                .profileImg(member.getProfileImg())
-                .self(member.getSelf())
+                .memberId(mem.get().getMemberId())
+                .email(mem.get().getEmail())
+                .nickName(mem.get().getNickName())
+                .profileImg(mem.get().getProfileImg())
+                .self(mem.get().getSelf())
                 .sns(snsList)
                 .postCnt(postCnt)
                 .commentCnt(commentCnt)
@@ -303,9 +252,6 @@ public class MyPageService {
 
         // 로그인 한 멤버 정보 추출
         Member member = validateMember(request);
-
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-//        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
 
         // 내가 작성한 포스트 repo에서 추출
         List<Post> myPosts = postRepository.findAllByMember(member);
@@ -331,7 +277,6 @@ public class MyPageService {
                     .build());
         }
 
-
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 myPostList), HttpStatus.OK);
     }
@@ -342,9 +287,6 @@ public class MyPageService {
 
         // 로그인 한 멤버 정보 추출
         Member member = validateMember(request);
-
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
-//        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
 
         // 내가 좋아요 한 게시물 repo에서 추출
         List<Heart> heartList = heartRepository.findAllByMember(member);
@@ -429,9 +371,6 @@ public class MyPageService {
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
-//        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
-
         // 좋아요 한 게시물 repo에서 추출
         List<Heart> heartList = heartRepository.findAllByMember(memberInfo);
 
@@ -469,9 +408,6 @@ public class MyPageService {
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-//        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
-
         // 내가 작성한 포스트 repo에서 추출
         List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
 
@@ -500,80 +436,6 @@ public class MyPageService {
                 myPostList), HttpStatus.OK);
     }
 
-    // 회원의 밸런스게임 선택지 통계 불러오기
-    public ResponseEntity<PrivateResponseBody> getMemberBalance(Long memberId){
-
-        // 회원정보 가져오기
-        Optional<Member> member = memberRepository.findById(memberId);
-        Member memberInfo = member.get();
-
-        // 회원의 게임 결과 가져오기
-        List<GameResult> gameResults= gameChoiceRepository.findAllByMember(memberInfo);
-
-        // 게임 결과값이 없을 때 실행한 게임이 없다는 메시지 반환
-        if(gameResults.isEmpty()){
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                    noMemberGames), HttpStatus.OK);
-        }
-
-        // 선택지 횟수를 세기 위한 List
-        List<String> resultList = new ArrayList<>();
-        List<Long> ansList = new ArrayList<>();
-
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> leftSet = new HashSet<>();
-        Set<String> rightSet = new HashSet<>();
-
-        // 선택지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countAns = new HashMap<>();
-
-        // 총 게임 횟수 저장
-        countAns.put("total", Long.valueOf(gameResults.size()));
-
-        // 회원의 게임 결과값 가져오기
-        for(GameResult results : gameResults) {
-            ansList.add(results.getAnswer1());
-            ansList.add(results.getAnswer2());
-            ansList.add(results.getAnswer3());
-            ansList.add(results.getAnswer4());
-            ansList.add(results.getAnswer5());
-
-
-            // 짝수번째 번호면 leftId 를 통해서 선택지 가져오기
-            List<Long> leftAns = ansList.stream().filter(a -> a % 2 == 0).collect(Collectors.toList());
-
-            for (Long ans : leftAns) {
-                String leftResult = questionRepository.findByLeftId(ans).getLeftAnswer();
-                resultList.add(leftResult);
-
-                // 중복값 제거
-                leftSet.add(leftResult);
-
-                // 리스트 안의 문자열 포함 횟수를 세어주는 frequecy 메소드 사용
-                Long count = Long.valueOf(Collections.frequency(resultList, leftResult));
-                countAns.put(leftResult, count);
-            }
-
-            // 홀수번째 번호면 rightId 를 통해서 선택지 가져오기
-            List<Long> rightAns = ansList.stream().filter(a -> a % 2 == 1).collect(Collectors.toList());
-
-            for (Long ans : rightAns) {
-                String rightResult = questionRepository.findByRightId(ans).getRightAnswer();
-                resultList.add(rightResult);
-
-                // 중복값 제거
-                rightSet.add(rightResult);
-
-                // 리스트 안의 문자열 포함 횟수를 세어주는 frequecy 메소드 사용
-                Long count = Long.valueOf(Collections.frequency(resultList, rightResult));
-                countAns.put(rightResult, count);
-            }
-
-        }
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK ,
-                countAns), HttpStatus.OK);
-    }
-
     // 회원의 밸런스 게임 여행지 통계 불러오기
     public ResponseEntity<PrivateResponseBody> getMemberTrip(Long memberId) {
 
@@ -590,33 +452,122 @@ public class MyPageService {
                     noMemberGames), HttpStatus.OK);
         }
 
-        // 선택지 횟수를 세기 위한 List
-        List<String> tripList = new ArrayList<>();
-
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> tripSet = new HashSet<>();
-
-        // 여행지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countTrip = new HashMap<>();
-
-        // 총 게임 횟수 저장
-        countTrip.put("total", Long.valueOf(gameResults.size()));
-
-        // 게임 결과값 가져오기
-        for (GameResult results : gameResults) {
-
-            // 선택한 여행지 결과값 리스트에 넣어주기
-            String trip = results.getGameResult();
-            tripList.add(trip);
-            tripSet.add(trip);
-            Long count = Long.valueOf(Collections.frequency(tripList, trip));
-            countTrip.put(trip, count);
-
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : gameResults) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
         }
+
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                countTrip), HttpStatus.OK);
+                result), HttpStatus.OK);
+    }
+    // 전체 밸런스 게임에 대한 통계
+    public ResponseEntity<PrivateResponseBody> totalGame() {
+
+        // 전체 밸런스 게임 통계
+        List<GameResult> allGame = gameChoiceRepository.findAll();
+
+        // 게임 결과값이 있는 것만 리스트에 넣기
+        List<GameResult> trueGame = new ArrayList<>();
+        for(int i = 0; i < allGame.size(); i++){
+            if(allGame.get(i).getGameResult()!=null){
+                trueGame.add(allGame.get(i));
+            }
+        }
+
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : trueGame) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
+        }
+
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+
+        System.out.println("총 게임 통계");
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                result), HttpStatus.OK);
     }
 
+    // 전체 밸런스 게임 중 상위 10개 통계
+    public ResponseEntity<PrivateResponseBody> totalTenGame() {
+
+        // 전체 밸런스 게임 통계
+        List<GameResult> allGame = gameChoiceRepository.findAll();
+
+        // 게임 결과값이 있는 것만 리스트에 넣기
+        List<GameResult> trueGame = new ArrayList<>();
+        for(int i = 0; i < allGame.size(); i++){
+            if(allGame.get(i).getGameResult()!=null){
+                trueGame.add(allGame.get(i));
+            }
+        }
+
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : trueGame) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
+        }
+
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+        List<String> tenResult = result.subList(0, 9);
+
+        System.out.println("총 게임 통계");
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                tenResult), HttpStatus.OK);
+    }
 
     // 로그인 한 회원 정보 확인
     public Member validateMember(HttpServletRequest request) {
@@ -633,4 +584,5 @@ public class MyPageService {
         // 인증된 유저 정보 반환
         return member;
     }
+
 }

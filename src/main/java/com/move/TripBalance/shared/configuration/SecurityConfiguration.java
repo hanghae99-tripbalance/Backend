@@ -63,18 +63,22 @@ public class SecurityConfiguration {
         .antMatchers(
                 "/tb/signup",//회원가입
                 "/tb/login",//로그인
-                "/tb/posts/**",
+                "/tb/ouath/kakao", // 카카오 로그인
+                "/tb/ouath/kakao?**",
+                "/tb/posts/**",// 포스트 조회
                 "/tb/posts/{postId}",
-                "/tb/bestfive", //메인 페이지
-                "/tb/besttrip",
+                "/tb/besttrip", // 메인페이지
                 "/tb/apimap/**",
+                "/tb/apimap",
                 "/tb/localpost/**",
-                "/tb/member/answer",
+                "/tb/member/answer", // 밸런스 게임
                 "/tb/game/**",
                 "/tb/hotel/**",
                 "/tb/blog/**",
-                "/tb/comments/**",
-                "/tb/memberinfo/**"
+                "/tb/comments/**", // 댓글
+                "/tb/memberinfo/**", // 회원 정보
+                "/tb/mypage/totaldb",
+                "/tb/mypage/totalten"
         ).permitAll()
             .antMatchers(HttpMethod.GET,"/tb/posts").permitAll()
         .antMatchers( "/v2/api-docs",

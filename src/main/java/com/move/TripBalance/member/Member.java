@@ -3,6 +3,7 @@ package com.move.TripBalance.member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
+import com.move.TripBalance.shared.Authority;
 import com.move.TripBalance.shared.domain.Timestamped;
 import com.move.TripBalance.post.Post;
 import lombok.*;
@@ -47,6 +48,15 @@ public class Member extends Timestamped {
     //프로필 사진
     @Column
     private String profileImg;
+
+    // 카카오 아이디
+    @Column(unique = true)
+    private Long kakaoId;
+
+    // 회원 권한
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private Authority role = Authority.MEMBER;
 
     //SNS
     @JsonIgnore
