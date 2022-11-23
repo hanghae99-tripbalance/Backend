@@ -371,9 +371,6 @@ public class MyPageService {
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 좋아요 누른 시간을 기준으로 내림차순 정렬
-//        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
-
         // 좋아요 한 게시물 repo에서 추출
         List<Heart> heartList = heartRepository.findAllByMember(memberInfo);
 
@@ -410,9 +407,6 @@ public class MyPageService {
         // 멤버 정보 추출
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
-
-//        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 10개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-//        Pageable pageable =  PageRequest.of(page, 10, Sort.by("createdAt").descending());
 
         // 내가 작성한 포스트 repo에서 추출
         List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
@@ -591,24 +585,4 @@ public class MyPageService {
         return member;
     }
 
-//    // 오름차순 정렬을 위한 엔티티 생성
-//    public class GameCount implements Comparable<GameCount>{
-//        private Set<String> trip;
-//        private Long count;
-//        public GameCount(Set<String> trip, Long count){
-//            this.trip = trip;
-//            this.count = count;
-//        }
-//
-//        // 게임 횟수로 오름차순 정렬을 위한 비교
-//        @Override
-//        public int compareTo(GameCount game) {
-//            if(game.count < count){
-//                return -1;
-//            } else if (game.count > count) {
-//                return 1;
-//            }
-//            return 0;
-//        }
-//    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.member.SNS;
+import com.move.TripBalance.member.controller.response.MemberResponseDto;
 import com.move.TripBalance.member.repository.MemberRepository;
 import com.move.TripBalance.member.repository.SNSRepository;
 import com.move.TripBalance.oauth.KakaoMemberInfoDto;
@@ -12,6 +13,8 @@ import com.move.TripBalance.shared.Authority;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
+import com.move.TripBalance.shared.jwt.TokenProvider;
+import com.move.TripBalance.shared.jwt.controller.request.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -25,6 +28,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 @RequiredArgsConstructor
 @Service
@@ -32,7 +36,7 @@ public class KakaoMemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final SNSRepository snsRepository;
-
+    private final TokenProvider tokenProvider;
 
     // 카카오 로그인 restApi Key
     @Value(value = "${ouath.kakao.api}")
@@ -43,7 +47,7 @@ public class KakaoMemberService {
     String redirectUri;
 
     // 카카오 로그인 과정
-    public ResponseEntity<PrivateResponseBody> kakaoLogin(String code) throws JsonProcessingException {
+    public ResponseEntity<PrivateResponseBody> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -55,11 +59,13 @@ public class KakaoMemberService {
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoMemberInfo);
 
         // 4. 강제 로그인 처리
-        forceLogin(kakaoMember);
+        forceLogin(kakaoMember, response);
 
-        // Message 및 Status를 Return
         return new ResponseEntity<>(new PrivateResponseBody
-                (StatusCode.OK, "카카오 로그인 성공"), HttpStatus.OK);
+                (StatusCode.OK, MemberResponseDto.builder()
+                        .email(kakaoMember.getEmail())
+                        .nickName(kakaoMember.getNickName())
+                        .build()), HttpStatus.OK);
     }
 
     // 액세스 토큰 요청
@@ -127,7 +133,7 @@ public class KakaoMemberService {
 
         // 카카오 계정 프로필 사진
         String profileImg = jsonNode.get("properties")
-                .get("picture").asText();
+                .get("profile_image").asText();
 
         System.out.println("카카오 사용자 정보: " + id + ", " + nickName + ", " + email + ", " + profileImg);
 
@@ -183,7 +189,7 @@ public class KakaoMemberService {
                         .self("자기소개를 등록해주세요")
                         .role(role)
                         .build();
-
+                memberRepository.save(kakaoMember);
                 // 카카오 로그인 멤버 sns 정보 생성
                 snsRepository.save(SNS.builder()
                         .blog("블로그를 등록해주세요")
@@ -193,16 +199,34 @@ public class KakaoMemberService {
                         .member(kakaoMember)
                         .build());
             }
-
-            // 카카오 로그인 멤버 정보 저장
-            memberRepository.save(kakaoMember);
         }
         return kakaoMember;
     }
     // 카카오 로그인 처리
-    private void forceLogin(Member kakaoMember) {
+    private ResponseEntity<PrivateResponseBody> forceLogin(Member kakaoMember, HttpServletResponse response) {
+
         UserDetails userDetails = new UserDetailsImpl(kakaoMember);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(kakaoMember);
+        tokenToHeaders(tokenDto, response);
+        System.out.println(response.getHeader("Authorization"));
+        System.out.println(response.getHeader("Refresh-Token"));
+
+        // Message 및 Status를 Return
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK, MemberResponseDto.builder()
+                        .email(kakaoMember.getEmail())
+                        .nickName(kakaoMember.getNickName())
+                        .build()), HttpStatus.OK);
     }
+
+    //토큰 지급
+    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+    }
+
 }
