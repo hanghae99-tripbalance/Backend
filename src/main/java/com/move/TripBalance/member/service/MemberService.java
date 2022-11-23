@@ -52,7 +52,7 @@ public class MemberService {
                 .email(requestDto.getEmail())
                 .nickName(requestDto.getNickName())
                 .pw(passwordEncoder.encode(requestDto.getPw()))
-                .profileImg("기본사진 입니다.")
+                .profileImg(null)
                 .self("자기소개를 등록해주세요")
                 .build();
         memberRepository.save(member);
