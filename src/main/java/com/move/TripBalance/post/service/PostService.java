@@ -40,8 +40,8 @@ public class PostService {
     private final HeartRepository heartRepository;
     private final MediaRepository mediaRepository;
     private final TokenProvider tokenProvider;
-
     private final MemberRepository memberRepository;
+
     //게시글 생성
     @Transactional
     public ResponseEntity<PrivateResponseBody> createPost(

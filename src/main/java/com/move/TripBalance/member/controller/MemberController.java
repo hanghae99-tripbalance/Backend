@@ -55,6 +55,7 @@ public class MemberController {
   @PostMapping(value = "/signup/nicknamecheck")
   public ResponseEntity<PrivateResponseBody> nicknamecheck(@RequestBody NickNameCheckRequestDto requestDto) {
     return memberService.nicknamecheck(requestDto);
+  }
 
   // 카카오 로그인
   @GetMapping("/ouath/kakao")
