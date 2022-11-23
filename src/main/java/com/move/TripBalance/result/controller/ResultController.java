@@ -9,9 +9,6 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/tb")

@@ -2,12 +2,14 @@ package com.move.TripBalance.post.controller;
 
 import com.move.TripBalance.post.service.PostService;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
+import com.move.TripBalance.shared.configuration.SwaggerAnnotation;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,17 +23,18 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 작성
+    @SwaggerAnnotation
     @ResponseBody
     @PostMapping(value = "/posts")
-    public ResponseEntity<PrivateResponseBody> createPost(@RequestBody PostRequestDto postRequestDto,HttpServletRequest request){
+    public ResponseEntity<PrivateResponseBody> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
         return postService.createPost(postRequestDto, request);
     }
 
     //게시글 목록 조회
     @ResponseBody
-    @GetMapping("/posts/list/{page}")
-    public ResponseEntity<PrivateResponseBody> getAllPost(@PathVariable int page) {
-        return postService.getAllPost(page);
+    @GetMapping("/posts")
+    public ResponseEntity<PrivateResponseBody> getAllPost(@RequestParam(value = "page") int page, Pageable pageable) {
+        return postService.getAllPost(page, pageable);
     }
 
     //게시글 상세 조회
@@ -42,6 +45,7 @@ public class PostController {
     }
 
     //게시글 수정
+    @SwaggerAnnotation
     @ResponseBody
     @PutMapping(value = "/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> updatePost(
@@ -52,6 +56,7 @@ public class PostController {
     }
 
     // 게시글 삭제
+    @SwaggerAnnotation
     @ResponseBody
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> deletePost(
@@ -61,21 +66,28 @@ public class PostController {
 
     // 게시글 검색
     @ResponseBody
-    @GetMapping("/posts/search/{page}")
-    public ResponseEntity<PrivateResponseBody> search(@RequestParam(value = "keyword") String keyword, @PathVariable int page){
-        return postService.searchPosts(keyword, page);
+    @GetMapping("/posts/search")
+    public ResponseEntity<PrivateResponseBody> search(
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page,
+            Pageable pageable) {
+        return postService.searchPosts(keyword, page, pageable);
     }
 
     // 카테고리별 게시글 검색
     @ResponseBody
-    @GetMapping("/posts/search/{local}/{page}")
-    public ResponseEntity<PrivateResponseBody> searchLocal(@PathVariable Long local, @RequestParam(value = "keyword") String keyword, @PathVariable int page){
-        return postService.searchLocalPosts(local, keyword, page);
+    @GetMapping("/posts/search/{local}")
+    public ResponseEntity<PrivateResponseBody> searchLocal(
+            @PathVariable Long local,
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page,
+            Pageable pageable) {
+        return postService.searchLocalPosts(local, keyword, page, pageable);
     }
 
     // 좋아요가 가장 많은 게시글 5개
     @GetMapping("/posts/bestfive")
-    public ResponseEntity<PrivateResponseBody> getBestFive(){
+    public ResponseEntity<PrivateResponseBody> getBestFive() {
         return postService.getTop5Posts();
     }
 

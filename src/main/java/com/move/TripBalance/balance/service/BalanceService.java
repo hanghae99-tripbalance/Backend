@@ -4,6 +4,7 @@ import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.balance.Question;
 import com.move.TripBalance.balance.QuestionTree;
 import com.move.TripBalance.balance.controller.response.ChoiceResponseDto;
+import com.move.TripBalance.balance.controller.response.TripResponseDto;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.balance.repository.QuestionRepository;
 import com.move.TripBalance.balance.repository.QuestionTreeRepository;
@@ -137,7 +138,14 @@ public class BalanceService {
         // 객체 부여
         String trip = gameResult.getGameResult();
 
-        return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, trip), HttpStatus.OK);
+        Question question = isPresentdec(trip);
+
+        TripResponseDto tripResponseDto = TripResponseDto.builder()
+                .Trip(question.getTrip())
+                .Tripcontent(question.getTripcontent())
+                .build();
+
+        return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, tripResponseDto), HttpStatus.OK);
     }
 
 
@@ -160,6 +168,13 @@ public class BalanceService {
     public GameResult isPresentGame(Long id) {
         Optional<GameResult> optionalGameResult = gameChoiceRepository.findById(id);
         return optionalGameResult.orElse(null);
+    }
+
+    //여행지 정보
+    @Transactional(readOnly = true)
+    public Question isPresentdec(String trip) {
+        Optional<Question> optionalQuestion1 = questionRepository.findByTrip(trip);
+        return optionalQuestion1.orElse(null);
     }
 
 }

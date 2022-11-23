@@ -3,6 +3,7 @@ package com.move.TripBalance.mypage.controller;
 import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import com.move.TripBalance.mypage.controller.response.MyPageResponseDto;
 import com.move.TripBalance.mypage.service.MyPageService;
+import com.move.TripBalance.shared.configuration.SwaggerAnnotation;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +18,19 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     // 내 정보 확인
+    @SwaggerAnnotation
     @GetMapping("/mypage/info")
     public ResponseEntity<PrivateResponseBody> getMyInfo(HttpServletRequest request){
         return myPageService.myInfo(request);}
 
     // 내 정보 수정
+    @SwaggerAnnotation
     @PutMapping("/mypage/setinfo")
     public MyPageResponseDto setMyInfo(@RequestBody MyPageRequestDto requestDto, HttpServletRequest request){
         return myPageService.setMyInfo(requestDto, request);}
 
     // 나의 밸런스 게임 여행지 통계
+    @SwaggerAnnotation
     @GetMapping("/mypage/tripdb")
     public ResponseEntity<PrivateResponseBody> getMyTrip(HttpServletRequest request){
         return myPageService.myTrip(request);}
@@ -42,12 +46,14 @@ public class MyPageController {
         return myPageService.totalTenGame();
     }
 
-        // 내가 작성한 글 목록
+    // 내가 작성한 글 목록
+    @SwaggerAnnotation
     @GetMapping(value = "/mypage/posts")
     public ResponseEntity<PrivateResponseBody> getMyPosts(HttpServletRequest request) {
         return myPageService.getMyPosts(request); }
 
     // 내가 좋아요한 글 목록
+    @SwaggerAnnotation
     @GetMapping(value = "/mypage/hearts")
     public ResponseEntity<PrivateResponseBody> getMyHearts(HttpServletRequest request) {
         return myPageService.getMyHeartPosts(request); }

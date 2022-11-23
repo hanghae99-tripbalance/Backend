@@ -1,6 +1,7 @@
 package com.move.TripBalance.heart.controller;
 
 import com.move.TripBalance.heart.service.HeartService;
+import com.move.TripBalance.shared.configuration.SwaggerAnnotation;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class HeartController {
     private final HeartService heartService;
 
     // 좋아요, 좋아요취소
+    @SwaggerAnnotation
     @PostMapping("/posts/{postId}/heart")
     public ResponseEntity<PrivateResponseBody> heart(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return heartService.heart(postId, userDetails);
