@@ -131,31 +131,33 @@ public class MyPageService {
         Member member = validateMember(request);
         List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member);
 
-        // 선택지 횟수를 세기 위한 List
-        List<String> tripList = new ArrayList<>();
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : gameResults) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
+            }
+        }
 
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> tripSet = new HashSet<>();
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
 
-        // 여행지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countTrip = new HashMap<>();
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
 
-        // 총 게임 횟수 저장
-        countTrip.put("myTotal", Long.valueOf(gameResults.size()));
-
-        // 나의 게임 결과값 가져오기
-        for (GameResult results : gameResults) {
-
-            // 선택한 여행지 결과값 리스트에 넣어주기
-            String trip = results.getGameResult();
-            tripList.add(trip);
-            tripSet.add(trip);
-            Long count = Long.valueOf(Collections.frequency(tripList, trip));
-            countTrip.put(trip, count);
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
         }
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                countTrip), HttpStatus.OK);
+                result), HttpStatus.OK);
     }
 
     // 내 정보 수정하기
@@ -449,12 +451,6 @@ public class MyPageService {
 
         // 밸런스 게임 결과 가져오기
         List<GameResult> gameResults = gameChoiceRepository.findAllByMember(memberInfo);
-        List<GameResult> trueGame = new ArrayList<>();
-        for(int i = 0; i < gameResults.size(); i++){
-            if(gameResults.get(i).getGameResult()!=null){
-                trueGame.add(gameResults.get(i));
-            }
-        }
 
         // 게임 결과값이 없을 때 실행한 게임이 없다는 메시지 반환
         if(gameResults.isEmpty()){
@@ -462,34 +458,34 @@ public class MyPageService {
                     noMemberGames), HttpStatus.OK);
         }
 
-        // 선택지 횟수를 세기 위한 List
-        List<String> tripList = new ArrayList<>();
-
-        // 중복값을 제거하기 위해 Set 사용
-        Set<String> tripSet = new HashSet<>();
-
-        // 여행지와 선택 횟수 매칭한 결과값
-        Map<String, Long> countTrip = new HashMap<>();
-
-        // 총 게임 횟수 저장
-        countTrip.put("total", Long.valueOf(trueGame.size()));
-
-        // 게임 결과값 가져오기
-        for (GameResult results : trueGame) {
-            if(results.getGameResult()!=null){
-                // 선택한 여행지 결과값 리스트에 넣어주기
-                String trip = results.getGameResult();
-                tripList.add(trip);
-                tripSet.add(trip);
-                Long count = Long.valueOf(Collections.frequency(tripList, trip));
-                countTrip.put(trip, count);
+        // 게임 결과값 세기
+        Map<String, Integer> map = new HashMap<>();
+        for (GameResult gameResult : gameResults) {
+            Integer count = map.get(gameResult.getGameResult());
+            if (count == null) {
+                map.put(gameResult.getGameResult(), 1);
+            } else {
+                map.put(gameResult.getGameResult(), count + 1);
             }
-
         }
-        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                countTrip), HttpStatus.OK);
-    }
 
+        // 정렬을 위한 리스트
+        List<String> descList = new ArrayList<>(map.keySet());
+
+        // 횟수를 기준으로 내림차순 정렬
+        Collections.sort(descList, (d1, d2) -> (map.get(d2).compareTo(map.get(d1))));
+
+        // 내림차순 한 결과값을 반환
+        List<String> result = new ArrayList<>();
+        String strResult;
+        for(String key : descList){
+            strResult = "지역: " + key + ", 값: " + map.get(key);
+            result.add(strResult);
+        }
+
+        return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
+                result), HttpStatus.OK);
+    }
     // 전체 밸런스 게임에 대한 통계
     public ResponseEntity<PrivateResponseBody> totalGame() {
 
@@ -528,7 +524,6 @@ public class MyPageService {
             strResult = "지역: " + key + ", 값: " + map.get(key);
             result.add(strResult);
         }
-        List<String> tenResult = result.subList(0, 9);
 
         System.out.println("총 게임 통계");
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
