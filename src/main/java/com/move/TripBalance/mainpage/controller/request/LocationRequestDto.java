@@ -10,5 +10,5 @@ import lombok.*;
 public class LocationRequestDto {
     private String lat;
     private String lng;
-
+    private String location;
 }
