@@ -2,6 +2,7 @@ package com.move.TripBalance.post.controller;
 
 import com.move.TripBalance.post.service.PostService;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
+import com.move.TripBalance.shared.configuration.SwaggerAnnotation;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 작성
+    @SwaggerAnnotation
     @ResponseBody
     @PostMapping(value = "/posts")
     public ResponseEntity<PrivateResponseBody> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
@@ -43,6 +45,7 @@ public class PostController {
     }
 
     //게시글 수정
+    @SwaggerAnnotation
     @ResponseBody
     @PutMapping(value = "/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> updatePost(
@@ -53,6 +56,7 @@ public class PostController {
     }
 
     // 게시글 삭제
+    @SwaggerAnnotation
     @ResponseBody
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<PrivateResponseBody> deletePost(

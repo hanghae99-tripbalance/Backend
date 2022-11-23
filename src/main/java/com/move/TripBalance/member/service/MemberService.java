@@ -2,8 +2,10 @@ package com.move.TripBalance.member.service;
 
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.member.SNS;
+import com.move.TripBalance.member.controller.request.IdCkeckRequestDto;
 import com.move.TripBalance.member.controller.request.LoginRequestDto;
 import com.move.TripBalance.member.controller.request.MemberRequestDto;
+import com.move.TripBalance.member.controller.request.NickNameCheckRequestDto;
 import com.move.TripBalance.member.repository.SNSRepository;
 import com.move.TripBalance.shared.jwt.controller.request.TokenDto;
 import com.move.TripBalance.member.controller.response.MemberResponseDto;
@@ -27,7 +29,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final SNSRepository snsRepository;
@@ -35,10 +36,17 @@ public class MemberService {
     //회원가입
     @Transactional
     public ResponseEntity<PrivateResponseBody> createMember(MemberRequestDto requestDto) {
-        // 아이디 중복 확인
-        if (null != isPresentMember(requestDto.getEmail())) {
+
+        // Email 중복 확인
+        if (null != isPresentEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
+        }
+
+        // NickName 중복 확인
+        if (null != isPresentNickName(requestDto.getNickName())) {
+            return new ResponseEntity<>(new PrivateResponseBody
+                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
         }
 
         // 비밀번호 중복 확인
@@ -72,7 +80,7 @@ public class MemberService {
     //로그인
     @Transactional
     public ResponseEntity<PrivateResponseBody> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        Member member = isPresentMember(requestDto.getEmail());
+        Member member = isPresentEmail(requestDto.getEmail());
 
         // DB에 Email 확인
         if (null == member) {
@@ -121,11 +129,46 @@ public class MemberService {
                 (StatusCode.OK, "로그아웃"), HttpStatus.OK);
     }
 
+    //Email 중복 확인
+    public ResponseEntity<PrivateResponseBody> idcheck(IdCkeckRequestDto requestDto) {
+
+        //email 체크
+        if (null != isPresentEmail(requestDto.getEmail())) {
+            return new ResponseEntity<>(new PrivateResponseBody
+                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
+        }
+
+        // Message 및 Status를 Return
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK, "Email 중복 확인 완료"), HttpStatus.OK);
+    }
+
+    //닉네임 중복 확인
+    public ResponseEntity<PrivateResponseBody> nicknamecheck(NickNameCheckRequestDto requestDto) {
+
+        //nickname 체크
+        if (null != isPresentNickName(requestDto.getNickName())) {
+            return new ResponseEntity<>(new PrivateResponseBody
+                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+        }
+
+        // Message 및 Status를 Return
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK, "NickName 중복 확인 완료"), HttpStatus.OK);
+    }
+
     //Email 확인
     @Transactional(readOnly = true)
-    public Member isPresentMember(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        return optionalMember.orElse(null);
+    public Member isPresentEmail(String email) {
+        Optional<Member> optionalEmail = memberRepository.findByEmail(email);
+        return optionalEmail.orElse(null);
+    }
+
+    //NickName 확인
+    @Transactional(readOnly = true)
+    public Member isPresentNickName(String nickname) {
+        Optional<Member> optionalNickName = memberRepository.findByNickName(nickname);
+        return optionalNickName.orElse(null);
     }
 
     //토큰 지급

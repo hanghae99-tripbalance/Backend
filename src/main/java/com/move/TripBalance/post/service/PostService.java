@@ -293,7 +293,7 @@ public class PostService {
     }
 
     // 좋아요 순으로 포스트 5개
-    @javax.transaction.Transactional
+    @Transactional
     public ResponseEntity<PrivateResponseBody> getTop5Posts() {
         List<TopFiveResponseDto> topFiveList = new ArrayList<>();
         List<Heart> hearts = heartRepository.findAll();

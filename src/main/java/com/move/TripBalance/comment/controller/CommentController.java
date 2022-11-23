@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.move.TripBalance.comment.service.CommentService;
 import com.move.TripBalance.comment.controller.request.CommentRequestDto;
+import com.move.TripBalance.shared.configuration.SwaggerAnnotation;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class CommentController {
     private final CommentService commentService;
 
     //댓글작성
+    @SwaggerAnnotation
     @PostMapping(value = "/comments")
     public ResponseEntity<PrivateResponseBody> createComment(@RequestBody CommentRequestDto requestDto,
                                                              HttpServletRequest request) {
@@ -30,12 +32,14 @@ public class CommentController {
     }
 
     //댓글 수정하기
+    @SwaggerAnnotation
     @PutMapping(value = "/comments/{commentId}")
     public ResponseEntity<PrivateResponseBody> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto,
                                         HttpServletRequest request) {
         return commentService.updateComment(commentId, requestDto, request);
     }
     //댓글 삭제하기
+    @SwaggerAnnotation
     @DeleteMapping(value = "/comments/{commentId}")
     public ResponseEntity<PrivateResponseBody> deleteComment(@PathVariable Long commentId,
                                         HttpServletRequest request) {

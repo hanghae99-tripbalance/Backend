@@ -1,5 +1,7 @@
 package com.move.TripBalance.member.controller;
 
+import com.move.TripBalance.member.controller.request.IdCkeckRequestDto;
+import com.move.TripBalance.member.controller.request.NickNameCheckRequestDto;
 import com.move.TripBalance.member.service.MemberService;
 import com.move.TripBalance.member.controller.request.LoginRequestDto;
 import com.move.TripBalance.member.controller.request.MemberRequestDto;
@@ -38,5 +40,17 @@ public class MemberController {
   @PostMapping(value = "/logout")
   public ResponseEntity<PrivateResponseBody> logout(HttpServletRequest request) {
     return memberService.logout(request);
+  }
+
+  //아이디 중복 체크 API
+  @PostMapping(value = "/signup/idcheck")
+  public ResponseEntity<PrivateResponseBody> idcheck(@RequestBody IdCkeckRequestDto requestDto) {
+    return memberService.idcheck(requestDto);
+  }
+
+  //닉네임 중복 체크 API
+  @PostMapping(value = "/signup/nicknamecheck")
+  public ResponseEntity<PrivateResponseBody> nicknamecheck(@RequestBody NickNameCheckRequestDto requestDto) {
+    return memberService.nicknamecheck(requestDto);
   }
 }
