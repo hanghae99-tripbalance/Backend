@@ -28,4 +28,6 @@ public class Question {
     private String rightAnswer;
     // 최종 결과 여행지
     private String trip;
+    // 여행지 상세 정보
+    private String tripcontent;
 }

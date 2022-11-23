@@ -61,7 +61,7 @@ public class SecurityConfiguration {
         .authorizeRequests()
         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
         .antMatchers(
-                "/tb/signup",//회원가입
+                "/tb/signup/**",//회원가입
                 "/tb/login",//로그인
                 "/tb/posts/**",
                 "/tb/posts/{postId}",

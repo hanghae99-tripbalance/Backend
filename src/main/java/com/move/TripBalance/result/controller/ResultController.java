@@ -1,15 +1,11 @@
 package com.move.TripBalance.result.controller;
 
-import com.move.TripBalance.result.Blog;
 import com.move.TripBalance.result.service.ResultService;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

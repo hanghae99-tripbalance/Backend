@@ -71,10 +71,10 @@ public class PostService {
 
     //전체 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseEntity<PrivateResponseBody> getAllPost(int page) {
+    public ResponseEntity<PrivateResponseBody> getAllPost(int page, Pageable pageable) {
 
         // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        Pageable pageable =  PageRequest.of(page, 20, Sort.by("createdAt").descending());
+        pageable =  PageRequest.of(page, 20, Sort.by("createdAt").descending());
 
         Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
 
@@ -164,7 +164,6 @@ public class PostService {
         mediaRepository.deleteAllByPost(post);
         post.update(postRequestDto);
 
-
         //수정된 미디어 목록 저장
         List<Media> mediaList = new ArrayList<>();
         Media media;
@@ -205,9 +204,9 @@ public class PostService {
 
     //게시글 검색
     @Transactional
-    public ResponseEntity<PrivateResponseBody> searchPosts(String keyword, int page) {
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        Pageable pageable =  PageRequest.of(page, 20);
+    public ResponseEntity<PrivateResponseBody> searchPosts(String keyword, int page, Pageable pageable) {
+        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기
+        pageable =  PageRequest.of(page, 20);
 
         Page<Post> postList = postRepository.search(keyword, pageable);
         // 검색된 항목 담아줄 리스트 생성
@@ -219,6 +218,7 @@ public class PostService {
             List<Media> oneimage = mediaRepository.findFirstByPost(post);
             postResponseDtos.add(
                     PostResponseDto.builder()
+                            .postId(post.getPostId())
                             .title(post.getTitle())
                             .image(oneimage)
                             .heartNum(heartNum)
@@ -234,10 +234,10 @@ public class PostService {
 
     //카테고리별 게시글 검색
     @Transactional
-    public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword, int page) {
+    public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword, int page, Pageable pageable) {
 
-        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        Pageable pageable =  PageRequest.of(page, 20);
+        // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기
+        pageable =  PageRequest.of(page, 20);
 
         // enum으로 나눈 지역 코드 불러오기
         Local localEnum = Local.partsValue(Math.toIntExact(local));
@@ -253,8 +253,7 @@ public class PostService {
                 // 미디어 파일 추출 및 할당
                 List<Media> oneimage = mediaRepository.findFirstByPost(post);
 
-                postResponseDtos.add(PostResponseDto
-                        .builder()
+                postResponseDtos.add(PostResponseDto.builder()
                         .postId(post.getPostId())
                         .title(post.getTitle())
                         .image(oneimage)
