@@ -25,4 +25,7 @@ public class ReCommentResponseDto {
 
     //프로필 사진
     private String profileImg;
+
+    //작성자 ID
+    private Long authorId;
 }

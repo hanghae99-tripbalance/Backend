@@ -1,14 +1,11 @@
 package com.move.TripBalance.post.controller.response;
 
-
-
 import com.move.TripBalance.post.Media;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -43,4 +40,6 @@ public class PostResponseDto {
     private Long heartNum;
     //하트 여부
     private boolean heartYn = false;
+    //작성자 ID
+    private Long authorId;
 }

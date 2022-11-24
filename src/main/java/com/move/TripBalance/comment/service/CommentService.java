@@ -64,6 +64,7 @@ public class CommentService {
                         .author(comment.getMember().getNickName())
                         .content(comment.getContent())
                         .profileImg(member.getProfileImg())
+                        .authorId(comment.getMember().getMemberId())
                         .build()), HttpStatus.OK);
     }
 
@@ -83,13 +84,14 @@ public class CommentService {
             List<ReComment> reCommentList = reCommentRepository.findAllByComment(comment);
             List<ReCommentResponseDto> reCommentResponseDtoList = new ArrayList<>();
             // 해당 댓글에 달린 대댓글 담기
-            for(ReComment reComment : reCommentList){
+            for (ReComment reComment : reCommentList) {
                 reCommentResponseDtoList.add(ReCommentResponseDto.builder()
                         .commentId(reComment.getComment().getCommentId())
                         .recommentId(reComment.getRecommentId())
                         .author(reComment.getMember().getNickName())
                         .content(reComment.getContent())
                         .profileImg(reComment.getMember().getProfileImg())
+                        .authorId(reComment.getMember().getMemberId())
                         .build());
             }
             // commentResponseDto에 여러 댓글 담기
@@ -100,12 +102,13 @@ public class CommentService {
                             .content(comment.getContent())
                             .reComments(reCommentResponseDtoList)
                             .profileImg(comment.getMember().getProfileImg())
+                            .authorId(comment.getMember().getMemberId())
                             .build()
             );
         }
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                commentResponseDtoList),HttpStatus.OK);
+                commentResponseDtoList), HttpStatus.OK);
     }
 
     //댓글 수정
@@ -137,6 +140,7 @@ public class CommentService {
                             .recommentId(reComment.getRecommentId())
                             .content(reComment.getContent())
                             .author(reComment.getMember().getNickName())
+                            .authorId(reComment.getMember().getMemberId())
                             .build()
             );
         }
@@ -148,7 +152,8 @@ public class CommentService {
                         .content(comment.getContent())
                         .reComments(reCommentResponseDtoList)
                         .profileImg(member.getProfileImg())
-                        .build()),HttpStatus.OK);
+                        .authorId(comment.getMember().getMemberId())
+                        .build()), HttpStatus.OK);
     }
 
     //댓글 삭제
@@ -176,7 +181,7 @@ public class CommentService {
         //댓글 삭제하기
         commentRepository.delete(comment);
         return new ResponseEntity<>(new PrivateResponseBody
-                (StatusCode.OK,"댓글 삭제 완료"),HttpStatus.OK);
+                (StatusCode.OK, "댓글 삭제 완료"), HttpStatus.OK);
     }
 
     //id 별 확인

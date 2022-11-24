@@ -51,6 +51,10 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    // 좋아요 개수
+    @Column(nullable = true)
+    private int heartNum;
+
     // 댓글
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
@@ -76,6 +80,13 @@ public class Post extends Timestamped {
         this.localDetail = LocalDetail.partsValue(Integer.parseInt(postRequestDto.getLocaldetail()));
     }
 
+    public void heartNumUpdate(){
+        this.heartNum = heartNum+1;
+    }
+
+    public void heartNumCancel(){
+        this.heartNum = heartNum-1;
+    }
     // 닉네임 변경시 바로 반영을 위한 업데이트
     public void updateMember(Member member){
         this.author = member.getNickName();

@@ -74,7 +74,7 @@ public class SecurityConfiguration {
                 "/tb/member/answer", // 밸런스 게임
                 "/tb/game/**",
                 "/tb/hotel/**",
-                "/tb/blog/**",
+                "/tb/blog",
                 "/tb/comments/**", // 댓글
                 "/tb/memberinfo/**", // 회원 정보
                 "/tb/mypage/totaldb",

@@ -46,7 +46,7 @@ public class MemberService {
         // NickName 중복 확인
         if (null != isPresentNickName(requestDto.getNickName())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
         }
 
         // 비밀번호 중복 확인

@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class OtherPostResponseDto {
 
+    //PostId
+    private Long postId;
+
     // 닉네임
     private String nickName;
 
@@ -28,6 +31,5 @@ public class OtherPostResponseDto {
 
     //이미지
     private String img;
-
 
 }

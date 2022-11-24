@@ -5,6 +5,7 @@ import com.move.TripBalance.mypage.controller.response.MyPostResponseDto;
 import com.move.TripBalance.post.*;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
 import com.move.TripBalance.post.controller.response.OtherPostResponseDto;
+import com.move.TripBalance.post.controller.response.PostListResponseDto;
 import com.move.TripBalance.post.controller.response.PostResponseDto;
 import com.move.TripBalance.member.Member;
 import com.move.TripBalance.heart.Heart;
@@ -29,8 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,9 +81,10 @@ public class PostService {
     public ResponseEntity<PrivateResponseBody> getAllPost(int page, Pageable pageable) {
 
         // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-        pageable =  PageRequest.of(page, 20, Sort.by("createdAt").descending());
+        pageable = PageRequest.of(page, 20, Sort.by("createdAt").descending());
 
         Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+
 
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : postList) {
@@ -92,6 +96,9 @@ public class PostService {
                             .title(post.getTitle())
                             .image(oneimage)
                             .heartNum(heartNum)
+                            .authorId(post.getMember().getMemberId())
+                            .profileImg(post.getMember().getProfileImg())
+                            .author(post.getMember().getNickName())
                             .build()
             );
         }
@@ -142,6 +149,7 @@ public class PostService {
                 .nickName(member.getNickName())
                 .profileImg(member.getProfileImg())
                 .mediaList(list)
+                .authorId(post.getMember().getMemberId())
                 .build();
 
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK, postList), HttpStatus.OK);
@@ -210,7 +218,7 @@ public class PostService {
     @Transactional
     public ResponseEntity<PrivateResponseBody> searchPosts(String keyword, int page, Pageable pageable) {
         // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기
-        pageable =  PageRequest.of(page, 20);
+        pageable = PageRequest.of(page, 20);
 
         Page<Post> postList = postRepository.search(keyword, pageable);
         // 검색된 항목 담아줄 리스트 생성
@@ -241,7 +249,7 @@ public class PostService {
     public ResponseEntity<PrivateResponseBody> searchLocalPosts(Long local, String keyword, int page, Pageable pageable) {
 
         // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기
-        pageable =  PageRequest.of(page, 20);
+        pageable = PageRequest.of(page, 20);
 
         // enum으로 나눈 지역 코드 불러오기
         Local localEnum = Local.partsValue(Math.toIntExact(local));
@@ -299,29 +307,31 @@ public class PostService {
     // 좋아요 순으로 포스트 5개
     @Transactional
     public ResponseEntity<PrivateResponseBody> getTop5Posts() {
-        List<TopFiveResponseDto> topFiveList = new ArrayList<>();
         List<Heart> hearts = heartRepository.findAll();
-        List<Post> fivePostList = postRepository.findTop5ByHeartsIn(hearts);
+        List<Post> fivePostList = postRepository.findTop10ByHeartsIn(hearts);
+        List<Post> result = fivePostList.stream().distinct().sorted(Comparator.comparing(Post::getHeartNum).reversed()).collect(Collectors.toList());
 
-        // 미디어, 좋아요 갯수 추출 및 할당
-        for (Post post : fivePostList) {
+        List<TopFiveResponseDto> list = new ArrayList<>();
+
+        for(Post post : result){
+            // 미디어, 좋아요 갯수 추출 및 할당
+
             List<Media> oneimage = mediaRepository.findFirstByPost(post);
             String img = oneimage.get(0).getImgURL();
-            Long heartNum = heartRepository.countByPost(post);
-
-            topFiveList.add(TopFiveResponseDto.builder()
+            list.add(TopFiveResponseDto.builder()
                     .postId(post.getPostId())
                     .title(post.getTitle())
                     .img(img)
-                    .heartNum(heartNum)
+                    .heartNum(post.getHeartNum())
                     .build());
         }
+
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                topFiveList), HttpStatus.OK);
+                list), HttpStatus.OK);
     }
 
     // ~님의 다른 글
-    public ResponseEntity<PrivateResponseBody> getOtherPosts(Long memberId){
+    public ResponseEntity<PrivateResponseBody> getOtherPosts(Long memberId) {
 
         // 멤버 정보 추출
         Optional<Member> member = memberRepository.findById(memberId);
@@ -331,19 +341,19 @@ public class PostService {
         List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
 
         // 내가 작성한 포스트가 없을 때 메시지 반환
-        if(memberPosts.isEmpty()){
+        if (memberPosts.isEmpty()) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.NOT_FOUND, null), HttpStatus.OK);
         }
 
         List<OtherPostResponseDto> myPostList = new ArrayList<>();
 
         // 내가 작성한 포스트 목록 반환
-        for(Post post : memberPosts){
+        for (Post post : memberPosts) {
 
             // 이미지 파일 넣어주기
             Media img = mediaRepository.findFirstByPost(post).get(0);
             myPostList.add(OtherPostResponseDto.builder()
-                    .nickName(memberInfo.getNickName())
+                    .postId(post.getPostId())
                     .profileImg(memberInfo.getProfileImg())
                     .title(post.getTitle())
                     .local(post.getLocal().toString())

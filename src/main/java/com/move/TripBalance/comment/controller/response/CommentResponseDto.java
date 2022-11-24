@@ -25,5 +25,8 @@ public class CommentResponseDto {
 
     //사용자 이미지
     private String profileImg;
+
+    //작성자 ID
+    private Long authorId;
 }
 

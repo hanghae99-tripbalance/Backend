@@ -60,6 +60,7 @@ public class ReCommentService {
                 .author(reComment.getAuthor())
                 .content(reComment.getContent())
                 .profileImg(member.getProfileImg())
+                .authorId(reComment.getMember().getMemberId())
                 .build();
 
         // 객체 Return
@@ -103,6 +104,7 @@ public class ReCommentService {
                         .author(reComment.getAuthor())
                         .content(reComment.getContent())
                         .profileImg(member.getProfileImg())
+                        .authorId(reComment.getMember().getMemberId())
                         .build()),HttpStatus.OK);
 
     }

@@ -33,6 +33,7 @@ public class HeartService {
         // 1. 좋아요 기록이 있으면 삭제 ( = 좋아요 취소)
         if(heart.isPresent()) {
             heartRepository.deleteById(heart.get().getHeartId());
+            post.heartNumCancel();
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,"좋아요 취소"), HttpStatus.OK);
         } else {
             // 2.좋아요 기록이 없으면 저장한다.
@@ -40,6 +41,7 @@ public class HeartService {
                     .post(post)
                     .member(member)
                     .build();
+            post.heartNumUpdate();
             heartRepository.save(heartList);
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,"좋아요!"), HttpStatus.OK);
         }

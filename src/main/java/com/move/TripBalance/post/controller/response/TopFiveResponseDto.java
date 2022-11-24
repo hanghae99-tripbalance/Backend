@@ -10,8 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopFiveResponseDto {
+    private int heartNum;
     private Long postId;
     private String title;
     private String img;
-    private Long heartNum;
 }
