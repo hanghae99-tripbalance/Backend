@@ -13,8 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PostListResponseDto {
 
-    private int currentPage;
-    private Integer nextPage;
     private Boolean isLastPage;
     private List<PostResponseDto> postResponseDtoList;
 }

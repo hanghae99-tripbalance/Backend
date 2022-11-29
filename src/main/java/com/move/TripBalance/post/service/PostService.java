@@ -85,6 +85,7 @@ public class PostService {
 
         Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
 
+        Boolean isLastPage =  postList.isLast();
 
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : postList) {
@@ -102,8 +103,17 @@ public class PostService {
                             .build()
             );
         }
+
+        List<PostListResponseDto> postListResponseDtoList = new ArrayList<>();
+        postListResponseDtoList.add(
+                PostListResponseDto.builder()
+                        .postResponseDtoList(postResponseDtos)
+                        .isLastPage(isLastPage)
+                        .build()
+        );
+
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                postResponseDtos), HttpStatus.OK
+                postListResponseDtoList), HttpStatus.OK
         );
     }
 
@@ -238,9 +248,19 @@ public class PostService {
             );
         }
 
+        Boolean isLastPage =  postList.isLast();
+
+        List<PostListResponseDto> postListResponseDtoList = new ArrayList<>();
+        postListResponseDtoList.add(
+                PostListResponseDto.builder()
+                        .postResponseDtoList(postResponseDtos)
+                        .isLastPage(isLastPage)
+                        .build()
+        );
+
         //결과값
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                postResponseDtos), HttpStatus.OK
+                postListResponseDtoList), HttpStatus.OK
         );
     }
 
@@ -273,8 +293,19 @@ public class PostService {
                         .build());
             }
         }
+
+        Boolean isLastPage =  postList.isLast();
+
+        List<PostListResponseDto> postListResponseDtoList = new ArrayList<>();
+        postListResponseDtoList.add(
+                PostListResponseDto.builder()
+                        .postResponseDtoList(postResponseDtos)
+                        .isLastPage(isLastPage)
+                        .build()
+        );
+
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
-                postResponseDtos), HttpStatus.OK);
+                postListResponseDtoList), HttpStatus.OK);
     }
 
 
