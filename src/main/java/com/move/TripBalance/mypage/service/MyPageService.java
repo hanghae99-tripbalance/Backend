@@ -129,11 +129,19 @@ public class MyPageService {
 
         // 나의 밸런스 게임 결과 가져오기
         Member member = validateMember(request);
-        List<GameResult> gameResults = gameChoiceRepository.findAllByMember(member);
+        List<GameResult> allGame = gameChoiceRepository.findAllByMember(member);
+
+        // 게임 결과값이 있는 것만 리스트에 넣기
+        List<GameResult> trueGame = new ArrayList<>();
+        for(int i = 0; i < allGame.size(); i++){
+            if(allGame.get(i).getGameResult()!=null){
+                trueGame.add(allGame.get(i));
+            }
+        }
 
         // 게임 결과값 세기
         Map<String, Integer> map = new HashMap<>();
-        for (GameResult gameResult : gameResults) {
+        for (GameResult gameResult : trueGame) {
             Integer count = map.get(gameResult.getGameResult());
             if (count == null) {
                 map.put(gameResult.getGameResult(), 1);
@@ -408,10 +416,10 @@ public class MyPageService {
         Optional<Member> member = memberRepository.findById(memberId);
         Member memberInfo = member.get();
 
-        // 내가 작성한 포스트 repo에서 추출
+        // 회원이 작성한 포스트 repo에서 추출
         List<Post> memberPosts = postRepository.findAllByMember(memberInfo);
 
-        // 내가 작성한 포스트가 없을 때 메시지 반환
+        // 회원이 작성한 포스트가 없을 때 메시지 반환
         if(memberPosts.isEmpty()){
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                     noMemberPosts), HttpStatus.OK);
@@ -419,7 +427,7 @@ public class MyPageService {
 
         List<MyPostResponseDto> myPostList = new ArrayList<>();
 
-        // 내가 작성한 포스트 목록 반환
+        // 회원이 작성한 포스트 목록 반환
         for(Post post : memberPosts){
 
             // 이미지 파일 넣어주기
@@ -444,17 +452,25 @@ public class MyPageService {
         Member memberInfo = member.get();
 
         // 밸런스 게임 결과 가져오기
-        List<GameResult> gameResults = gameChoiceRepository.findAllByMember(memberInfo);
+        List<GameResult> allGame = gameChoiceRepository.findAllByMember(memberInfo);
+
+        // 게임 결과값이 있는 것만 리스트에 넣기
+        List<GameResult> trueGame = new ArrayList<>();
+        for(int i = 0; i < allGame.size(); i++){
+            if(allGame.get(i).getGameResult()!=null){
+                trueGame.add(allGame.get(i));
+            }
+        }
 
         // 게임 결과값이 없을 때 실행한 게임이 없다는 메시지 반환
-        if(gameResults.isEmpty()){
+        if(trueGame.isEmpty()){
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                     noMemberGames), HttpStatus.OK);
         }
 
         // 게임 결과값 세기
         Map<String, Integer> map = new HashMap<>();
-        for (GameResult gameResult : gameResults) {
+        for (GameResult gameResult : trueGame) {
             Integer count = map.get(gameResult.getGameResult());
             if (count == null) {
                 map.put(gameResult.getGameResult(), 1);
