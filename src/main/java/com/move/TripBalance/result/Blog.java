@@ -20,6 +20,7 @@ public class Blog {
     private String url;
     private String blogName;
     private String thumbnail;
+    private String location;
     public void setId(int id) {
         this.id = id;
     }

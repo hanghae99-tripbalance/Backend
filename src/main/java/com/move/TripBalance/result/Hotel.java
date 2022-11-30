@@ -23,4 +23,6 @@ public class Hotel {
 
     private String URL;
 
+    private String location;
+
 }
