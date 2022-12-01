@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-    Location findByLatAndLng(String lat, String lng);
+    Location findByResult(String result);
 
     Page<Location> findAll(Pageable pageable);
 }
