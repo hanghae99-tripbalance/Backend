@@ -58,7 +58,7 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: 52.79.89.235
+          host: 52.79.89.235 #테스트
           username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
