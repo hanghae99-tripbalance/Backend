@@ -1,5 +1,6 @@
 package com.move.TripBalance.mainpage.controller;
 
+import com.move.TripBalance.mainpage.Result;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.service.ApiService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class MainPageController {
 
     // sk api로 인구 통계 불러오기
     @GetMapping("/apimap")
-    public void getApi() throws IOException, ParseException {
-        apiService.getResultList();
+    public Result getApi() throws IOException, ParseException {
+        return apiService.getResultList();
     }
 
     // 위도, 경도 정보를 받아서 인구통계와 날씨 정보, 블로그, 숙소 정보 반환

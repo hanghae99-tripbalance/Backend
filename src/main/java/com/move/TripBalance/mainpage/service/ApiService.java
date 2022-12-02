@@ -26,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +49,18 @@ public class ApiService {
 
     private final ResultService resultService;
 
+    @Transactional
+    public void getRepo() {
+        System.out.println(resultRepository.findAllByLocationAndGender("전라남도 보성군", "male"));
+    }
+
     // sk API 를 통해 받아온 인구 통계 결과를 DB에 저장하기
-    public void getResultList() throws IOException, ParseException {
+    @Transactional
+    public Result getResultList() throws IOException, ParseException {
 
 //        // 지난 달의 정보를 지워준다
 //        resultRepository.deleteAll();
+        Result result = new Result();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -82,114 +90,126 @@ public class ApiService {
         // API 호출횟수 제한때문에 지역을 8개씩 끊어서 호출
         for (int j = 0; j < 3; j ++) {
 
-            //sk api 서비스를 호출하기 위한 appkey 를 application.properties 에서 불러오기
-            String appkey = environment.getProperty("sk.api.appkey." + j);
+        //sk api 서비스를 호출하기 위한 appkey 를 application.properties 에서 불러오기
+        String appkey = environment.getProperty("sk.api.appkey." + j);
 
-            // 새로운 페이지의 리스트를 위해 비워주기
-            locationList.clear();
+        // 새로운 페이지의 리스트를 위해 비워주기
+        locationList.clear();
 
-            // 0페이지부터, 8개씩, id를 기준으로 오름차순 페이징
-            Pageable pageable = PageRequest.of(j, 8, Sort.by("id").ascending());
+        // 0페이지부터, 8개씩, id를 기준으로 오름차순 페이징
+        Pageable pageable = PageRequest.of(2, 8, Sort.by("id").ascending());
 
-            // 새로운 페이지의 리스트 담아주기
-            locationList.addAll(locationRepository.findAll(pageable).toList());
+        // 새로운 페이지의 리스트 담아주기
+        locationList.addAll(locationRepository.findAll(pageable).toList());
 
-            for (int i = 0; i < locationList.size(); i++) {
 
-                String regionCode = locationList.get(i).getCode();
+        for (int i = 2; i < locationList.size(); i++) {
 
-                // 성별을 기준으로 정보 저장
-                for (String gender : genGrp) {
-                    Request requestGen = new Request.Builder()
-                            .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                    regionCode +
-                                    "?gender=" +
-                                    gender + "&ageGrp=all&companionType=all")
-                            .get()
-                            .addHeader("accept", "application/json")
-                            .addHeader("appkey", appkey)
-                            .build();
+            String regionCode = locationList.get(i).getCode();
 
-                    Response responseGen = client.newCall(requestGen).execute();
-                    String genString = responseGen.body().string();
+            // 성별을 기준으로 정보 저장
+            for (String gender : genGrp) {
+                Request requestGen = new Request.Builder()
+                        .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                                regionCode +
+                                "?gender=" +
+                                gender + "&ageGrp=all&companionType=all")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("appkey", appkey)
+                        .build();
 
-                    //복잡한 JSON 파일 파싱
-                    JSONParser parser = new JSONParser();
-                    JSONObject resJson = (JSONObject) parser.parse(genString);
-                    JSONObject contents = (JSONObject) resJson.get("contents");
-                    //지역 이름 추출
-                    String genDistrictName = (String) contents.get("districtName");
-                    JSONObject jsonRow = (JSONObject) contents.get("raw");
-                    //방문객 수 추출
-                    Long genResults = (Long) jsonRow.get("travelerCount");
+                Response responseGen = client.newCall(requestGen).execute();
+                String genString = responseGen.body().string();
 
-                    Result genderResults = new Result();
-                    genderResults.setPeopleCnt(genResults);
-                    genderResults.setGender(gender);
-                    genderResults.setLocation(genDistrictName);
-                    resultRepository.save(genderResults);
-                }
+                //복잡한 JSON 파일 파싱
+                JSONParser parser = new JSONParser();
+                JSONObject resJson = (JSONObject) parser.parse(genString);
+                JSONObject contents = (JSONObject) resJson.get("contents");
+                //지역 이름 추출
+                String genDistrictName = (String) contents.get("districtName");
+                JSONObject jsonRow = (JSONObject) contents.get("raw");
+                //방문객 수 추출
+                Long genResults = (Long) jsonRow.get("travelerCount");
 
-                // 연령대를 기준으로 정보 저장
-                for (String age : ageGrp) {
-                    Request requestAge = new Request.Builder()
-                            .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                    regionCode +
-                                    "?gender=all&ageGrp=" + age +
-                                    "&companionType=all")
-                            .get()
-                            .addHeader("accept", "application/json")
-                            .addHeader("appkey", appkey)
-                            .build();
+                Result genderResults = Result.builder()
+                        .gender(gender)
+                        .location(genDistrictName)
+                        .peopleCnt(genResults)
+                        .build();
+                resultRepository.saveAndFlush(genderResults);
+                System.out.println(genderResults);
+                System.out.println(resultRepository.findAllByLocationAndGender(genDistrictName, gender));
+            }
 
-                    Response responseAge = client.newCall(requestAge).execute();
-                    String ageString = responseAge.body().string();
+            // 연령대를 기준으로 정보 저장
+            for (String age : ageGrp) {
+                Request requestAge = new Request.Builder()
+                        .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                                regionCode +
+                                "?gender=all&ageGrp=" + age +
+                                "&companionType=all")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("appkey", appkey)
+                        .build();
 
-                    JSONParser parser = new JSONParser();
-                    JSONObject resJson = (JSONObject) parser.parse(ageString);
+                Response responseAge = client.newCall(requestAge).execute();
+                String ageString = responseAge.body().string();
 
-                    JSONObject arr = (JSONObject) resJson.get("contents");
-                    String ageDistrictName = (String) arr.get("districtName");
-                    JSONObject jsonRow = (JSONObject) arr.get("raw");
-                    Long ageResults = (Long) jsonRow.get("travelerCount");
+                JSONParser parser = new JSONParser();
+                JSONObject resJson = (JSONObject) parser.parse(ageString);
 
-                    Result ageRes = new Result();
-                    ageRes.setPeopleCnt(ageResults);
-                    ageRes.setAge(age);
-                    ageRes.setLocation(ageDistrictName);
-                    resultRepository.save(ageRes);
-                }
-                // 가족 형태를 기준으로 정보 저장
-                for (String comp : companion) {
-                    Request requestComp = new Request.Builder()
-                            .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
-                                    regionCode +
-                                    "?gender=all&ageGrp=all&companionType=" + comp)
-                            .get()
-                            .addHeader("accept", "application/json")
-                            .addHeader("appkey", appkey)
-                            .build();
+                JSONObject arr = (JSONObject) resJson.get("contents");
+                String ageDistrictName = (String) arr.get("districtName");
+                JSONObject jsonRow = (JSONObject) arr.get("raw");
+                Long ageResults = (Long) jsonRow.get("travelerCount");
 
-                    Response responseComp = client.newCall(requestComp).execute();
-                    String compString = responseComp.body().string();
+                Result ageRes = Result.builder()
+                        .age(age)
+                        .peopleCnt(ageResults)
+                        .location(ageDistrictName)
+                        .build();
+                resultRepository.saveAndFlush(ageRes);
+                System.out.println(ageRes);
+                System.out.println(resultRepository.findAllByLocationAndAge(ageDistrictName, age));
+            }
+            // 가족 형태를 기준으로 정보 저장
+            for (String comp : companion) {
+                Request requestComp = new Request.Builder()
+                        .url("https://apis.openapi.sk.com/puzzle/traveler-count/raw/monthly/districts/" +
+                                regionCode +
+                                "?gender=all&ageGrp=all&companionType=" + comp)
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("appkey", appkey)
+                        .build();
 
-                    JSONParser parser = new JSONParser();
-                    JSONObject resJson = (JSONObject) parser.parse(compString);
+                Response responseComp = client.newCall(requestComp).execute();
+                String compString = responseComp.body().string();
 
-                    JSONObject arr = (JSONObject) resJson.get("contents");
-                    String comDistrictName = (String) arr.get("districtName");
-                    JSONObject jsonRow = (JSONObject) arr.get("raw");
-                    Long comResults = (Long) jsonRow.get("travelerCount");
+                JSONParser parser = new JSONParser();
+                JSONObject resJson = (JSONObject) parser.parse(compString);
 
-                    Result compResults = new Result();
-                    compResults.setPeopleCnt(comResults);
-                    compResults.setType(comp);
-                    compResults.setLocation(comDistrictName);
-                    resultRepository.save(compResults);
-                }
+                JSONObject arr = (JSONObject) resJson.get("contents");
+                String comDistrictName = (String) arr.get("districtName");
+                JSONObject jsonRow = (JSONObject) arr.get("raw");
+                Long comResults = (Long) jsonRow.get("travelerCount");
+
+                Result compResults = Result.builder()
+                        .type(comp)
+                        .location(comDistrictName)
+                        .peopleCnt(comResults)
+                        .build();
+
+                resultRepository.saveAndFlush(compResults);
+                System.out.println(compResults);
+                System.out.println(resultRepository.findAllByLocationAndType(comDistrictName, comp));
             }
         }
+        }return result;
     }
+
 
     // repo에 저장된 인구 통계를 바탕으로 그래프를 그릴 정보를 추출
     public JSONArray getPeopleNum(LocationRequestDto requestDto) {
