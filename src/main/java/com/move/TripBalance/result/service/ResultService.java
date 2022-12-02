@@ -298,8 +298,10 @@ public class  ResultService {
         // 지역 정보에 맞는 블로그 DB 에서 가져오기
         List<Blog> blogList = blogRepository.findAllByLocation(location);
 
-        // JSONArray 에 블로그 크롤링 결과 담기
-        blogJson.add(blogList);
+        // JSONArray 에 블로그 크롤링 결과 6개만 담기
+        for(int i = 0; i < 6; i ++){
+            blogJson.add(blogList.get(i));
+        }
 
         return blogJson;
     }
