@@ -7,13 +7,6 @@ on:
 
 permissions: write-all
 
-# flow에서 사용할 변수
-env:
-  AWS_REGION: ap-northeast-2
-  CODE_DEPLOY_APPLICATION_NAME: TBDeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: team01
-
-
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -58,8 +51,8 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ip-172-31-32-205.ap-northeast-2.compute.internal
-          username: ubuntu
+          host: ec2-52-79-89-235.ap-northeast-2.compute.amazonaws.com
+          username: jueun
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
