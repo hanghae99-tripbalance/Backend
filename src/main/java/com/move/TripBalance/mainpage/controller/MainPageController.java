@@ -1,14 +1,11 @@
 package com.move.TripBalance.mainpage.controller;
 
+import com.move.TripBalance.mainpage.Result;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.service.ApiService;
-import com.move.TripBalance.result.service.ResultService;
-import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,8 +19,8 @@ public class MainPageController {
 
     // sk api로 인구 통계 불러오기
     @GetMapping("/apimap")
-    public void getApi() throws IOException, ParseException {
-        apiService.getResultList();
+    public Result getApi() throws IOException, ParseException {
+        return apiService.getResultList();
     }
 
     // 위도, 경도 정보를 받아서 인구통계와 날씨 정보, 블로그, 숙소 정보 반환

@@ -2,11 +2,14 @@ package com.move.TripBalance.result.service;
 
 import com.move.TripBalance.balance.GameResult;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
+import com.move.TripBalance.mainpage.Location;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.repository.LocationRepository;
 import com.move.TripBalance.mainpage.service.MapService;
 import com.move.TripBalance.result.Blog;
 import com.move.TripBalance.result.Hotel;
+import com.move.TripBalance.result.repository.BlogRepository;
+import com.move.TripBalance.result.repository.HotelRepository;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import lombok.Getter;
@@ -28,10 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
@@ -44,6 +44,8 @@ public class  ResultService {
     private final LocationRepository locationRepository;
 
     private final MapService mapService;
+    private final HotelRepository hotelRepository;
+    private final BlogRepository blogRepository;
 
     // 다음 크롤링 하기 위한 API 키
     @Value("${kakao.key}")
@@ -57,7 +59,7 @@ public class  ResultService {
 
 
     // 다음 블로그 크롤링
-    public ResponseEntity daumCraw(String query) {
+    public ResponseEntity daumCraw(String keyword) {
 
         // 크롤링 결과값 추출
         RestTemplate restTemplate = new RestTemplate();
@@ -74,7 +76,7 @@ public class  ResultService {
         // 전송할 최종 URL 만들기 및 인코딩
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(blogUrl)
-                .queryParam("query", query + " 여행")
+                .queryParam("query", keyword + " 여행")
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
@@ -131,17 +133,66 @@ public class  ResultService {
         return blogList;
     }
 
-    // 호텔 리스트 정보를 위해 gameId 에서 여행지 결과 도출
-    public String hotel(Long gameId) {
+    // 블로그 크롤링한 결과값 저장
+    public void saveBlogs() throws ParseException {
 
-        // 게임 아이디 확인
-        GameResult gameResult = isPresentGame(gameId);
+        // 저장된 지역 정보 전부 불러오기
+        List<Location> locationList = locationRepository.findAll();
 
-        // 게임 결과를 검색어에 포함하여 결과 도출
-        return gameResult.getGameResult();
+        // 블로그 정보 담아줄 리스트
+        List<Blog> blogList = new ArrayList<>();
+
+        // 지역 하나씩 꺼내오기
+        for(Location location : locationList) {
+
+            // 지역 이름 추출
+            String keyword = location.getResult();
+            // 결과값 JSON 파싱
+            JSONParser jsonParser = new JSONParser();
+
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(daumCraw(keyword).getBody().toString());
+
+            // documents만 도출
+            JSONArray docuArray = (JSONArray) jsonObject.get("documents");
+
+                for (int i = 0; i < docuArray.size(); i++) {
+
+                    JSONObject docuObject = (JSONObject) docuArray.get(i);
+                    if (!docuObject.get("thumbnail").toString().equals("")) {
+
+                        // 블로그 객체 생성
+                        Blog blog = new Blog();
+
+                        // 블로그 아이디 할당
+                        blog.setId(i);
+
+                        // 블로그 이름
+                        blog.setBlogName(docuObject.get("blogname").toString());
+
+                        // 연결되는 URL
+                        blog.setUrl(docuObject.get("url").toString());
+
+                        // 게시글 제목 태그 제거 후 넣기
+                        blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
+
+                        // 게시글 내용 태그 제거 후 넣기
+                        blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
+
+                        // 게시글 첫 이미지
+                        blog.setThumbnail(docuObject.get("thumbnail").toString());
+
+                        // 지역 정보
+                        blog.setLocation(keyword);
+
+                        // 블로그 DB에 저장
+                        blogRepository.save(blog);
+
+                        blogList.add(blog);
+                    }
+                }
+        }
     }
-
-    // 크롤링한 호텔 정보 파싱 - 4개
+    // 밸런스 게임 결과페이지를 위해 크롤링한 호텔 정보 파싱 - 4개
     public List<Hotel> getHotel(String keyword){
 
         // 호텔 검색 결과를 담을 리스트 생성
@@ -183,83 +234,104 @@ public class  ResultService {
         return hotels;
     }
 
-    // 메인페이지용 숙소 8개
-    public List<Hotel> getMoreHotel(String keyword){
-        // 호텔 검색 결과를 담을 리스트 생성
-        List<Hotel> hotels = new ArrayList<>();
+    // 숙소 정보 저장
+    public void saveHotels(){
 
-        // 검색 키워드에 지역이름 추가
-        String url = hotelUrl + keyword;
+        // 저장된 지역 정보 전부 불러오기
+        List<Location> locationList = locationRepository.findAll();
 
-        // 필요한 정보 파싱
-        try {
-            Document doc = Jsoup.connect(url).get();
-            Elements stockTableBody = doc.select("div.list_wrap li");
+        // 지역 하나씩 꺼내오기
+        for(Location location : locationList){
 
-            for (int i =0; i < 8; i++) {
-                Hotel hotel = new Hotel();
+            // 지역 이름 추출
+            String keyword = location.getResult();
 
-                // 호텔 정보 아이디 할당
-                int id = i;
+            // 검색 키워드에 지역이름 추가
+            String url = hotelUrl + keyword;
 
-                // 호텔 이름
-                String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
+            // 필요한 정보 파싱
+            try {
+                Document doc = Jsoup.connect(url).get();
+                Elements stockTableBody = doc.select("div.list_wrap li");
 
-                // 호텔 이미지
-                String img = stockTableBody.get(i).select("p.pic img.lazy").attr("data-original");
+                // 8개 저장
+                for (int i =0; i < 8; i++) {
+                    Hotel hotel = new Hotel();
 
-                // 호텔 URL
-                String URL = stockTableBody.get(i).select("a").attr("href");
+                    // 호텔 정보 아이디 할당
+                    //int id = i;
 
-                // 호텔 결과값 만들기
-                hotel.setId(id);
-                hotel.setTitle(text);
-                hotel.setImg(img);
-                hotel.setURL(URL);
-                hotels.add(hotel);
+                    // 호텔 이름
+                    String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
+
+                    // 호텔 이미지
+                    String img = stockTableBody.get(i).select("p.pic img.lazy").attr("data-original");
+
+                    // 호텔 URL
+                    String URL = stockTableBody.get(i).select("a").attr("href");
+
+                    // 호텔 결과값 만들기
+                    //hotel.setId(id);
+                    hotel.setTitle(text);
+                    hotel.setImg(img);
+                    hotel.setURL(URL);
+                    hotel.setLocation(keyword);
+
+                    // 호텔 정보 저장
+                    hotelRepository.save(hotel);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return hotels;
     }
 
-    // 지도의 지역 정보 넘겨서 블로그 정보 크롤링
-    public JSONArray getMapBlog(LocationRequestDto requestDto) throws ParseException {
+    // 지도의 지역 정보 넘겨서 DB에 저장된 블로그 정보 불러오기
+    public JSONArray getMapBlog(LocationRequestDto requestDto) {
 
         // 지역 정보 가져오기
         String location = requestDto.getLocation();
 
-        // 공백 기준으로 두번째 단어 출력
-        String[] strArr = location.split(" ");
-        String locResult = strArr[1];
-
         // 최종 결과값에 넣기 위한 JSON 파싱
         JSONArray blogJson = new JSONArray();
 
-        // JSONArray 에 블로그 크롤링 결과 담기
-        blogJson.add(getAllBlog(locResult));
+        // 지역 정보에 맞는 블로그 DB 에서 가져오기
+        List<Blog> blogList = blogRepository.findAllByLocation(location);
+
+        // JSONArray 에 블로그 크롤링 결과 6개만 담기
+        for(int i = 0; i < 6; i ++){
+            blogJson.add(blogList.get(i));
+        }
 
         return blogJson;
     }
 
-    // 지도의 지역 정보 넘겨서 숙소 정보 크롤링
+    // 지도의 지역 정보 넘겨서 DB에 저장된 숙소 정보 불러오기
     public JSONArray getMapHotel(LocationRequestDto requestDto){
 
         // 지역 정보 가져오기
         String location = requestDto.getLocation();
 
-        // 공백 기준으로 두번째 단어 출력
-        String[] strArr = location.split(" ");
-        String locResult = strArr[1];
-
         // 최종 결과값에 넣기 위한 JSON 파싱
         JSONArray blogJson = new JSONArray();
 
+        // 지역 정보에 맞는 숙소 DB 에서 가져오기
+        List<Hotel> hotelList = hotelRepository.findAllByLocation(location);
+
         // JSONArray 에 블로그 크롤링 결과 담기
-        blogJson.add(getMoreHotel(locResult));
+        blogJson.add(hotelList);
 
         return blogJson;
+    }
+
+    // 호텔 리스트 정보를 위해 gameId 에서 여행지 결과 도출
+    public String hotel(Long gameId) {
+
+        // 게임 아이디 확인
+        GameResult gameResult = isPresentGame(gameId);
+
+        // 게임 결과를 검색어에 포함하여 결과 도출
+        return gameResult.getGameResult();
     }
 
     // 게임 결과를 통해 블로그 정보 크롤링
