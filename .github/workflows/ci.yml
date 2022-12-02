@@ -60,7 +60,7 @@ jobs:
         with:
           host: ec2-52-79-89-235.ap-northeast-2.compute.amazonaws.com
           username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE }}
+          key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
             docker pull jueun62/spring-cicd:${GITHUB_SHA::7}
