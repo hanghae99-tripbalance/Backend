@@ -38,11 +38,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ApiService {
     //sk api 서비스를 호출하기 위한 appkey
-    @Value(value = "${sk.api.appkey}")
+    @Value(value = "${{ secrets.SK_API_0 }}")
     String appkey;
 
     // 법정지역코드를 불러오기 위한 api key
-    @Value(value = "${region.api.code}")
+    @Value(value = "${{ secrets.REGION_KEY }}")
     String regionCode;
 
     private final ResultRepository resultRepository;
