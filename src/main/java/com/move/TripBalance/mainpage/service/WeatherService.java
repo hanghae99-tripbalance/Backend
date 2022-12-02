@@ -31,7 +31,7 @@ import java.util.Objects;
 public class WeatherService {
 
     // 공공데이터 포털 키
-    @Value(value = "${weather.key}")
+    @Value(value = "${{ secrets.WEATHER_KEY }")
     String key;
 
     // 기상청 api를 통해 날씨 정보 불러오기
