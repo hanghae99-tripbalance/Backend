@@ -46,7 +46,7 @@ public class  ResultService {
     private final MapService mapService;
 
     // 다음 크롤링 하기 위한 API 키
-    @Value("${kakao.key}")
+    @Value("${{ secrets.KAKAO_MAP_KEY }}")
     private String key;
 
     // 다음 블로그 크롤링 주소
