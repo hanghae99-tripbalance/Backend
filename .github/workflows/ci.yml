@@ -36,7 +36,7 @@ jobs:
           character set server: 'utf8'
           mysql database: 'tb'
           mysql user: ${{ secrets.MYSQL_ID }}
-          mysql password: ${{ secrets.MYSQL_PASSWORD }} # github Secret 탭에서 설정하세요!
+          mysql password: ${{ secrets.MYSQL_PASSWORD }} 
 
       # 3) gradlew 권한 설정
       - name: Grant execute permission for gradlew
