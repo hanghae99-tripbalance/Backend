@@ -26,7 +26,6 @@ jobs:
       - name: Setup MySQL
         uses: samin/mysql-action@v1
         with:
-          character set server: 'utf8'
           mysql database: 'tb'
           mysql user: ${{ secrets.MYSQL_ID }}
           mysql password: ${{ secrets.MYSQL_PASSWORD }} 
@@ -52,7 +51,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ec2-52-79-89-235.ap-northeast-2.compute.amazonaws.com
-          username: jueun
+          username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
