@@ -58,7 +58,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t tb-cicd .
-          docker tag spring-cicd jueun62/tb-cicd:${GITHUB_SHA::7}
+          docker tag tb-cicd jueun62/tb-cicd:${GITHUB_SHA::7}
           docker push jueun62/tb-cicd:${GITHUB_SHA::7}
 
       # 6) 배포
