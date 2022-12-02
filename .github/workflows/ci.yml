@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'temurin'
+          distribution: 'adopt'
 
       - name: Setup MySQL
         uses: samin/mysql-action@v1
@@ -57,9 +57,9 @@ jobs:
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t spring-cicd .
-          docker tag spring-cicd jueun62/spring-cicd:${GITHUB_SHA::7}
-          docker push jueun62/spring-cicd:${GITHUB_SHA::7}
+          docker build -t tb-cicd .
+          docker tag spring-cicd jueun62/tb-cicd:${GITHUB_SHA::7}
+          docker push jueun62/tb-cicd:${GITHUB_SHA::7}
 
       # 6) 배포
       - name: Deploy
@@ -70,7 +70,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
-            docker pull jueun62/spring-cicd:${GITHUB_SHA::7}
-            docker tag jueun62/spring-cicd:${GITHUB_SHA::7} spring-cicd
+            docker pull jueun62/tb-cicd:${GITHUB_SHA::7}
+            docker tag jueun62/tb-cicd:${GITHUB_SHA::7} tb-cicd
             docker stop server
-            docker run -d --rm --name server -p 443:8080 spring-cicd
+            docker run -d --rm --name server -p 443:8080 tb-cicd
