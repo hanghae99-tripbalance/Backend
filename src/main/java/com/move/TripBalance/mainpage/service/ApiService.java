@@ -6,7 +6,9 @@ import com.move.TripBalance.mainpage.apiDB.ResultAge;
 import com.move.TripBalance.mainpage.apiDB.ResultComp;
 import com.move.TripBalance.mainpage.apiDB.ResultGender;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
+import com.move.TripBalance.mainpage.repository.LocationCustomRepositoryImpl;
 import com.move.TripBalance.mainpage.repository.LocationRepository;
+import com.move.TripBalance.mainpage.repository.ResultCustomRepositoryImpl;
 import com.move.TripBalance.mainpage.repository.ResultRepository;
 import com.move.TripBalance.result.service.ResultService;
 import com.squareup.okhttp.OkHttpClient;
@@ -41,18 +43,15 @@ public class ApiService {
     // application.properties 에서 appkey 정보 추출을 위한 import
     @Inject
     private Environment environment;
-    private final ResultRepository resultRepository;
-    private final LocationRepository locationRepository;
+    private final ResultCustomRepositoryImpl resultRepository;
+
+    private final ResultRepository resultRepo;
+    private final LocationCustomRepositoryImpl locationRepository;
 
     private final MapService mapService;
     private final WeatherService weatherService;
 
     private final ResultService resultService;
-
-    @Transactional
-    public void getRepo() {
-        System.out.println(resultRepository.findAllByLocationAndGender("전라남도 보성군", "male"));
-    }
 
     // sk API 를 통해 받아온 인구 통계 결과를 DB에 저장하기
     @Transactional
@@ -97,7 +96,7 @@ public class ApiService {
         locationList.clear();
 
         // 0페이지부터, 8개씩, id를 기준으로 오름차순 페이징
-        Pageable pageable = PageRequest.of(2, 8, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(j, 8, Sort.by("id").ascending());
 
         // 새로운 페이지의 리스트 담아주기
         locationList.addAll(locationRepository.findAll(pageable).toList());
@@ -137,9 +136,7 @@ public class ApiService {
                         .location(genDistrictName)
                         .peopleCnt(genResults)
                         .build();
-                resultRepository.saveAndFlush(genderResults);
-                System.out.println(genderResults);
-                System.out.println(resultRepository.findAllByLocationAndGender(genDistrictName, gender));
+                resultRepo.save(genderResults);
             }
 
             // 연령대를 기준으로 정보 저장
@@ -170,10 +167,9 @@ public class ApiService {
                         .peopleCnt(ageResults)
                         .location(ageDistrictName)
                         .build();
-                resultRepository.saveAndFlush(ageRes);
-                System.out.println(ageRes);
-                System.out.println(resultRepository.findAllByLocationAndAge(ageDistrictName, age));
+                resultRepo.save(ageRes);
             }
+
             // 가족 형태를 기준으로 정보 저장
             for (String comp : companion) {
                 Request requestComp = new Request.Builder()
@@ -202,9 +198,7 @@ public class ApiService {
                         .peopleCnt(comResults)
                         .build();
 
-                resultRepository.saveAndFlush(compResults);
-                System.out.println(compResults);
-                System.out.println(resultRepository.findAllByLocationAndType(comDistrictName, comp));
+                resultRepo.save(compResults);
             }
         }
         }return result;
