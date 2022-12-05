@@ -91,6 +91,7 @@ public class  ResultService {
 
     // 블로그 크롤링 결과 세팅
     public List<Blog> setBlogCraw(String query) throws ParseException {
+
         // 결과값 JSON 파싱
         JSONParser jsonParser = new JSONParser();
 
@@ -106,6 +107,8 @@ public class  ResultService {
         for (int i = 0; i < 6; i++) {
 
             JSONObject docuObject = (JSONObject) docuArray.get(i);
+
+            // 썸네일 사진이 있는 결과만 추출
             if (!docuObject.get("thumbnail").toString().equals("")) {
 
                 // 블로그 객체 생성
@@ -259,6 +262,7 @@ public class  ResultService {
 
         // 지역 정보에 맞는 블로그 DB 에서 가져오기
         blogJson.add(blogRepository.findAllByLocation(location));
+        System.out.println(blogJson);
 
         return blogJson;
     }
@@ -274,6 +278,7 @@ public class  ResultService {
 
         // 지역 정보에 맞는 숙소 DB 에서 가져오기
         List<Hotel> hotelList = hotelRepository.findAllByLocation(location);
+        System.out.println(hotelList);
 
         // JSONArray 에 블로그 크롤링 결과 담기
         hotelJson.add(hotelList);

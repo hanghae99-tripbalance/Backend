@@ -34,8 +34,11 @@ public class WeatherService {
     @Value(value = "${weather.key}")
     String key;
 
+    // 공공데이터 기상청 api 주소
+    String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+
     // 기상청 api를 통해 날씨 정보 불러오기
-    public JSONObject getWeather(LocationRequestDto requestDto) throws IOException, ParseException {
+    public JSONObject getWeather(LocationRequestDto requestDto) throws ParseException, IOException {
         // api에 맞는 날짜 포맷 변환
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         LocalTime now = LocalTime.now();
@@ -64,20 +67,20 @@ public class WeatherService {
         String lonRes = requestDto.getLng().substring(0, 3);
 
         // 기상청 api 주소에서 정보 추출하기
-        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("12", "UTF-8")); /*한 페이지 결과 수*/
-        urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON) Default: XML*/
-        urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*매일 당일 발표*/
-        urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(time, "UTF-8")); /*05시 발표(정시단위) */
-        urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(latRes, "UTF-8")); /*예보지점의 X 좌표값*/
-        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(lonRes, "UTF-8")); /*예보지점의 Y 좌표값*/
-        URL url = new URL(urlBuilder.toString());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); // 서비스 키
+        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); // 페이지 번호
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("12", "UTF-8")); // 한 페이지 결과 수
+        urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); // 요청 자료 형식
+        urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); // 매일 당일 발표
+        urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(time, "UTF-8")); // 최신 자료 업데이트
+        urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(latRes, "UTF-8")); // 예보지점의 X 좌표값
+        urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(lonRes, "UTF-8")); // 예보지점의 Y 좌표값
+        URL urlResult = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) urlResult.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
-        System.out.println("Response code: " + conn.getResponseCode());
+
         BufferedReader rd;
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -95,12 +98,16 @@ public class WeatherService {
 
         // REST API return 데이터 추출
 
+        // 결과값 JSON 파싱
         JSONParser jsonParser = new JSONParser();
 
         //JSON데이터를 넣어 JSON Object 로 만들어 준다.
         JSONObject obj = (JSONObject) jsonParser.parse(line);
         JSONObject parse_response = (JSONObject) obj.get("response");
-        JSONObject parse_body = (JSONObject) parse_response.get("body");// response 로 부터 body 찾아오기
+
+        // response 로 부터 body 찾아오기
+        JSONObject parse_body = (JSONObject) parse_response.get("body");
+
         JSONObject itemObj = (JSONObject) parse_body.get("items");
         JSONArray arr = (JSONArray) itemObj.get("item");
 
@@ -108,9 +115,11 @@ public class WeatherService {
         String category;
         JSONObject datalist = new JSONObject();
         for (int i = 0; i < arr.size(); i++) {
+
             // 해당 item을 가져오기
             valueObj = (JSONObject) arr.get(i);
             Object obsrValue = valueObj.get("fcstValue");
+
             // 해당 category를 가져오기
             category = (String) valueObj.get("category");
 
