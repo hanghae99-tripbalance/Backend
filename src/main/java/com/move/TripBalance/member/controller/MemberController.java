@@ -58,7 +58,7 @@ public class MemberController {
   }
 
   // 카카오 로그인
-  @GetMapping("/ouath/kakao")
+  @GetMapping("/oauth/kakao")
   public ResponseEntity<PrivateResponseBody> kakaoSignup(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
     return kakaoMemberService.kakaoLogin(code, response);
   }
