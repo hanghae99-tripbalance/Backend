@@ -132,6 +132,9 @@ public class  ResultService {
                 // 게시글 첫 이미지
                 blog.setThumbnail(docuObject.get("thumbnail").toString());
 
+                // 지역명
+                blog.setLocation(query);
+
                 // 반환할 리스트에 블로그 정보 추가
                 blogList.add(blog);
             }
@@ -194,6 +197,7 @@ public class  ResultService {
                 hotel.setTitle(text);
                 hotel.setImg(img);
                 hotel.setURL(URL);
+                hotel.setLocation(keyword);
                 hotels.add(hotel);
             }
         } catch (Exception e) {
