@@ -15,43 +15,34 @@ public class ResultCustomRepositoryImpl implements ResultCustomRepository{
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public List<Result> findByLocation(String districtName) {
-        return jpaQueryFactory.selectFrom(result)
-                .where(result.location.eq(districtName))
-                .fetch();
-    }
-
     // 지역명과 방문 형태로 찾기
     @Override
     public Result findByLocationAndType(String districtName, String comp) {
-        return jpaQueryFactory.selectFrom(result)
-                .where(
-                        result.location.eq(districtName),
-                        result.type.eq(comp)
-                )
+        Result typeResult = jpaQueryFactory.selectFrom(result)
+                .where(result.location.eq(districtName)
+                        .and(result.type.eq(comp)))
                 .fetchOne();
+        return typeResult;
     }
 
     // 지역명과 연령대로 찾기
     @Override
     public Result findByLocationAndAge(String districtName, String age) {
-        return jpaQueryFactory.selectFrom(result)
-                .where(
-                        result.location.eq(districtName),
-                        result.age.eq(age)
-                )
+        Result ageResult = jpaQueryFactory.selectFrom(result)
+                .where(result.location.eq(districtName)
+                        .and(result.age.eq(age)))
                 .fetchOne();
+        return ageResult;
     }
 
     // 지역명과 성별로 찾기
     @Override
     public Result findByLocationAndGender(String districtName, String gender) {
-        return jpaQueryFactory.selectFrom(result)
-                .where(
-                        result.location.eq(districtName),
-                        result.gender.eq(gender)
-                )
+        Result genResult = jpaQueryFactory.selectFrom(result)
+                .where(result.location.eq(districtName)
+                        .and(result.gender.eq(gender)))
                 .fetchOne();
+
+        return genResult;
     }
 }

@@ -318,6 +318,7 @@ public class ApiService {
 
         return resultObj;
     }
+
     // 연령별 그룹
     public List<String> ageGroup (){
 
