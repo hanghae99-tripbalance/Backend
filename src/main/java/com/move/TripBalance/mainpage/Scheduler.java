@@ -27,15 +27,14 @@ public class Scheduler {
     private final HotelRepository hotelRepository;
     private final BlogRepository blogRepository;
 
-    // 매달 1일 23시에 저번달의 인구 통계를 가져오는 스케쥴러
-    @Scheduled(cron = "0 0 23 1 * ?")
+    // 매달 2일 오전 5시에 저번달의 인구 통계를 가져오는 스케쥴러
+    @Scheduled(cron = "0 0 5 2 * ?", zone = "Asia/Seoul")
     public void mapResult() throws IOException, ParseException {
         apiService.getResultList();
     }
 
-
     // 매일 오전 4시에 메인페이지의 호텔, 블로그 정보 크롤링하는 스케줄러
-    @Scheduled(cron = "0 0 4 * * ?")
+    @Scheduled(cron = "0 0 4 * * ?", zone = "Asia/Seoul")
     public void saveResult() throws ParseException {
         hotelRepository.deleteAll();
         blogRepository.deleteAll();

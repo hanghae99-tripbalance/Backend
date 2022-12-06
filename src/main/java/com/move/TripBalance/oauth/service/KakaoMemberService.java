@@ -39,11 +39,11 @@ public class KakaoMemberService {
     private final TokenProvider tokenProvider;
 
     // 카카오 로그인 restApi Key
-    @Value(value = "${ouath.kakao.api}")
+    @Value(value = "${oauth.kakao.api}")
     String restApi;
 
     // 카카오 로그인 리다이렉트 URI
-    @Value(value = "${ouath.kakao.redirect}")
+    @Value(value = "${oauth.kakao.redirect}")
     String redirectUri;
 
     // 카카오 로그인 과정
@@ -211,8 +211,6 @@ public class KakaoMemberService {
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(kakaoMember);
         tokenToHeaders(tokenDto, response);
-        System.out.println(response.getHeader("Authorization"));
-        System.out.println(response.getHeader("Refresh-Token"));
 
         // Message 및 Status를 Return
         return new ResponseEntity<>(new PrivateResponseBody

@@ -5,10 +5,11 @@ import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.mainpage.Location;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.repository.LocationRepository;
-import com.move.TripBalance.mainpage.service.MapService;
 import com.move.TripBalance.result.Blog;
 import com.move.TripBalance.result.Hotel;
+import com.move.TripBalance.result.repository.BlogCustomRepositoryImpl;
 import com.move.TripBalance.result.repository.BlogRepository;
+import com.move.TripBalance.result.repository.HotelCustomRepositoryImpl;
 import com.move.TripBalance.result.repository.HotelRepository;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
@@ -42,10 +43,12 @@ public class  ResultService {
     private final GameChoiceRepository gameChoiceRepository;
 
     private final LocationRepository locationRepository;
+    private final HotelCustomRepositoryImpl hotelRepository;
 
-    private final MapService mapService;
-    private final HotelRepository hotelRepository;
-    private final BlogRepository blogRepository;
+    private final HotelRepository hotelRepo;
+    private final BlogCustomRepositoryImpl blogRepository;
+
+    private final BlogRepository blogRepo;
 
     // 다음 크롤링 하기 위한 API 키
     @Value("${kakao.key}")
@@ -86,8 +89,8 @@ public class  ResultService {
         return response; //내용 반환
     }
 
-    // 블로그 크롤링한 결과값 담아서 보내기
-    public List<Blog> getAllBlog(String query) throws ParseException {
+    // 블로그 크롤링 결과 세팅
+    public List<Blog> setBlogCraw(String query) throws ParseException {
 
         // 결과값 JSON 파싱
         JSONParser jsonParser = new JSONParser();
@@ -100,10 +103,13 @@ public class  ResultService {
         // 리스트에 담아서 반환
         List<Blog> blogList = new ArrayList<>();
 
-        for(int i = 0; i< docuArray.size(); i++){
+        // 6개씩만 저장
+        for (int i = 0; i < 6; i++) {
 
             JSONObject docuObject = (JSONObject) docuArray.get(i);
-            if(!docuObject.get("thumbnail").toString().equals("")){
+
+            // 썸네일 사진이 있는 결과만 추출
+            if (!docuObject.get("thumbnail").toString().equals("")) {
 
                 // 블로그 객체 생성
                 Blog blog = new Blog();
@@ -118,13 +124,16 @@ public class  ResultService {
                 blog.setUrl(docuObject.get("url").toString());
 
                 // 게시글 제목 태그 제거 후 넣기
-                blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]",""));
+                blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
 
                 // 게시글 내용 태그 제거 후 넣기
-                blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]",""));
+                blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
 
                 // 게시글 첫 이미지
                 blog.setThumbnail(docuObject.get("thumbnail").toString());
+
+                // 지역명
+                blog.setLocation(query);
 
                 // 반환할 리스트에 블로그 정보 추가
                 blogList.add(blog);
@@ -133,65 +142,27 @@ public class  ResultService {
         return blogList;
     }
 
+
     // 블로그 크롤링한 결과값 저장
     public void saveBlogs() throws ParseException {
 
         // 저장된 지역 정보 전부 불러오기
         List<Location> locationList = locationRepository.findAll();
 
-        // 블로그 정보 담아줄 리스트
-        List<Blog> blogList = new ArrayList<>();
-
         // 지역 하나씩 꺼내오기
         for(Location location : locationList) {
 
             // 지역 이름 추출
             String keyword = location.getResult();
-            // 결과값 JSON 파싱
-            JSONParser jsonParser = new JSONParser();
 
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(daumCraw(keyword).getBody().toString());
+            // 블로그 크롤링한 결과값
+            List<Blog> blogList = setBlogCraw(keyword);
 
-            // documents만 도출
-            JSONArray docuArray = (JSONArray) jsonObject.get("documents");
-
-                for (int i = 0; i < docuArray.size(); i++) {
-
-                    JSONObject docuObject = (JSONObject) docuArray.get(i);
-                    if (!docuObject.get("thumbnail").toString().equals("")) {
-
-                        // 블로그 객체 생성
-                        Blog blog = new Blog();
-
-                        // 블로그 아이디 할당
-                        blog.setId(i);
-
-                        // 블로그 이름
-                        blog.setBlogName(docuObject.get("blogname").toString());
-
-                        // 연결되는 URL
-                        blog.setUrl(docuObject.get("url").toString());
-
-                        // 게시글 제목 태그 제거 후 넣기
-                        blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
-
-                        // 게시글 내용 태그 제거 후 넣기
-                        blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
-
-                        // 게시글 첫 이미지
-                        blog.setThumbnail(docuObject.get("thumbnail").toString());
-
-                        // 지역 정보
-                        blog.setLocation(keyword);
-
-                        // 블로그 DB에 저장
-                        blogRepository.save(blog);
-
-                        blogList.add(blog);
-                    }
-                }
+            // 블로그 DB에 저장
+            blogRepo.saveAll(blogList);
         }
     }
+
     // 밸런스 게임 결과페이지를 위해 크롤링한 호텔 정보 파싱 - 4개
     public List<Hotel> getHotel(String keyword){
 
@@ -226,6 +197,7 @@ public class  ResultService {
                 hotel.setTitle(text);
                 hotel.setImg(img);
                 hotel.setURL(URL);
+                hotel.setLocation(keyword);
                 hotels.add(hotel);
             }
         } catch (Exception e) {
@@ -234,7 +206,7 @@ public class  ResultService {
         return hotels;
     }
 
-    // 숙소 정보 저장
+    // 숙소 정보 저장 - 8개
     public void saveHotels(){
 
         // 저장된 지역 정보 전부 불러오기
@@ -258,9 +230,6 @@ public class  ResultService {
                 for (int i =0; i < 8; i++) {
                     Hotel hotel = new Hotel();
 
-                    // 호텔 정보 아이디 할당
-                    //int id = i;
-
                     // 호텔 이름
                     String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
 
@@ -278,7 +247,7 @@ public class  ResultService {
                     hotel.setLocation(keyword);
 
                     // 호텔 정보 저장
-                    hotelRepository.save(hotel);
+                    hotelRepo.save(hotel);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -296,12 +265,7 @@ public class  ResultService {
         JSONArray blogJson = new JSONArray();
 
         // 지역 정보에 맞는 블로그 DB 에서 가져오기
-        List<Blog> blogList = blogRepository.findAllByLocation(location);
-
-        // JSONArray 에 블로그 크롤링 결과 6개만 담기
-        for(int i = 0; i < 6; i ++){
-            blogJson.add(blogList.get(i));
-        }
+        blogJson.add(blogRepository.findAllByLocation(location));
 
         return blogJson;
     }
@@ -313,15 +277,15 @@ public class  ResultService {
         String location = requestDto.getLocation();
 
         // 최종 결과값에 넣기 위한 JSON 파싱
-        JSONArray blogJson = new JSONArray();
+        JSONArray hotelJson = new JSONArray();
 
         // 지역 정보에 맞는 숙소 DB 에서 가져오기
         List<Hotel> hotelList = hotelRepository.findAllByLocation(location);
 
         // JSONArray 에 블로그 크롤링 결과 담기
-        blogJson.add(hotelList);
+        hotelJson.add(hotelList);
 
-        return blogJson;
+        return hotelJson;
     }
 
     // 호텔 리스트 정보를 위해 gameId 에서 여행지 결과 도출
@@ -335,8 +299,8 @@ public class  ResultService {
     }
 
     // 게임 결과를 통해 블로그 정보 크롤링
-    public ResponseEntity<PrivateResponseBody> getGameBlog(String query) throws ParseException {
-        List<Blog> gameBlog = getAllBlog(query);
+    public ResponseEntity<PrivateResponseBody> getGameBlog(String query) throws ParseException{
+        List<Blog> gameBlog = setBlogCraw(query);
         return new ResponseEntity<>(new PrivateResponseBody<>(StatusCode.OK, gameBlog), HttpStatus.OK);
     }
 

@@ -18,14 +18,15 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+
+repositories {
+    mavenCentral()
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -60,6 +61,7 @@ dependencies {
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 
     // JSONObject
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -105,7 +107,6 @@ configurations {
     //jsp
     //implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
     //implementation 'javax.servlet:jstl'
-
 
 }
 
