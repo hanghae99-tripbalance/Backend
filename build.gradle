@@ -59,6 +59,8 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     // JSONObject
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20220924'
@@ -76,12 +78,16 @@ dependencies {
 }
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
-def querydslDir = "$buildDir/generated/'querydsl'"
+def querydslDir = "$buildDir/generated/querydsl"
 
 // JPA 사용여부 및 사용 경로 설정
 querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
 }
 
 // querydsl 컴파일 시 사용할 옵션 설정
@@ -95,8 +101,6 @@ configurations {
         extendsFrom annotationProcessor
     }
     querydsl.extendsFrom compileClasspath
-
-
 
     //jsp
     //implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'

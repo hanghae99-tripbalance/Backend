@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum StatusCode {
     OK(HttpStatus.OK, "0", "응답이 정상 처리 되었습니다."),
-    LOGIN_MEMBER_ID_FAIL(HttpStatus.NOT_FOUND, "110", "해당 하는 memberId 가 없습니다"),
+    LOGIN_EMAIL_FAIL(HttpStatus.NOT_FOUND, "110", "해당 하는 Email이 없습니다"),
     LOGIN_PASSWORD_FAIL(HttpStatus.BAD_REQUEST, "111", "Password가 틀렸습니다."),
     LOGIN_WRONG_SIGNATURE_JWT_TOKEN(HttpStatus.BAD_REQUEST, "112", "잘못된 JWT 서명입니다."),
     LOGIN_EXPIRED_JWT_TOKEN(HttpStatus.BAD_REQUEST, "113", "만료된 JWT 토큰입니다."),
