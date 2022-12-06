@@ -266,7 +266,6 @@ public class  ResultService {
 
         // 지역 정보에 맞는 블로그 DB 에서 가져오기
         blogJson.add(blogRepository.findAllByLocation(location));
-        System.out.println(blogJson);
 
         return blogJson;
     }
@@ -282,7 +281,6 @@ public class  ResultService {
 
         // 지역 정보에 맞는 숙소 DB 에서 가져오기
         List<Hotel> hotelList = hotelRepository.findAllByLocation(location);
-        System.out.println(hotelList);
 
         // JSONArray 에 블로그 크롤링 결과 담기
         hotelJson.add(hotelList);
