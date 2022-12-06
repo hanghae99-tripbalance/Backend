@@ -46,5 +46,5 @@
 <img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
 <h3>Design</h3>
 <p align=>
-<img src="https://img.shields.io/badge/서보영-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<img src="https://img.shields.io/badge/서보영-FCC624?style=for-the-badge&logo=spring&logoColor=white">
 <br>
