@@ -12,6 +12,7 @@ import com.move.TripBalance.heart.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
 import com.move.TripBalance.post.controller.response.TopFiveResponseDto;
 import com.move.TripBalance.post.repository.MediaRepository;
+import com.move.TripBalance.post.repository.PostCustomRepository;
 import com.move.TripBalance.post.repository.PostRepository;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateException;
@@ -44,6 +45,7 @@ public class PostService {
     private final MediaRepository mediaRepository;
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    private final PostCustomRepository postCustomRepository;
 
     //게시글 생성
     @Transactional
@@ -83,7 +85,7 @@ public class PostService {
         // 페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
         pageable = PageRequest.of(page, 20, Sort.by("createdAt").descending());
 
-        Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<Post> postList = postCustomRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         Boolean isLastPage =  postList.isLast();
 
