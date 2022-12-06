@@ -85,7 +85,7 @@ public class MemberService {
         // DB에 Email 확인
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.LOGIN_MEMBER_ID_FAIL, null), HttpStatus.OK);
+                    (StatusCode.LOGIN_EMAIL_FAIL, null), HttpStatus.OK);
         }
 
         // DB에 PW 확인
@@ -119,7 +119,7 @@ public class MemberService {
         // 회원 확인
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.LOGIN_MEMBER_ID_FAIL, null), HttpStatus.OK);
+                    (StatusCode.LOGIN_EMAIL_FAIL, null), HttpStatus.OK);
         }
 
         tokenProvider.deleteRefreshToken(member);
