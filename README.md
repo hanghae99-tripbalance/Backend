@@ -14,7 +14,7 @@
 
 <div>
 
-![initial](https://user-images.githubusercontent.com/77573910/205982215-c80b3e05-a507-4fd5-94e3-a282395b67eb.png)
+![image](https://user-images.githubusercontent.com/77573910/206008466-f0abc659-948e-433d-adc8-5f6f7000c7c4.png)
 
 </div>
 
