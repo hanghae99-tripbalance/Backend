@@ -1,32 +1,26 @@
 ### 실전 프로젝트
-<h1 align="center"><b>🏝Trip Balane🏝</b></h3>
-<h3 align="center">여행을 가고싶은데 어디로 갈지 모르겠다면,</h3>
-<h3 align="center">밸런스 게임을 통해서 정해보세요!</h3>
-<h4 align="center">📆 2022.11.04 ~ 2022.12.16</h4>
+<h1><b>🏝Trip Balane🏝</b></h3>
+<h3>여행을 가고싶은데 어디로 갈지 모르겠다면,</h3>
+<h3>밸런스 게임을 통해서 정해보세요!</h3>
+<h4>📆프로젝트 기간 2022.11.04 ~ 2022.12.16</h4>
 
 -------
 
-<h2 align="center"> 🚌 서비스 소개</h2>
+<h2> 🚌 서비스 소개</h2>
 
 서비스 소개랑 이미지를 넣어주세요~
 
-<h2 align="center"> ⚙ 서비스 아키텍쳐 ⚙</h2>
+<h2> ⚙ 서비스 아키텍쳐 ⚙</h2>
 
-<div align="center">
+<div>
 
 ![initial](https://user-images.githubusercontent.com/77573910/205982215-c80b3e05-a507-4fd5-94e3-a282395b67eb.png)
 
 </div>
 
+<h2><b>🛠 Skill 🛠</b></h2>
 
-
-<br>
-<h3 align="center"><b>🛠 Stacks 🛠</b></h3>
-<p align="center">
-
-<div align="center">
-
-
+<div>
 
 |🔩 Part|🛠 Stacks 🛠|
 |:---:|:---:|
@@ -39,5 +33,18 @@
 
 </div>
 
-
+<h3>Front End</h3>
+<p align=>
+<img src="https://img.shields.io/badge/곽규현-61DAFB?style=for-the-badge&logo=react&logoColor=white">
+<img src="https://img.shields.io/badge/조광익-61DAFB?style=for-the-badge&logo=react&logoColor=white">
+<img src="https://img.shields.io/badge/이중오-61DAFB?style=for-the-badge&logo=react&logoColor=white">
+<img src="https://img.shields.io/badge/박성우-61DAFB?style=for-the-badge&logo=react&logoColor=white">
+<h3>Back End</h3>
+<p align=>
+<img src="https://img.shields.io/badge/김용문-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<img src="https://img.shields.io/badge/방주은-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<h3>Design</h3>
+<p align=>
+<img src="https://img.shields.io/badge/서보영-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
 <br>
