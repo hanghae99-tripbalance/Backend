@@ -33,18 +33,20 @@
 
 </div>
 
-<h3>Front End</h3>
+<h2> 🎲 ERD 🎲 </h2>
+
+![Trip Balance](https://user-images.githubusercontent.com/77573910/206089915-1eb07e1e-a774-4ff4-b086-11dcd3ac03e1.png)
+
+
+<h3>👨‍💻 Member </h3>
 <p align=>
-<img src="https://img.shields.io/badge/곽규현-61DAFB?style=for-the-badge&logo=react&logoColor=white">
-<img src="https://img.shields.io/badge/조광익-61DAFB?style=for-the-badge&logo=react&logoColor=white">
-<img src="https://img.shields.io/badge/이중오-61DAFB?style=for-the-badge&logo=react&logoColor=white">
-<img src="https://img.shields.io/badge/박성우-61DAFB?style=for-the-badge&logo=react&logoColor=white">
-<h3>Back End</h3>
-<p align=>
+
 <img src="https://img.shields.io/badge/김용문-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<img src="https://img.shields.io/badge/방주은-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<h3>Design</h3>
-<p align=>
-<img src="https://img.shields.io/badge/서보영-FCC624?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/dydrkflqmdl"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/dydrkflqmdl"/></a>
 <br>
+<img src="https://img.shields.io/badge/방주은-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/jueun330"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/jueun330"/></a>
+<br>
+<img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/chunngamm"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/chunngamm"/></a>
+
