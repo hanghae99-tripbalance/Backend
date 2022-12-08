@@ -1,15 +1,17 @@
 package com.move.TripBalance.post.service;
 
+import com.move.TripBalance.heart.Heart;
+import com.move.TripBalance.heart.repository.HeartRepository;
+import com.move.TripBalance.member.Member;
 import com.move.TripBalance.member.repository.MemberRepository;
-import com.move.TripBalance.mypage.controller.response.MyPostResponseDto;
-import com.move.TripBalance.post.*;
+import com.move.TripBalance.post.Local;
+import com.move.TripBalance.post.LocalDetail;
+import com.move.TripBalance.post.Media;
+import com.move.TripBalance.post.Post;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
 import com.move.TripBalance.post.controller.response.OtherPostResponseDto;
 import com.move.TripBalance.post.controller.response.PostListResponseDto;
 import com.move.TripBalance.post.controller.response.PostResponseDto;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.heart.Heart;
-import com.move.TripBalance.heart.repository.HeartRepository;
 import com.move.TripBalance.post.controller.response.TopFiveResponseDto;
 import com.move.TripBalance.post.repository.MediaRepository;
 import com.move.TripBalance.post.repository.PostCustomRepository;
@@ -19,6 +21,7 @@ import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +39,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.move.TripBalance.post.QMedia.media;
+import static com.move.TripBalance.heart.QHeart.heart;
+import static com.move.TripBalance.post.QPost.post;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -46,6 +53,8 @@ public class PostService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final PostCustomRepository postCustomRepository;
+    private final JPAQueryFactory jpaQueryFactory;
+
 
     //게시글 생성
     @Transactional
@@ -87,7 +96,7 @@ public class PostService {
 
         Page<Post> postList = postCustomRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-        Boolean isLastPage =  postList.isLast();
+        Boolean isLastPage = postList.isLast();
 
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : postList) {
@@ -132,9 +141,14 @@ public class PostService {
         //좋아요 갯수
         Long heartNum = heartRepository.countByPost(post);
 
+        //미디어 목록 10개만 불러오기
+        List<Media> mediaList = jpaQueryFactory
+                .selectFrom(media)
+                .where(media.post.postId.eq(post.getPostId()))
+                .limit(10)
+                .fetch();
 
-        //미디어 목록
-        List<Media> mediaList = mediaRepository.findAllByPost(post);
+        //리스트에 담아주기
         List<String> list = new ArrayList<>();
         for (int i = 0; i < mediaList.size(); i++) {
             list.add(mediaList.get(i).getImgURL());
@@ -250,7 +264,7 @@ public class PostService {
             );
         }
 
-        Boolean isLastPage =  postList.isLast();
+        Boolean isLastPage = postList.isLast();
 
         List<PostListResponseDto> postListResponseDtoList = new ArrayList<>();
         postListResponseDtoList.add(
@@ -296,7 +310,7 @@ public class PostService {
             }
         }
 
-        Boolean isLastPage =  postList.isLast();
+        Boolean isLastPage = postList.isLast();
 
         List<PostListResponseDto> postListResponseDtoList = new ArrayList<>();
         postListResponseDtoList.add(
@@ -340,22 +354,30 @@ public class PostService {
     // 좋아요 순으로 포스트 5개
     @Transactional
     public ResponseEntity<PrivateResponseBody> getTop5Posts() {
-        List<Heart> hearts = heartRepository.findAll();
-        List<Post> fivePostList = postRepository.findTop10ByHeartsIn(hearts);
-        List<Post> result = fivePostList.stream().distinct().sorted(Comparator.comparing(Post::getHeartNum).reversed()).collect(Collectors.toList());
+        List<Long> hearts = jpaQueryFactory
+                .select(heart.post.postId)
+                .from(heart)
+                .groupBy(heart.post.postId)
+                .orderBy(heart.count().desc())
+                .limit(10)
+                .fetch();
 
         List<TopFiveResponseDto> list = new ArrayList<>();
 
-        for(Post post : result){
-            // 미디어, 좋아요 갯수 추출 및 할당
-
-            List<Media> oneimage = mediaRepository.findFirstByPost(post);
+        for (Long posts : hearts) {
+            Post post1 = jpaQueryFactory
+                    .selectFrom(post)
+                    .where(post.postId.eq(posts))
+                    .orderBy(post.heartNum.desc())
+                    .fetchOne();
+            Long heartNum = heartRepository.countByPost(post1);
+            List<Media> oneimage = mediaRepository.findFirstByPost(post1);
             String img = oneimage.get(0).getImgURL();
             list.add(TopFiveResponseDto.builder()
-                    .postId(post.getPostId())
-                    .title(post.getTitle())
+                    .postId(post1.getPostId())
+                    .title(post1.getTitle())
                     .img(img)
-                    .heartNum(post.getHeartNum())
+                    .heartNum(heartNum)
                     .build());
         }
 
