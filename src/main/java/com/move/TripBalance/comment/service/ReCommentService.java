@@ -7,6 +7,7 @@ import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
 import com.move.TripBalance.comment.controller.response.ReCommentResponseDto;
 import com.move.TripBalance.comment.repository.ReCommentRepository;
 import com.move.TripBalance.member.Member;
+import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
@@ -36,7 +37,7 @@ public class ReCommentService {
             HttpServletRequest request
     ) {
         //멤버 확인
-        Member member = validateMember(request);
+        Member member = authorizeToken(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
@@ -75,24 +76,16 @@ public class ReCommentService {
             ReCommentRequestDto requestDto,
             HttpServletRequest request
     ) {
-        //멤버 확인
-        Member member = validateMember(request);
-        if (null == member) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
-        }
-        //댓글 확인
+        Member member = authorizeToken(request);
         Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-        if (null == comment) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
-        }
-        //대댓글 확인
         ReComment reComment = isPresentReComment(reCommentId);
-        if (null == reComment) {
-            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_RECOMMENT, null), HttpStatus.OK);
-        }
-        //대댓글을 작성한 멤버 확인
+        //멤버 확인
         if (reComment.validateMember(member)) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST, null), HttpStatus.OK);
+        }
+        //댓글 확인
+        if (null == comment) {
+            return new ResponseEntity<>(new PrivateResponseBody(StatusCode.BAD_REQUEST_COMMENT, null), HttpStatus.OK);
         }
         //대댓글 수정
         reComment.update(requestDto);
@@ -116,7 +109,7 @@ public class ReCommentService {
             HttpServletRequest request
     ) {
         //멤버확인
-        Member member = validateMember(request);
+        Member member = authorizeToken(request);
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody(StatusCode.LOGIN_EXPIRED_JWT_TOKEN, null), HttpStatus.OK);
         }
@@ -143,12 +136,24 @@ public class ReCommentService {
         Optional<ReComment> optionalReComment = reCommentRepository.findById(id);
         return optionalReComment.orElse(null);
     }
-    //멤버 확인
+    // 토큰 확인 여부
     @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return null;
+    public Member authorizeToken(HttpServletRequest request) {
+
+        // Access 토큰 유효성 확인
+        if (request.getHeader("Authorization") == null) {
+            throw new PrivateException(StatusCode.LOGIN_EXPIRED_JWT_TOKEN);
         }
-        return tokenProvider.getMemberFromAuthentication();
+
+        // Refresh 토큰 유요성 확인
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            throw new PrivateException(StatusCode.LOGIN_EXPIRED_JWT_TOKEN);
+        }
+
+        // Access, Refresh 토큰 유효성 검증이 완료되었을 경우 인증된 유저 정보 저장
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        // 인증된 유저 정보 반환
+        return member;
     }
 }
