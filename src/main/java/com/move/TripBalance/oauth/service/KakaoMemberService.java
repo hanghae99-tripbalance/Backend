@@ -135,7 +135,6 @@ public class KakaoMemberService {
         String profileImg = jsonNode.get("properties")
                 .get("profile_image").asText();
 
-        System.out.println("카카오 사용자 정보: " + id + ", " + nickName + ", " + email + ", " + profileImg);
 
         return new KakaoMemberInfoDto(id, nickName, email, profileImg);
     }

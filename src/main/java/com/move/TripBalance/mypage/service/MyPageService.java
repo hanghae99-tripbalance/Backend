@@ -183,9 +183,11 @@ public class MyPageService {
         Optional<Member> mem = memberRepository.findById(member.getMemberId());
 
         //nickname 체크
-        if (null != memberService.isPresentNickName(requestDto.getNickName())) {
-            return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+        if(!requestDto.getNickName().equals(member.getNickName())) {
+            if (null != memberService.isPresentNickName(requestDto.getNickName())) {
+                return new ResponseEntity<>(new PrivateResponseBody
+                        (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+            }
         }
 
         // 회원정보 업데이트
@@ -544,7 +546,6 @@ public class MyPageService {
             result.add(strResult);
         }
 
-        System.out.println("총 게임 통계");
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 result), HttpStatus.OK);
     }
@@ -589,7 +590,6 @@ public class MyPageService {
         }
         List<String> tenResult = result.subList(0, 9);
 
-        System.out.println("총 게임 통계");
         return new ResponseEntity<>(new PrivateResponseBody(StatusCode.OK,
                 tenResult), HttpStatus.OK);
     }

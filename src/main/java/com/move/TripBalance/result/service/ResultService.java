@@ -103,13 +103,10 @@ public class  ResultService {
         // 리스트에 담아서 반환
         List<Blog> blogList = new ArrayList<>();
 
-        // 6개씩만 저장
-        for (int i = 0; i < 6; i++) {
+        for(int i = 0; i< docuArray.size(); i++){
 
             JSONObject docuObject = (JSONObject) docuArray.get(i);
-
-            // 썸네일 사진이 있는 결과만 추출
-            if (!docuObject.get("thumbnail").toString().equals("")) {
+            if(!docuObject.get("thumbnail").toString().equals("")){
 
                 // 블로그 객체 생성
                 Blog blog = new Blog();
@@ -127,7 +124,7 @@ public class  ResultService {
                 blog.setTitle(docuObject.get("title").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
 
                 // 게시글 내용 태그 제거 후 넣기
-                blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]", ""));
+                blog.setContents(docuObject.get("contents").toString().replaceAll("[<b></b>]", "").replaceAll("[&#39;|&#map;|&amp;|&lt;|&gt;]",""));
 
                 // 게시글 첫 이미지
                 blog.setThumbnail(docuObject.get("thumbnail").toString());

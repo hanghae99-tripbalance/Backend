@@ -1,6 +1,7 @@
 package com.move.TripBalance.member.controller.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MemberRequestDto {
 
   @NotBlank
