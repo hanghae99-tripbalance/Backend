@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Service
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class HeartService {
     private final HeartRepository heartRepository;
     private final PostService postService;
+    private final EntityManager em;
 
     // 좋아요, 좋아요취소
     public ResponseEntity<PrivateResponseBody> heart (Long  postId, UserDetailsImpl userDetails) {
