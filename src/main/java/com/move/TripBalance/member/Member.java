@@ -67,7 +67,8 @@ public class Member extends Timestamped {
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    //게임 결과
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY, orphanRemoval = true)
     private List<GameResult> gameResults = new ArrayList<>();
 
     @Override

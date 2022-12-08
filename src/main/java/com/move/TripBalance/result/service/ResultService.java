@@ -115,7 +115,7 @@ public class  ResultService {
                 Blog blog = new Blog();
 
                 // 블로그 아이디 할당
-                blog.setId(i);
+                blog.setId((long) i);
 
                 // 블로그 이름
                 blog.setBlogName(docuObject.get("blogname").toString());
@@ -181,7 +181,7 @@ public class  ResultService {
                 Hotel hotel = new Hotel();
 
                 // 호텔 정보 아이디 할당
-                int id = i;
+                Long id = Long.valueOf(i);
 
                 // 호텔 이름
                 String text = stockTableBody.get(i).select("p.pic img.lazy").attr("alt");
@@ -264,8 +264,10 @@ public class  ResultService {
         // 최종 결과값에 넣기 위한 JSON 파싱
         JSONArray blogJson = new JSONArray();
 
+        List<Blog> blogList = blogRepository.findAllByLocation(location);
+
         // 지역 정보에 맞는 블로그 DB 에서 가져오기
-        blogJson.add(blogRepository.findAllByLocation(location));
+        blogJson.add(blogList);
 
         return blogJson;
     }

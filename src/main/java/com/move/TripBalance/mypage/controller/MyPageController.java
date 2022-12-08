@@ -26,7 +26,7 @@ public class MyPageController {
     // 내 정보 수정
     @SwaggerAnnotation
     @PutMapping("/mypage/setinfo")
-    public MyPageResponseDto setMyInfo(@RequestBody MyPageRequestDto requestDto, HttpServletRequest request){
+    public ResponseEntity<PrivateResponseBody> setMyInfo(@RequestBody MyPageRequestDto requestDto, HttpServletRequest request){
         return myPageService.setMyInfo(requestDto, request);}
 
     // 나의 밸런스 게임 여행지 통계

@@ -33,12 +33,12 @@ public class Scheduler {
         apiService.getResultList();
     }
 
-    // 매일 오전 4시에 메인페이지의 호텔, 블로그 정보 크롤링하는 스케줄러
-    @Scheduled(cron = "0 0 4 * * ?", zone = "Asia/Seoul")
-    public void saveResult() throws ParseException {
-        hotelRepository.deleteAll();
-        blogRepository.deleteAll();
-        resultService.saveHotels();
-        resultService.saveBlogs();
-    }
+//    // 매일 오전 4시에 메인페이지의 호텔, 블로그 정보 크롤링하는 스케줄러
+//    @Scheduled(cron = "0 0 4 * * ?", zone = "Asia/Seoul")
+//    public void saveResult() throws ParseException {
+//        hotelRepository.deleteAll();
+//        blogRepository.deleteAll();
+//        resultService.saveHotels();
+//        resultService.saveBlogs();
+//    }
 }

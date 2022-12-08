@@ -20,6 +20,8 @@ public class BlogCustomRepositoryImpl implements BlogCustomRepository {
     public List<Blog> findAllByLocation(String location) {
         return jpaQueryFactory.selectFrom(blog)
                 .where(blog.location.eq(location))
+                .limit(6)
                 .fetch();
     }
+
 }

@@ -11,6 +11,7 @@ import com.move.TripBalance.member.Member;
 import com.move.TripBalance.member.SNS;
 import com.move.TripBalance.member.repository.MemberRepository;
 import com.move.TripBalance.member.repository.SNSRepository;
+import com.move.TripBalance.member.service.MemberService;
 import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import com.move.TripBalance.mypage.controller.response.MyHeartResponseDto;
 import com.move.TripBalance.mypage.controller.response.MyPageResponseDto;
@@ -57,6 +58,7 @@ public class MyPageService {
     private final GameChoiceRepository gameChoiceRepository;
     private final CommentRepository commentRepository;
     private final QuestionRepository questionRepository;
+    private final MemberService memberService;
 
     // 내가 작성한 포스트가 없을 때 메시지
     @Value(value = "${mypage.posts.notfound}")
@@ -169,7 +171,7 @@ public class MyPageService {
     }
 
     // 내 정보 수정하기
-    public MyPageResponseDto setMyInfo(MyPageRequestDto requestDto, HttpServletRequest request){
+    public ResponseEntity<PrivateResponseBody> setMyInfo(MyPageRequestDto requestDto, HttpServletRequest request){
 
         // 로그인 한 회원 정보 추출
         Member member = validateMember(request);
@@ -179,6 +181,12 @@ public class MyPageService {
 
         // 회원정보 찾기
         Optional<Member> mem = memberRepository.findById(member.getMemberId());
+
+        //nickname 체크
+        if (null != memberService.isPresentNickName(requestDto.getNickName())) {
+            return new ResponseEntity<>(new PrivateResponseBody
+                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+        }
 
         // 회원정보 업데이트
         mem.get().updateInfo(requestDto);
@@ -252,7 +260,8 @@ public class MyPageService {
                 .gameCnt(gameCnt)
                 .build();
 
-        return responseDto;
+        return new ResponseEntity<>(new PrivateResponseBody
+                (StatusCode.OK, responseDto), HttpStatus.OK);
     }
 
     // 내가 작성한 글 목록
