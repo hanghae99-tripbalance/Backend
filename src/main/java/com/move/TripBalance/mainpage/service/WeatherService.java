@@ -67,7 +67,7 @@ public class WeatherService {
         String lonRes = requestDto.getLng().substring(0, 3);
 
         // 기상청 api 주소에서 정보 추출하기
-        StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
+        StringBuilder urlBuilder = new StringBuilder(url); // url
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + key); // 서비스 키
         urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); // 페이지 번호
         urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("12", "UTF-8")); // 한 페이지 결과 수
