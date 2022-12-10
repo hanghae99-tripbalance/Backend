@@ -40,19 +40,19 @@ public class MemberService {
         // Email 중복 확인
         if (null != isPresentEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.IM_USED);
         }
 
         // NickName 중복 확인
         if (null != isPresentNickName(requestDto.getNickName())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.IM_USED);
         }
 
         // 비밀번호 중복 확인
         if (!requestDto.getPw().equals(requestDto.getPwConfirm())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_PASSWORD, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_PASSWORD, null), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
 
         // 회원 정보 저장
@@ -85,13 +85,13 @@ public class MemberService {
         // DB에 Email 확인
         if (null == member) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.LOGIN_EMAIL_FAIL, null), HttpStatus.OK);
+                    (StatusCode.LOGIN_EMAIL_FAIL, null), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
 
         // DB에 PW 확인
         if (!member.validatePassword(passwordEncoder, requestDto.getPw())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.LOGIN_PASSWORD_FAIL, null), HttpStatus.OK);
+                    (StatusCode.LOGIN_PASSWORD_FAIL, null), HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
 
         //토큰 지급
@@ -135,7 +135,7 @@ public class MemberService {
         //email 체크
         if (null != isPresentEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_EMAIL, null), HttpStatus.IM_USED);
         }
 
         // Message 및 Status를 Return
@@ -149,7 +149,7 @@ public class MemberService {
         //nickname 체크
         if (null != isPresentNickName(requestDto.getNickName())) {
             return new ResponseEntity<>(new PrivateResponseBody
-                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.OK);
+                    (StatusCode.DUPLICATED_NICKNAME, null), HttpStatus.IM_USED);
         }
 
         // Message 및 Status를 Return
