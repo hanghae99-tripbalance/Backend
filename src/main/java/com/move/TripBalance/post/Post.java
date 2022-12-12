@@ -47,8 +47,8 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private int pet;
 
-    // 게시글 내용
-    @Column(nullable = false)
+    // 게시글 내용(1000자 이하 저장될수있게 진행)
+    @Column(nullable = false, length = 1000)
     private String content;
 
     // 좋아요 개수
