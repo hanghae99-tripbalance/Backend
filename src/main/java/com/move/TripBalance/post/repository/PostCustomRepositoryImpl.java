@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.move.TripBalance.post.QPost.post;
+import static com.move.TripBalance.post.domain.QPost.post;
 
 @Repository
 @RequiredArgsConstructor

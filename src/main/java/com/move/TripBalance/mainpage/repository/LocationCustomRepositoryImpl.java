@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.move.TripBalance.mainpage.QLocation.location;
+import static com.move.TripBalance.mainpage.domain.QLocation.location;
 
 @Repository
 @RequiredArgsConstructor

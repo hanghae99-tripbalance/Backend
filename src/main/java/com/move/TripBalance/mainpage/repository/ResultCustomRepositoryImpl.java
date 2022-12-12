@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 
-import static com.move.TripBalance.mainpage.QResult.result;
+import static com.move.TripBalance.mainpage.domain.QResult.result;
 
 @Repository
 @RequiredArgsConstructor

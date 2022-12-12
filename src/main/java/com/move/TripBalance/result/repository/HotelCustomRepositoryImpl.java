@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.move.TripBalance.result.QHotel.hotel;
+import static com.move.TripBalance.result.domain.QHotel.hotel;
 
 @Repository
 @RequiredArgsConstructor

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.move.TripBalance.result.QBlog.blog;
+import static com.move.TripBalance.result.domain.QBlog.blog;
 
 @Repository
 @RequiredArgsConstructor

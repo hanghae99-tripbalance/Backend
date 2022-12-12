@@ -37,9 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.move.TripBalance.post.QMedia.media;
-import static com.move.TripBalance.heart.QHeart.heart;
-import static com.move.TripBalance.post.QPost.post;
+import static com.move.TripBalance.post.domain.QMedia.media;
+import static com.move.TripBalance.heart.domain.QHeart.heart;
+import static com.move.TripBalance.post.domain.QPost.post;
 
 @Service
 @RequiredArgsConstructor
