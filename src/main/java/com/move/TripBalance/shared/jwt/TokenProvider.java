@@ -1,7 +1,7 @@
 package com.move.TripBalance.shared.jwt;
 
 import com.move.TripBalance.shared.exception.controller.response.ResponseDto;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.jwt.controller.request.TokenDto;
 import com.move.TripBalance.shared.jwt.repository.RefreshTokenRepository;

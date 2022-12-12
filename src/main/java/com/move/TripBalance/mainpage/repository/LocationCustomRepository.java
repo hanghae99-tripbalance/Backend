@@ -1,6 +1,6 @@
 package com.move.TripBalance.mainpage.repository;
 
-import com.move.TripBalance.mainpage.Location;
+import com.move.TripBalance.mainpage.domain.Location;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

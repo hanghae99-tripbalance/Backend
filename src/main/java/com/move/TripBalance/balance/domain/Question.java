@@ -1,7 +1,5 @@
-package com.move.TripBalance.balance;
+package com.move.TripBalance.balance.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.post.Post;
 import lombok.Getter;
 import lombok.Setter;
 

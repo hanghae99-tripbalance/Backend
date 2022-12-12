@@ -1,4 +1,4 @@
-package com.move.TripBalance.result;
+package com.move.TripBalance.result.domain;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.move.TripBalance.oauth;
+package com.move.TripBalance.oauth.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.move.TripBalance.mainpage.repository;
 
-import com.move.TripBalance.mainpage.Result;
+import com.move.TripBalance.mainpage.domain.Result;
 
 
 public interface ResultCustomRepository {

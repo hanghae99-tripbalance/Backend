@@ -1,7 +1,7 @@
 package com.move.TripBalance.member.service;
 
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.member.SNS;
+import com.move.TripBalance.member.domain.Member;
+import com.move.TripBalance.member.domain.SNS;
 import com.move.TripBalance.member.controller.request.IdCkeckRequestDto;
 import com.move.TripBalance.member.controller.request.LoginRequestDto;
 import com.move.TripBalance.member.controller.request.MemberRequestDto;

@@ -1,14 +1,14 @@
 package com.move.TripBalance.mypage.service;
 
-import com.move.TripBalance.balance.GameResult;
+import com.move.TripBalance.balance.domain.GameResult;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.balance.repository.QuestionRepository;
-import com.move.TripBalance.comment.Comment;
+import com.move.TripBalance.comment.domain.Comment;
 import com.move.TripBalance.comment.repository.CommentRepository;
-import com.move.TripBalance.heart.Heart;
+import com.move.TripBalance.heart.domain.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.member.SNS;
+import com.move.TripBalance.member.domain.Member;
+import com.move.TripBalance.member.domain.SNS;
 import com.move.TripBalance.member.repository.MemberRepository;
 import com.move.TripBalance.member.repository.SNSRepository;
 import com.move.TripBalance.member.service.MemberService;
@@ -16,15 +16,14 @@ import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import com.move.TripBalance.mypage.controller.response.MyHeartResponseDto;
 import com.move.TripBalance.mypage.controller.response.MyPageResponseDto;
 import com.move.TripBalance.mypage.controller.response.MyPostResponseDto;
-import com.move.TripBalance.post.Media;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Media;
+import com.move.TripBalance.post.domain.Post;
 import com.move.TripBalance.post.repository.MediaRepository;
 import com.move.TripBalance.post.repository.PostRepository;
 import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
 import com.move.TripBalance.shared.jwt.TokenProvider;
-import io.swagger.models.auth.In;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -38,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service

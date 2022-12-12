@@ -1,7 +1,7 @@
 package com.move.TripBalance.post.repository;
 
-import com.move.TripBalance.post.Media;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Media;
+import com.move.TripBalance.post.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

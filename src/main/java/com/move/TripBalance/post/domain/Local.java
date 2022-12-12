@@ -1,4 +1,4 @@
-package com.move.TripBalance.post;
+package com.move.TripBalance.post.domain;
 
 public enum Local {
 

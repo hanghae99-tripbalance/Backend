@@ -1,6 +1,6 @@
 package com.move.TripBalance.shared.jwt.service;
 
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 
 import com.move.TripBalance.member.repository.MemberRepository;

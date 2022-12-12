@@ -1,4 +1,4 @@
-package com.move.TripBalance.balance;
+package com.move.TripBalance.balance.domain;
 
 import lombok.Getter;
 import lombok.Setter;

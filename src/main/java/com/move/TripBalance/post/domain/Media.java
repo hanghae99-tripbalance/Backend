@@ -1,4 +1,4 @@
-package com.move.TripBalance.post;
+package com.move.TripBalance.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

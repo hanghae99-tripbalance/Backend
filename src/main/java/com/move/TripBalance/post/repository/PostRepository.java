@@ -1,9 +1,8 @@
 package com.move.TripBalance.post.repository;
 
-import com.move.TripBalance.heart.Heart;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.post.Local;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.heart.domain.Heart;
+import com.move.TripBalance.member.domain.Member;
+import com.move.TripBalance.post.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

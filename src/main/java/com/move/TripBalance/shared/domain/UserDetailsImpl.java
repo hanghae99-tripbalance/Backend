@@ -1,6 +1,6 @@
 package com.move.TripBalance.shared.domain;
 
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.Authority;
 import java.util.ArrayList;
 import java.util.Collection;

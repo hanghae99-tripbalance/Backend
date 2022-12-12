@@ -3,8 +3,8 @@ package com.move.TripBalance.comment.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.move.TripBalance.comment.Comment;
-import com.move.TripBalance.comment.ReComment;
+import com.move.TripBalance.comment.domain.Comment;
+import com.move.TripBalance.comment.domain.ReComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

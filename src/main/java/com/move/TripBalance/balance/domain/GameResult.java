@@ -1,9 +1,9 @@
-package com.move.TripBalance.balance;
+package com.move.TripBalance.balance.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.balance.controller.response.ChoiceResponseDto;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;

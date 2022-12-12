@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.domain.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

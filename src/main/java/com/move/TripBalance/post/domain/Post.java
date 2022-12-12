@@ -1,11 +1,11 @@
-package com.move.TripBalance.post;
+package com.move.TripBalance.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.domain.Timestamped;
-import com.move.TripBalance.comment.Comment;
-import com.move.TripBalance.heart.Heart;
+import com.move.TripBalance.comment.domain.Comment;
+import com.move.TripBalance.heart.domain.Heart;
 import lombok.*;
 
 import javax.persistence.*;

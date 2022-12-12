@@ -1,10 +1,9 @@
 package com.move.TripBalance.balance.repository;
 
-import com.move.TripBalance.balance.Question;
+import com.move.TripBalance.balance.domain.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

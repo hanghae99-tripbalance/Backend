@@ -1,6 +1,6 @@
 package com.move.TripBalance.result.repository;
 
-import com.move.TripBalance.result.Blog;
+import com.move.TripBalance.result.domain.Blog;
 
 import java.util.List;
 

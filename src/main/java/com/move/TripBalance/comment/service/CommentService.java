@@ -1,18 +1,18 @@
 package com.move.TripBalance.comment.service;
 
-import com.move.TripBalance.comment.Comment;
-import com.move.TripBalance.comment.ReComment;
+import com.move.TripBalance.comment.domain.Comment;
+import com.move.TripBalance.comment.domain.ReComment;
 import com.move.TripBalance.comment.controller.request.CommentRequestDto;
 import com.move.TripBalance.comment.controller.response.CommentResponseDto;
 import com.move.TripBalance.comment.controller.response.ReCommentResponseDto;
 import com.move.TripBalance.comment.repository.CommentRepository;
 import com.move.TripBalance.comment.repository.ReCommentRepository;
 import com.move.TripBalance.post.service.PostService;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Post;
 import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

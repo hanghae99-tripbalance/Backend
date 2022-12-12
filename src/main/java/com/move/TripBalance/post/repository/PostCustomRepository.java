@@ -1,14 +1,8 @@
 package com.move.TripBalance.post.repository;
 
-import com.move.TripBalance.heart.Heart;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface PostCustomRepository {
 

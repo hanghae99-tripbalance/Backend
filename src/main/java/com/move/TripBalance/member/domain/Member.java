@@ -1,11 +1,11 @@
-package com.move.TripBalance.member;
+package com.move.TripBalance.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.balance.GameResult;
+import com.move.TripBalance.balance.domain.GameResult;
 import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;
 import com.move.TripBalance.shared.Authority;
 import com.move.TripBalance.shared.domain.Timestamped;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Post;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;

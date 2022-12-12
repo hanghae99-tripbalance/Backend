@@ -1,24 +1,11 @@
 package com.move.TripBalance.post.controller;
 
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.post.Local;
-import com.move.TripBalance.post.LocalDetail;
-import com.move.TripBalance.post.Media;
-import com.move.TripBalance.post.Post;
-import com.move.TripBalance.post.controller.request.PostRequestDto;
+import com.move.TripBalance.post.domain.Media;
 import com.move.TripBalance.post.repository.MediaRepository;
 import com.move.TripBalance.post.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @DisplayName("게시글 테스트")
 class PostControllerTest {

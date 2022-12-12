@@ -1,14 +1,14 @@
 package com.move.TripBalance.balance.service;
 
-import com.move.TripBalance.balance.GameResult;
-import com.move.TripBalance.balance.Question;
-import com.move.TripBalance.balance.QuestionTree;
+import com.move.TripBalance.balance.domain.GameResult;
+import com.move.TripBalance.balance.domain.Question;
+import com.move.TripBalance.balance.domain.QuestionTree;
 import com.move.TripBalance.balance.controller.response.ChoiceResponseDto;
 import com.move.TripBalance.balance.controller.response.TripResponseDto;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
 import com.move.TripBalance.balance.repository.QuestionRepository;
 import com.move.TripBalance.balance.repository.QuestionTreeRepository;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;

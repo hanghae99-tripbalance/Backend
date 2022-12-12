@@ -1,4 +1,4 @@
-package com.move.TripBalance.member;
+package com.move.TripBalance.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.move.TripBalance.mypage.controller.request.MyPageRequestDto;

@@ -1,12 +1,12 @@
 package com.move.TripBalance.result.service;
 
-import com.move.TripBalance.balance.GameResult;
+import com.move.TripBalance.balance.domain.GameResult;
 import com.move.TripBalance.balance.repository.GameChoiceRepository;
-import com.move.TripBalance.mainpage.Location;
+import com.move.TripBalance.mainpage.domain.Location;
 import com.move.TripBalance.mainpage.controller.request.LocationRequestDto;
 import com.move.TripBalance.mainpage.repository.LocationRepository;
-import com.move.TripBalance.result.Blog;
-import com.move.TripBalance.result.Hotel;
+import com.move.TripBalance.result.domain.Blog;
+import com.move.TripBalance.result.domain.Hotel;
 import com.move.TripBalance.result.repository.BlogCustomRepositoryImpl;
 import com.move.TripBalance.result.repository.BlogRepository;
 import com.move.TripBalance.result.repository.HotelCustomRepositoryImpl;

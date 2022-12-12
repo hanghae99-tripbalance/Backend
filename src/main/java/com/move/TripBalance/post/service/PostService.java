@@ -1,13 +1,13 @@
 package com.move.TripBalance.post.service;
 
-import com.move.TripBalance.heart.Heart;
+import com.move.TripBalance.heart.domain.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.member.repository.MemberRepository;
-import com.move.TripBalance.post.Local;
-import com.move.TripBalance.post.LocalDetail;
-import com.move.TripBalance.post.Media;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Local;
+import com.move.TripBalance.post.domain.LocalDetail;
+import com.move.TripBalance.post.domain.Media;
+import com.move.TripBalance.post.domain.Post;
 import com.move.TripBalance.post.controller.request.PostRequestDto;
 import com.move.TripBalance.post.controller.response.OtherPostResponseDto;
 import com.move.TripBalance.post.controller.response.PostListResponseDto;
@@ -34,10 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.move.TripBalance.post.QMedia.media;
 import static com.move.TripBalance.heart.QHeart.heart;

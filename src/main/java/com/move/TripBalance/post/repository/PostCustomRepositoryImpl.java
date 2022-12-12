@@ -1,8 +1,6 @@
 package com.move.TripBalance.post.repository;
 
-import com.move.TripBalance.heart.Heart;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Post;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

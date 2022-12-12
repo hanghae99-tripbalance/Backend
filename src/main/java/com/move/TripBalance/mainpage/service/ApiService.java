@@ -1,7 +1,7 @@
 package com.move.TripBalance.mainpage.service;
 
-import com.move.TripBalance.mainpage.Location;
-import com.move.TripBalance.mainpage.Result;
+import com.move.TripBalance.mainpage.domain.Location;
+import com.move.TripBalance.mainpage.domain.Result;
 import com.move.TripBalance.mainpage.apiDB.ResultAge;
 import com.move.TripBalance.mainpage.apiDB.ResultComp;
 import com.move.TripBalance.mainpage.apiDB.ResultGender;

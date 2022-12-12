@@ -1,4 +1,4 @@
-package com.move.TripBalance.oauth;
+package com.move.TripBalance.oauth.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

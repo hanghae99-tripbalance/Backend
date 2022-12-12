@@ -1,6 +1,6 @@
 package com.move.TripBalance.shared.jwt.repository;
 
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 
 import java.util.Optional;
 

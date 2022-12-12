@@ -1,6 +1,6 @@
 package com.move.TripBalance.mainpage.repository;
 
-import com.move.TripBalance.mainpage.Result;
+import com.move.TripBalance.mainpage.domain.Result;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

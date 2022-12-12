@@ -1,7 +1,7 @@
 package com.move.TripBalance.member.controller;
 
 import com.google.gson.Gson;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.member.controller.request.IdCkeckRequestDto;
 import com.move.TripBalance.member.controller.request.LoginRequestDto;
 import com.move.TripBalance.member.controller.request.MemberRequestDto;

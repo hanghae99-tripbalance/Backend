@@ -1,14 +1,13 @@
-package com.move.TripBalance.heart;
+package com.move.TripBalance.heart.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.member.domain.Member;
+import com.move.TripBalance.post.domain.Post;
 import com.move.TripBalance.shared.domain.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

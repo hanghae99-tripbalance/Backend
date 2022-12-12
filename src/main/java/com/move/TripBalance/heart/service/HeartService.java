@@ -1,10 +1,10 @@
 package com.move.TripBalance.heart.service;
 
 
-import com.move.TripBalance.member.Member;
-import com.move.TripBalance.heart.Heart;
+import com.move.TripBalance.member.domain.Member;
+import com.move.TripBalance.heart.domain.Heart;
 import com.move.TripBalance.heart.repository.HeartRepository;
-import com.move.TripBalance.post.Post;
+import com.move.TripBalance.post.domain.Post;
 import com.move.TripBalance.shared.domain.UserDetailsImpl;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;

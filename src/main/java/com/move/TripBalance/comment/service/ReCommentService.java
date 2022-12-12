@@ -1,12 +1,12 @@
 package com.move.TripBalance.comment.service;
 
 
-import com.move.TripBalance.comment.Comment;
-import com.move.TripBalance.comment.ReComment;
+import com.move.TripBalance.comment.domain.Comment;
+import com.move.TripBalance.comment.domain.ReComment;
 import com.move.TripBalance.comment.controller.request.ReCommentRequestDto;
 import com.move.TripBalance.comment.controller.response.ReCommentResponseDto;
 import com.move.TripBalance.comment.repository.ReCommentRepository;
-import com.move.TripBalance.member.Member;
+import com.move.TripBalance.member.domain.Member;
 import com.move.TripBalance.shared.exception.PrivateException;
 import com.move.TripBalance.shared.exception.PrivateResponseBody;
 import com.move.TripBalance.shared.exception.StatusCode;
