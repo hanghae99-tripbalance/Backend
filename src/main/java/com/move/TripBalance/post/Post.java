@@ -47,8 +47,8 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private int pet;
 
-    // 게시글 내용
-    @Column(nullable = false)
+    // 게시글 내용(1000자 이하 저장될수있게 진행)
+    @Column(nullable = false, length = 1000)
     private String content;
 
     // 좋아요 개수
@@ -81,12 +81,11 @@ public class Post extends Timestamped {
     }
 
     public void heartNumUpdate(){
-        this.heartNum = heartNum+1;
+        this.heartNum += 1;
     }
 
     public void heartNumCancel(){
-        int a = -1;
-        this.heartNum = heartNum+a;
+        this.heartNum -= 1;
     }
     // 닉네임 변경시 바로 반영을 위한 업데이트
     public void updateMember(Member member){
