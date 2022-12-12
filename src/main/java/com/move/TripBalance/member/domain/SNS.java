@@ -41,16 +41,16 @@ public class SNS {
     private Member member;
 
     public void updateinsta(MyPageRequestDto requestDto){
-        this.insta = "https://www.instagram.com/" + requestDto.getInsta();
+        this.insta = requestDto.getInsta();
     }
     public void updatefacebook(MyPageRequestDto requestDto){
-        this.facebook = "https://www.facebook.com/" +requestDto.getFacebook();
+        this.facebook = requestDto.getFacebook();
     }
     public void updateyoutube(MyPageRequestDto requestDto){
-        this.youtube = "https://www.youtube.com/" + requestDto.getYoutube();
+        this.youtube = requestDto.getYoutube();
     }
     public void updateblog(MyPageRequestDto requestDto){
-        this.blog = "https://blog.naver.com/" + requestDto.getBlog();
+        this.blog = requestDto.getBlog();
     }
 
 

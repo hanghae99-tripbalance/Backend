@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @Builder
 @AllArgsConstructor
@@ -17,7 +15,10 @@ public class MyPageResponseDto {
     private String nickName;
     private String profileImg;
     private String self;
-    private List<String> sns;
+    private String facebook;
+    private String youtube;
+    private String blog;
+    private String insta;
     private Long postCnt = 0L;
     private Long commentCnt = 0L;
     private Long gameCnt = 0L;
