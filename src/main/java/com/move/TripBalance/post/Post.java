@@ -81,12 +81,11 @@ public class Post extends Timestamped {
     }
 
     public void heartNumUpdate(){
-        this.heartNum = heartNum+1;
+        this.heartNum += 1;
     }
 
     public void heartNumCancel(){
-        int a = -1;
-        this.heartNum = heartNum+a;
+        this.heartNum -= 1;
     }
     // 닉네임 변경시 바로 반영을 위한 업데이트
     public void updateMember(Member member){

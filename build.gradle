@@ -76,6 +76,10 @@ dependencies {
     // ouath 소셜로그인
     implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 
+    //sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:6.9.2'
+
+
 
 }
 

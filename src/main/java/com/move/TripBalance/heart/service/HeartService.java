@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class HeartService {
     private final EntityManager em;
 
     // 좋아요, 좋아요취소
+    @Transactional
     public ResponseEntity<PrivateResponseBody> heart (Long  postId, UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         Post post = postService.isPresentPost(postId);
