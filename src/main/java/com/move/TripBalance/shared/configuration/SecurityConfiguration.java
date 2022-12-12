@@ -96,15 +96,6 @@ public class SecurityConfiguration {
         .addFilter(corsConfig.corsFilter())
         .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
 
-
-        http
-                .headers()
-                .xssProtection()
-                .and()
-                .contentSecurityPolicy("script-src 'self'");
-
-
-
     return http.build();
   }
 }
