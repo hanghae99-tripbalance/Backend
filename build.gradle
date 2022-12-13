@@ -12,9 +12,16 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
+
+
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+
+repositories {
+    mavenCentral()
+}
 
 configurations {
     compileOnly {
@@ -22,25 +29,19 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.jetbrains:annotations:20.1.0'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.8'
-
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.projectlombok:lombok:1.18.22'
 
     // JWT
+
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
@@ -53,35 +54,38 @@ dependencies {
     // AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+    //jsoup
+    implementation 'org.jsoup:jsoup:1.15.2'
+
     // querydsl 디펜던시 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 
     // JSONObject
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.json:json:20220924'
 
-    // WebSocket
-    compile 'org.springframework.boot:spring-boot-starter-mustache'
-    //compile 'org.springframework.boot:spring-boot-starter-websocket'
-    compile 'org.webjars.bower:jquery:3.6.1'
-    compile 'org.webjars:sockjs-client:1.5.1'
-    compile 'org.webjars:webjars-locator:0.45'
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    //okhttp
+    implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
 
-    // pub/sub
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    //gson
+    implementation 'com.google.code.gson:gson:2.10'
 
-}
+    // ouath 소셜로그인
+    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 
-//빌드시 plain jar 파일은 만들어지지 않습니다.
-jar {
-    enabled = false
+    //sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:6.9.2'
+
+
+
 }
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
-def querydslDir = "$buildDir/generated/'querydsl'"
+def querydslDir = "$buildDir/generated/querydsl"
 
 // JPA 사용여부 및 사용 경로 설정
 querydsl {
@@ -89,11 +93,9 @@ querydsl {
     querydslSourcesDir = querydslDir
 }
 
-// build시 사용할 sourceSet 추가 설정
 sourceSets {
     main.java.srcDir querydslDir
 }
-
 
 // querydsl 컴파일 시 사용할 옵션 설정
 compileQuerydsl {
@@ -106,14 +108,17 @@ configurations {
         extendsFrom annotationProcessor
     }
     querydsl.extendsFrom compileClasspath
+
+    //jsp
+    //implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    //implementation 'javax.servlet:jstl'
+
 }
 
-// Dockerfile
-//FROM openjdk:11-openjdk
-//ARG JAR_FILE=build/libs/*.jar
-//COPY ${JAR_FILE} app.jar
-//ENTRYPOINT ["java","-jar","/app.jar"]
-
+//빌드시 plain jar 파일은 만들어지지 않습니다.
+jar {
+    enabled = false
+}
 
 tasks.named('test') {
     useJUnitPlatform()
