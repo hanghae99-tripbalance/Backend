@@ -5,6 +5,47 @@
 <h4>📆프로젝트 기간 2022.11.04 ~ 2022.12.16</h4>
 
 -------
+
+<h2> ⚙ 서비스 아키텍쳐 ⚙</h2>
+
+<div>
+
+![image](https://user-images.githubusercontent.com/77573910/206633198-1de82ce6-a604-4b8d-a520-6a412251021b.png)
+
+</div>
+
+<h2><b>🛠 Skill 🛠</b></h2>
+
+<div>
+
+|🔩 Part|🛠 Stacks 🛠|
+|:---:|:---:|
+|📃 Code| <img src="https://img.shields.io/badge/java-FC4C02?style=for-the-badge&logo=&logoColor=white"> |
+|🛠 Tech| <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/GRADLE-02303A?style=for-the-badge&logo=Gradle&logoColor=white">|
+|💾 DB| <img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=MariaDB&logoColor=white">|
+|⚙️ Tool| <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira%20Software&logoColor=white"><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ%20IDEA&logoColor=white"><img src="https://img.shields.io/badge/SSL-F68212?style=for-the-badge&logo=Open%20Access&logoColor=white">|
+|🔍 Cloud| <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white">|
+|🐧 OS | <img src="https://img.shields.io/badge/linux-FCC624?style=for-the-badge&logo=linux&logoColor=black"><img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white">|
+
+</div>
+
+<h2> 🎲 ERD 🎲 </h2>
+
+![Trip Balance](https://user-images.githubusercontent.com/77573910/206089915-1eb07e1e-a774-4ff4-b086-11dcd3ac03e1.png)
+
+
+<h3>👨‍💻 Member </h3>
+<p align=>
+
+<img src="https://img.shields.io/badge/김용문-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/dydrkflqmdl"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/dydrkflqmdl"/></a>
+<br>
+<img src="https://img.shields.io/badge/방주은-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/jueun330"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/jueun330"/></a>
+<br>
+<img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+<a href="https://github.com/chunngamm"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/chunngamm"/></a>
+
 <div style="white-space:nowrap; overflow:auto;  width:500px; height:150px;">
 
   <h2> 🚌 Trip Balane 서비스 미리보기 (Mobile) </h2>
@@ -53,44 +94,4 @@
 <img src="https://user-images.githubusercontent.com/77573910/207362891-0eb7e051-cc86-468b-9cb9-15f4886dd455.gif" width="600" height="300">
 
 -------
-
-<h2> ⚙ 서비스 아키텍쳐 ⚙</h2>
-
-<div>
-
-![image](https://user-images.githubusercontent.com/77573910/206633198-1de82ce6-a604-4b8d-a520-6a412251021b.png)
-
-</div>
-
-<h2><b>🛠 Skill 🛠</b></h2>
-
-<div>
-
-|🔩 Part|🛠 Stacks 🛠|
-|:---:|:---:|
-|📃 Code| <img src="https://img.shields.io/badge/java-FC4C02?style=for-the-badge&logo=&logoColor=white"> |
-|🛠 Tech| <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/GRADLE-02303A?style=for-the-badge&logo=Gradle&logoColor=white">|
-|💾 DB| <img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=MariaDB&logoColor=white">|
-|⚙️ Tool| <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira%20Software&logoColor=white"><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ%20IDEA&logoColor=white"><img src="https://img.shields.io/badge/SSL-F68212?style=for-the-badge&logo=Open%20Access&logoColor=white">|
-|🔍 Cloud| <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=Amazon%20AWS&logoColor=white">|
-|🐧 OS | <img src="https://img.shields.io/badge/linux-FCC624?style=for-the-badge&logo=linux&logoColor=black"><img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white">|
-
-</div>
-
-<h2> 🎲 ERD 🎲 </h2>
-
-![Trip Balance](https://user-images.githubusercontent.com/77573910/206089915-1eb07e1e-a774-4ff4-b086-11dcd3ac03e1.png)
-
-
-<h3>👨‍💻 Member </h3>
-<p align=>
-
-<img src="https://img.shields.io/badge/김용문-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<a href="https://github.com/dydrkflqmdl"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/dydrkflqmdl"/></a>
-<br>
-<img src="https://img.shields.io/badge/방주은-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<a href="https://github.com/jueun330"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/jueun330"/></a>
-<br>
-<img src="https://img.shields.io/badge/김장원-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-<a href="https://github.com/chunngamm"><img src="https://img.shields.io/badge/GITHUB-6DB33F?style=for-the-badge&logo=GitHub&logoColor=white&link=https://github.com/chunngamm"/></a>
 
